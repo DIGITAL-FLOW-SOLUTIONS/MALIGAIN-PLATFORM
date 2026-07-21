@@ -44,43 +44,47 @@
   --radius-2xl: calc(var(--radius) + 8px);
 }
 
+/* ── WealthEarn-style light theme ─────────────────────────────────────────── */
 :root {
-  /* Default to dark mode palette for the premium SaaS feel */
-  --background: 222 47% 7%;
-  --foreground: 210 40% 98%;
-  
-  --card: 222 47% 9%;
-  --card-foreground: 210 40% 98%;
-  
-  --popover: 222 47% 9%;
-  --popover-foreground: 210 40% 98%;
-  
-  /* Primary: Indigo */
-  --primary: 243 75% 59%;
-  --primary-foreground: 210 40% 98%;
-  
-  /* Secondary: Cyan */
-  --secondary: 190 95% 39%;
-  --secondary-foreground: 210 40% 98%;
-  
-  /* Accent: Green */
-  --accent: 142 71% 45%;
-  --accent-foreground: 210 40% 98%;
-  
-  --muted: 217 32% 17%;
-  --muted-foreground: 215 20.2% 65.1%;
-  
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  
-  --border: 217 32% 17%;
-  --input: 217 32% 17%;
-  --ring: 243 75% 59%;
-  
-  --sidebar: 222 47% 6%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 217 32% 14%;
-  
+  /* Page background: very light blue-gray */
+  --background: 220 30% 97%;
+  --foreground: 222 47% 11%;
+
+  /* Cards: pure white */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Primary: WealthEarn bright blue #5b8dee */
+  --primary: 217 78% 64%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Secondary: Purple #8b6ff5 */
+  --secondary: 256 87% 69%;
+  --secondary-foreground: 0 0% 100%;
+
+  /* Accent: lighter indigo */
+  --accent: 230 85% 72%;
+  --accent-foreground: 222 47% 11%;
+
+  /* Muted: light gray */
+  --muted: 220 20% 93%;
+  --muted-foreground: 220 13% 46%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 13% 87%;
+  --input: 220 13% 87%;
+  --ring: 217 78% 64%;
+
+  /* Sidebar: white with subtle border */
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-border: 220 13% 90%;
+
   --radius: 0.75rem;
 }
 
@@ -91,9 +95,10 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
-    background-image: 
-      radial-gradient(ellipse at top right, hsl(243 75% 59% / 0.15), transparent 50%),
-      radial-gradient(ellipse at bottom left, hsl(190 95% 39% / 0.1), transparent 50%);
+    /* Subtle blue/purple ambient glow on the page background */
+    background-image:
+      radial-gradient(ellipse at top right,  hsl(217 78% 64% / 0.07), transparent 55%),
+      radial-gradient(ellipse at bottom left, hsl(256 87% 69% / 0.05), transparent 55%);
     background-attachment: fixed;
     min-height: 100vh;
   }
@@ -121,7 +126,7 @@
 
 /* Glassmorphism Utilities */
 .glass-panel {
-  @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-xl;
+  @apply bg-card/80 backdrop-blur-xl border border-white/60 shadow-xl;
 }
 
 .gradient-text {
@@ -129,9 +134,7 @@
 }
 
 @keyframes shimmer {
-  to {
-    background-position: 200% center;
-  }
+  to { background-position: 200% center; }
 }
 
 @keyframes float {
@@ -143,34 +146,39 @@
   animation: float 6s ease-in-out infinite;
 }
 
-/* Icon glow animations */
+/* Icon glow animations — blue/purple palette */
+@keyframes glow-pulse-primary {
+  0%, 100% { box-shadow: 0 0 6px 2px hsl(217 78% 64% / 0.45); }
+  50%       { box-shadow: 0 0 14px 5px hsl(217 78% 64% / 0.70); }
+}
 @keyframes glow-pulse-purple {
-  0%, 100% { box-shadow: 0 0 6px 2px rgba(139, 92, 246, 0.5); }
-  50% { box-shadow: 0 0 14px 5px rgba(139, 92, 246, 0.75); }
+  0%, 100% { box-shadow: 0 0 6px 2px hsl(256 87% 69% / 0.45); }
+  50%       { box-shadow: 0 0 14px 5px hsl(256 87% 69% / 0.70); }
 }
 @keyframes glow-pulse-violet {
   0%, 100% { box-shadow: 0 0 6px 2px rgba(167, 139, 250, 0.5); }
-  50% { box-shadow: 0 0 14px 5px rgba(167, 139, 250, 0.75); }
+  50%       { box-shadow: 0 0 14px 5px rgba(167, 139, 250, 0.75); }
 }
 @keyframes glow-pulse-emerald {
   0%, 100% { box-shadow: 0 0 6px 2px rgba(16, 185, 129, 0.5); }
-  50% { box-shadow: 0 0 14px 5px rgba(16, 185, 129, 0.75); }
+  50%       { box-shadow: 0 0 14px 5px rgba(16, 185, 129, 0.75); }
 }
 @keyframes glow-pulse-orange {
   0%, 100% { box-shadow: 0 0 6px 2px rgba(249, 115, 22, 0.5); }
-  50% { box-shadow: 0 0 14px 5px rgba(249, 115, 22, 0.75); }
+  50%       { box-shadow: 0 0 14px 5px rgba(249, 115, 22, 0.75); }
 }
 @keyframes glow-pulse-cyan {
   0%, 100% { box-shadow: 0 0 6px 2px rgba(6, 182, 212, 0.5); }
-  50% { box-shadow: 0 0 14px 5px rgba(6, 182, 212, 0.75); }
+  50%       { box-shadow: 0 0 14px 5px rgba(6, 182, 212, 0.75); }
 }
 
-.icon-glow-purple { animation: glow-pulse-purple 2.5s ease-in-out infinite; }
-.icon-glow-violet { animation: glow-pulse-violet 2.5s ease-in-out infinite; }
-.icon-glow-emerald { animation: glow-pulse-emerald 2.5s ease-in-out infinite; }
-.icon-glow-orange { animation: glow-pulse-orange 2.5s ease-in-out infinite; }
-.icon-glow-cyan { animation: glow-pulse-cyan 2.5s ease-in-out infinite; }
+.icon-glow-primary  { animation: glow-pulse-primary  2.5s ease-in-out infinite; }
+.icon-glow-purple   { animation: glow-pulse-purple    2.5s ease-in-out infinite; }
+.icon-glow-violet   { animation: glow-pulse-violet    2.5s ease-in-out infinite; }
+.icon-glow-emerald  { animation: glow-pulse-emerald   2.5s ease-in-out infinite; }
+.icon-glow-orange   { animation: glow-pulse-orange    2.5s ease-in-out infinite; }
+.icon-glow-cyan     { animation: glow-pulse-cyan      2.5s ease-in-out infinite; }
 
 .icon-glow {
-  animation: glow-pulse-violet 2.5s ease-in-out infinite;
+  animation: glow-pulse-primary 2.5s ease-in-out infinite;
 }
