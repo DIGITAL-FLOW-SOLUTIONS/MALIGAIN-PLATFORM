@@ -1,0 +1,111 @@
+# Render Blueprint — deploys 3 separate services:
+#   1. maligain-api      — Render Free Web Service  (Express API)
+#   2. maligain-frontend — Render Static Site       (user-facing React app)
+#   3. maligain-admin    — Render Static Site       (admin panel React app)
+#
+# Deploy order: create the API service first so you have its URL, then create
+# the two static sites and set VITE_API_URL to that URL.
+
+services:
+
+  # ── 1. API SERVER ──────────────────────────────────────────────────────────
+  - type: web
+    name: maligain-api
+    runtime: node
+    plan: free
+    buildCommand: >
+      pnpm install --no-frozen-lockfile &&
+      pnpm --filter @workspace/api-server run build
+    startCommand: node --enable-source-maps ./artifacts/api-server/dist/index.mjs
+    healthCheckPath: /api/healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Paste your Render API URL + the two Render Static Site URLs here after
+      # the first deploy, e.g.:
+      #   https://maligain-frontend.onrender.com,https://maligain-admin.onrender.com
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_SECRET
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      # Optional — email delivery
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      # Optional — M-Pesa
+      - key: MPESA_CONSUMER_KEY
+        sync: false
+      - key: MPESA_CONSUMER_SECRET
+        sync: false
+      - key: MPESA_SHORTCODE
+        sync: false
+      - key: MPESA_PASSKEY
+        sync: false
+      - key: MPESA_ENVIRONMENT
+        sync: false
+      # Optional — PayHero
+      - key: PAYHERO_API_username
+        sync: false
+      - key: PAYHERO_API_password
+        sync: false
+      - key: PAYHERO_Basic_Auth_token
+        sync: false
+      - key: PAYHERO_Channel_ID
+        sync: false
+      - key: PAYHERO_Account_ID
+        sync: false
+      # Public URL of this API service (used for webhook callbacks etc.)
+      - key: APP_URL
+        sync: false
+
+  # ── 2. USER FRONTEND (mulacent) ────────────────────────────────────────────
+  - type: web
+    name: maligain-frontend
+    runtime: static
+    buildCommand: >
+      pnpm install --no-frozen-lockfile &&
+      pnpm --filter @workspace/mulacent run build
+    staticPublishPath: ./artifacts/mulacent/dist/public
+    autoDeploy: true
+    routes:
+      # SPA fallback — all paths serve index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Set this to your API service URL, e.g. https://maligain-api.onrender.com
+      - key: VITE_API_URL
+        sync: false
+
+  # ── 3. ADMIN PANEL ─────────────────────────────────────────────────────────
+  - type: web
+    name: maligain-admin
+    runtime: static
+    buildCommand: >
+      pnpm install --no-frozen-lockfile &&
+      BASE_PATH=/admin pnpm --filter @workspace/admin run build
+    staticPublishPath: ./artifacts/admin/dist/public
+    autoDeploy: true
+    routes:
+      # SPA fallback — all paths serve index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Set this to your API service URL, e.g. https://maligain-api.onrender.com
+      - key: VITE_API_URL
+        sync: false

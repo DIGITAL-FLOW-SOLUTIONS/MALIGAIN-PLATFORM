@@ -3,7 +3,6 @@ import cors from "cors";
 import compression from "compression";
 import cookieSession from "cookie-session";
 import pinoHttp from "pino-http";
-import path from "path";
 import router from "./routes";
 import adminRouter from "./routes/admin";
 import mpesaRouter from "./routes/mpesa";
@@ -52,27 +51,29 @@ app.use(
   }),
 );
 
-app.use(cors({ origin: true, credentials: true }));
+// ALLOWED_ORIGINS — comma-separated list of frontend origins allowed to call
+// the API with credentials (e.g. https://maligain.onrender.com,https://maligain-admin.onrender.com).
+// Defaults to "*" in development and to the env var in production.
+const rawOrigins = process.env["ALLOWED_ORIGINS"];
+const allowedOrigins = rawOrigins
+  ? rawOrigins.split(",").map((o) => o.trim()).filter(Boolean)
+  : null;
+
+app.use(
+  cors({
+    origin: allowedOrigins
+      ? (origin, cb) => {
+          // Allow server-to-server calls (no Origin header) and listed origins
+          if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+          cb(new Error(`CORS: origin "${origin}" not allowed`));
+        }
+      : true,
+    credentials: true,
+  }),
+);
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
-// ---------------------------------------------------------------------------
-// Static ASSET files — served before session middleware so JS/CSS bundles,
-// images, fonts etc. bypass cookie parsing entirely (minor perf win).
-// ---------------------------------------------------------------------------
-if (isProd) {
-  const repoRoot     = process.cwd();
-  const adminDist    = path.resolve(repoRoot, "artifacts/admin/dist/public");
-  const mulacentDist = path.resolve(repoRoot, "artifacts/mulacent/dist/public");
-
-  const assetOpts = { maxAge: "1y", immutable: true } as const;
-  const imageOpts = { maxAge: "7d" } as const;
-
-  app.use("/admin/assets", express.static(path.join(adminDist,    "assets"), assetOpts));
-  app.use("/assets",       express.static(path.join(mulacentDist, "assets"), assetOpts));
-  app.use("/images",       express.static(path.join(mulacentDist, "images"), imageOpts));
-  app.use("/admin/images", express.static(path.join(adminDist,    "images"), imageOpts));
-}
 
 app.use(cookieSessionMiddleware);
 
@@ -80,23 +81,5 @@ app.use("/api", router);
 app.use("/api/admin", adminRouter);
 app.use("/callbackurl", mpesaRouter);
 
-// ---------------------------------------------------------------------------
-// Static HTML + SPA fallback
-// ---------------------------------------------------------------------------
-if (isProd) {
-  const repoRoot     = process.cwd();
-  const adminDist    = path.resolve(repoRoot, "artifacts/admin/dist/public");
-  const mulacentDist = path.resolve(repoRoot, "artifacts/mulacent/dist/public");
-
-  app.use("/admin", express.static(adminDist));
-  app.get("/admin/*path", (_req, res) => {
-    res.sendFile(path.join(adminDist, "index.html"));
-  });
-
-  app.use("/", express.static(mulacentDist));
-  app.get("/*path", (_req, res) => {
-    res.sendFile(path.join(mulacentDist, "index.html"));
-  });
-}
 
 export default app;
