@@ -1,0 +1,1989 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: MALIGAIN API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: users
+    description: User operations
+  - name: wallet
+    description: Wallet and finance operations
+  - name: products
+    description: Store and product operations
+  - name: referrals
+    description: Referral and downlines operations
+  - name: tournaments
+    description: Tournament operations
+  - name: bonuses
+    description: Bonus operations
+  - name: tasks
+    description: Task operations
+  - name: admin
+    description: Admin panel operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/profile:
+    put:
+      operationId: updateProfile
+      tags: [users]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/change-password:
+    put:
+      operationId: changePassword
+      tags: [users]
+      summary: Change user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid current password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /wallet/balances:
+    get:
+      operationId: getWalletBalances
+      tags: [wallet]
+      summary: Get all wallet balances
+      responses:
+        "200":
+          description: Wallet balances
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletBalances"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /wallet/withdraw:
+    post:
+      operationId: requestWithdrawal
+      tags: [wallet]
+      summary: Request a withdrawal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WithdrawalRequest"
+      responses:
+        "200":
+          description: Withdrawal requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Insufficient balance or below minimum
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /wallet/recharge:
+    post:
+      operationId: initiateRecharge
+      tags: [wallet]
+      summary: Initiate a recharge/deposit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RechargeRequest"
+      responses:
+        "200":
+          description: Recharge initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid amount
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /wallet/transactions:
+    get:
+      operationId: getTransactions
+      tags: [wallet]
+      summary: Get transaction history
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [withdrawal, recharge, all]
+            default: all
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Transaction list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionList"
+
+  /products:
+    get:
+      operationId: getProducts
+      tags: [products]
+      summary: Get all products in the store
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, popular, price_asc, price_desc]
+            default: newest
+      responses:
+        "200":
+          description: Product list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductList"
+
+  /products/my-purchases:
+    get:
+      operationId: getMyPurchases
+      tags: [products]
+      summary: Get user's purchased products
+      responses:
+        "200":
+          description: Purchased products
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseList"
+
+  /products/{id}/purchase:
+    post:
+      operationId: purchaseProduct
+      tags: [products]
+      summary: Purchase a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Purchase successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Insufficient funds or already owned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /referrals/downlines:
+    get:
+      operationId: getDownlines
+      tags: [referrals]
+      summary: Get user's downlines/referrals
+      parameters:
+        - name: level
+          in: query
+          schema:
+            type: string
+            default: all
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [all, active, inactive]
+            default: all
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Downlines list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DownlineList"
+
+  /referrals/stats:
+    get:
+      operationId: getReferralStats
+      tags: [referrals]
+      summary: Get referral statistics
+      responses:
+        "200":
+          description: Referral stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReferralStats"
+
+  /tournaments/current:
+    get:
+      operationId: getCurrentTournament
+      tags: [tournaments]
+      summary: Get current tournament info and leaderboard
+      responses:
+        "200":
+          description: Tournament info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+
+  /bonuses:
+    get:
+      operationId: getBonuses
+      tags: [bonuses]
+      summary: Get bonus tiers and user progress
+      responses:
+        "200":
+          description: Bonus info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BonusInfo"
+
+  /tasks:
+    get:
+      operationId: getTasks
+      tags: [tasks]
+      summary: Get available tasks
+      responses:
+        "200":
+          description: Tasks list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskList"
+
+  /tasks/{id}/start:
+    post:
+      operationId: startTask
+      tags: [tasks]
+      summary: Start a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /tasks/{id}/complete:
+    post:
+      operationId: completeTask
+      tags: [tasks]
+      summary: Complete a task and credit reward
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: string
+                title:
+                  type: string
+                content:
+                  type: string
+      responses:
+        "200":
+          description: Task completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskCompleteResponse"
+
+  /admin/auth/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /admin/auth/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+
+  /admin/auth/me:
+    get:
+      operationId: adminGetMe
+      tags: [admin]
+      summary: Get current admin
+      responses:
+        "200":
+          description: Current admin user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Not authenticated
+
+  /admin/stats:
+    get:
+      operationId: adminGetStats
+      tags: [admin]
+      summary: Platform-wide dashboard stats
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users:
+    get:
+      operationId: adminListUsers
+      tags: [admin]
+      summary: List all users with filters
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, suspended]
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserList"
+
+  /admin/users/{userId}:
+    get:
+      operationId: adminGetUser
+      tags: [admin]
+      summary: Get user detail
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserDetail"
+    put:
+      operationId: adminUpdateUser
+      tags: [admin]
+      summary: Update user profile
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUpdateUserRequest"
+      responses:
+        "200":
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/users/{userId}/status:
+    post:
+      operationId: adminSetUserStatus
+      tags: [admin]
+      summary: Set user status (activate, suspend, unsuspend)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminSetStatusRequest"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/users/{userId}/wallet:
+    get:
+      operationId: adminGetUserWallet
+      tags: [admin]
+      summary: Get user wallet balances
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Wallet balances
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminWallet"
+
+  /admin/users/{userId}/wallet/credit:
+    post:
+      operationId: adminCreditWallet
+      tags: [admin]
+      summary: Credit a user wallet field
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminWalletAdjustRequest"
+      responses:
+        "200":
+          description: Credited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/users/{userId}/wallet/debit:
+    post:
+      operationId: adminDebitWallet
+      tags: [admin]
+      summary: Debit a user wallet field
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminWalletAdjustRequest"
+      responses:
+        "200":
+          description: Debited successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/users/{userId}/referrals:
+    get:
+      operationId: adminGetUserReferrals
+      tags: [admin]
+      summary: Get a user's full downline tree
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Referral tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminReferralTree"
+
+  /admin/referrals/bonus:
+    post:
+      operationId: adminAddReferralBonus
+      tags: [admin]
+      summary: Manually add referral bonus to a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAddBonusRequest"
+      responses:
+        "200":
+          description: Bonus added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/verifications:
+    get:
+      operationId: adminListVerifications
+      tags: [admin]
+      summary: List Eversend payment verifications
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Verification list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminVerificationList"
+
+  /admin/verifications/{id}/approve:
+    post:
+      operationId: adminApproveVerification
+      tags: [admin]
+      summary: Approve an Eversend payment verification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminVerificationActionRequest"
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/verifications/{id}/reject:
+    post:
+      operationId: adminRejectVerification
+      tags: [admin]
+      summary: Reject an Eversend payment verification
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminVerificationActionRequest"
+      responses:
+        "200":
+          description: Rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/transactions:
+    get:
+      operationId: adminListTransactions
+      tags: [admin]
+      summary: List all transactions platform-wide
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Transaction list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTransactionList"
+
+  /admin/tasks:
+    get:
+      operationId: adminListTasks
+      tags: [admin]
+      summary: List all tasks
+      responses:
+        "200":
+          description: Task list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTaskList"
+
+  /admin/tasks/{taskId}:
+    put:
+      operationId: adminUpdateTask
+      tags: [admin]
+      summary: Update a task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUpdateTaskRequest"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /admin/audit-log:
+    get:
+      operationId: adminGetAuditLog
+      tags: [admin]
+      summary: Get admin action audit log
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Audit log entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuditLogList"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        success:
+          type: boolean
+      required:
+        - message
+        - success
+
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        phone:
+          type: string
+        country:
+          type: string
+        referralCode:
+          type: string
+      required:
+        - username
+        - email
+        - password
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        rememberMe:
+          type: boolean
+          default: false
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        message:
+          type: string
+      required:
+        - user
+        - message
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        referralCode:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        avatarInitials:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - username
+        - email
+        - referralCode
+        - status
+        - avatarInitials
+        - createdAt
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        country:
+          type: string
+
+    ChangePasswordRequest:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 6
+        confirmPassword:
+          type: string
+      required:
+        - currentPassword
+        - newPassword
+        - confirmPassword
+
+    WalletBalances:
+      type: object
+      properties:
+        teamEarnings:
+          type: number
+        mainWallet:
+          type: number
+        totalWithdrawn:
+          type: number
+        totalEarned:
+          type: number
+        todayEarnings:
+          type: number
+        activeMembers:
+          type: integer
+        productsOwned:
+          type: integer
+        commissions:
+          type: number
+        affiliateBalance:
+          type: number
+      required:
+        - teamEarnings
+        - mainWallet
+        - totalWithdrawn
+        - totalEarned
+        - todayEarnings
+        - activeMembers
+        - productsOwned
+        - commissions
+        - affiliateBalance
+
+    WithdrawalRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        phoneNumber:
+          type: string
+      required:
+        - amount
+        - phoneNumber
+
+    RechargeRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        phoneNumber:
+          type: string
+      required:
+        - amount
+        - phoneNumber
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [withdrawal, recharge, bonus, commission, referral]
+        amount:
+          type: number
+        status:
+          type: string
+          enum: [pending, completed, failed]
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - amount
+        - status
+        - description
+        - createdAt
+
+    TransactionList:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"
+        total:
+          type: integer
+        totalPaidOut:
+          type: number
+        totalPending:
+          type: integer
+      required:
+        - transactions
+        - total
+        - totalPaidOut
+        - totalPending
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        originalPrice:
+          type: number
+          nullable: true
+        category:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        soldCount:
+          type: integer
+        commissionPercent:
+          type: number
+        isOwned:
+          type: boolean
+      required:
+        - id
+        - title
+        - description
+        - price
+        - category
+        - soldCount
+        - commissionPercent
+        - isOwned
+
+    ProductList:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        total:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: string
+        owned:
+          type: integer
+        sellers:
+          type: integer
+      required:
+        - products
+        - total
+        - categories
+        - owned
+        - sellers
+
+    Purchase:
+      type: object
+      properties:
+        id:
+          type: integer
+        product:
+          $ref: "#/components/schemas/Product"
+        purchasedAt:
+          type: string
+          format: date-time
+        amountPaid:
+          type: number
+      required:
+        - id
+        - product
+        - purchasedAt
+        - amountPaid
+
+    PurchaseList:
+      type: object
+      properties:
+        purchases:
+          type: array
+          items:
+            $ref: "#/components/schemas/Purchase"
+        totalSpent:
+          type: number
+        totalOwned:
+          type: integer
+        totalPending:
+          type: integer
+        totalCommissions:
+          type: number
+      required:
+        - purchases
+        - totalSpent
+        - totalOwned
+        - totalPending
+        - totalCommissions
+
+    Downline:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive]
+        level:
+          type: string
+        referralCount:
+          type: integer
+        joinedAt:
+          type: string
+          format: date-time
+        avatarInitials:
+          type: string
+      required:
+        - id
+        - username
+        - status
+        - level
+        - referralCount
+        - joinedAt
+        - avatarInitials
+
+    DownlineList:
+      type: object
+      properties:
+        downlines:
+          type: array
+          items:
+            $ref: "#/components/schemas/Downline"
+        total:
+          type: integer
+        active:
+          type: integer
+        inactive:
+          type: integer
+        levelCounts:
+          type: object
+          additionalProperties:
+            type: integer
+      required:
+        - downlines
+        - total
+        - active
+        - inactive
+        - levelCounts
+
+    ReferralStats:
+      type: object
+      properties:
+        inviteLink:
+          type: string
+        referralCode:
+          type: string
+        totalInvited:
+          type: integer
+        totalActivated:
+          type: integer
+        totalEarned:
+          type: number
+        todayReferrals:
+          type: integer
+      required:
+        - inviteLink
+        - referralCode
+        - totalInvited
+        - totalActivated
+        - totalEarned
+        - todayReferrals
+
+    TournamentEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        username:
+          type: string
+        referrals:
+          type: integer
+        avatarInitials:
+          type: string
+        isCurrentUser:
+          type: boolean
+      required:
+        - rank
+        - username
+        - referrals
+        - avatarInitials
+        - isCurrentUser
+
+    Tournament:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        endsAt:
+          type: string
+          format: date-time
+        prizes:
+          type: array
+          items:
+            type: object
+            properties:
+              rank:
+                type: integer
+              prize:
+                type: string
+            required:
+              - rank
+              - prize
+        leaderboard:
+          type: array
+          items:
+            $ref: "#/components/schemas/TournamentEntry"
+        userPosition:
+          $ref: "#/components/schemas/TournamentEntry"
+          nullable: true
+      required:
+        - id
+        - name
+        - endsAt
+        - prizes
+        - leaderboard
+
+    BonusTier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        requiredReferrals:
+          type: integer
+        bonusAmount:
+          type: number
+        currentReferrals:
+          type: integer
+        achieved:
+          type: boolean
+      required:
+        - id
+        - name
+        - requiredReferrals
+        - bonusAmount
+        - currentReferrals
+        - achieved
+
+    BonusHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        tierName:
+          type: string
+        amount:
+          type: number
+        claimedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - tierName
+        - amount
+        - claimedAt
+
+    BonusInfo:
+      type: object
+      properties:
+        balance:
+          type: number
+        totalEarned:
+          type: number
+        tiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/BonusTier"
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/BonusHistory"
+        nextTierName:
+          type: string
+          nullable: true
+        nextTierProgress:
+          type: number
+      required:
+        - balance
+        - totalEarned
+        - tiers
+        - history
+        - nextTierProgress
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [survey, blogging, video, trivia, chat]
+        reward:
+          type: number
+        availableCount:
+          type: integer
+        description:
+          type: string
+        difficulty:
+          type: string
+        doneToday:
+          type: boolean
+      required:
+        - id
+        - name
+        - type
+        - reward
+        - availableCount
+        - description
+
+    TaskList:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        totalAvailable:
+          type: integer
+        doneTodayCount:
+          type: integer
+      required:
+        - tasks
+        - totalAvailable
+
+    TaskCompleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        reward:
+          type: number
+      required:
+        - success
+        - message
+        - reward
+
+    AdminLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    AdminUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+      required:
+        - id
+        - username
+
+    AdminAuthResponse:
+      type: object
+      properties:
+        admin:
+          $ref: "#/components/schemas/AdminUser"
+        message:
+          type: string
+      required:
+        - admin
+        - message
+
+    AdminStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        activeUsers:
+          type: integer
+        inactiveUsers:
+          type: integer
+        suspendedUsers:
+          type: integer
+        totalDeposits:
+          type: number
+        totalWithdrawals:
+          type: number
+        pendingVerifications:
+          type: integer
+        pendingWithdrawals:
+          type: integer
+        totalTransactions:
+          type: integer
+        recentSignups:
+          type: integer
+      required:
+        - totalUsers
+        - activeUsers
+        - inactiveUsers
+        - suspendedUsers
+        - totalDeposits
+        - totalWithdrawals
+        - pendingVerifications
+        - pendingWithdrawals
+        - totalTransactions
+        - recentSignups
+
+    AdminUserItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        status:
+          type: string
+        referralCode:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        referredBy:
+          type: integer
+          nullable: true
+      required:
+        - id
+        - username
+        - email
+        - status
+        - referralCode
+        - createdAt
+
+    AdminUserList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminUserItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - users
+        - total
+        - page
+        - totalPages
+
+    AdminWallet:
+      type: object
+      properties:
+        mainWallet:
+          type: number
+        teamEarnings:
+          type: number
+        affiliateBalance:
+          type: number
+        commissions:
+          type: number
+        totalEarned:
+          type: number
+        totalWithdrawn:
+          type: number
+        todayEarnings:
+          type: number
+      required:
+        - mainWallet
+        - teamEarnings
+        - affiliateBalance
+        - commissions
+        - totalEarned
+        - totalWithdrawn
+        - todayEarnings
+
+    AdminUserDetail:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AdminUserItem"
+        wallet:
+          $ref: "#/components/schemas/AdminWallet"
+        totalReferrals:
+          type: integer
+        taskCompletions:
+          type: integer
+      required:
+        - user
+        - wallet
+        - totalReferrals
+        - taskCompletions
+
+    AdminUpdateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        country:
+          type: string
+
+    AdminSetStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        reason:
+          type: string
+      required:
+        - status
+
+    AdminWalletAdjustRequest:
+      type: object
+      properties:
+        field:
+          type: string
+          enum: [main_wallet, team_earnings, affiliate_balance, commissions]
+        amount:
+          type: number
+        reason:
+          type: string
+      required:
+        - field
+        - amount
+        - reason
+
+    AdminReferralNode:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        status:
+          type: string
+        joinedAt:
+          type: string
+          format: date-time
+        level:
+          type: integer
+      required:
+        - id
+        - username
+        - status
+        - joinedAt
+        - level
+
+    AdminReferralTree:
+      type: object
+      properties:
+        level1:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminReferralNode"
+        level2:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminReferralNode"
+        level3:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminReferralNode"
+        totalCount:
+          type: integer
+      required:
+        - level1
+        - level2
+        - level3
+        - totalCount
+
+    AdminAddBonusRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        amount:
+          type: number
+        walletField:
+          type: string
+          enum: [team_earnings, affiliate_balance, commissions]
+        reason:
+          type: string
+      required:
+        - userId
+        - amount
+        - walletField
+        - reason
+
+    AdminVerificationItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        screenshotUrl:
+          type: string
+        amountPaid:
+          type: number
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        adminNote:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - username
+        - email
+        - phone
+        - screenshotUrl
+        - amountPaid
+        - status
+        - createdAt
+
+    AdminVerificationList:
+      type: object
+      properties:
+        verifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminVerificationItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - verifications
+        - total
+        - page
+        - totalPages
+
+    AdminVerificationActionRequest:
+      type: object
+      properties:
+        note:
+          type: string
+
+    AdminTransactionItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        username:
+          type: string
+        type:
+          type: string
+        amount:
+          type: number
+        status:
+          type: string
+        description:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - username
+        - type
+        - amount
+        - status
+        - createdAt
+
+    AdminTransactionList:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminTransactionItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - transactions
+        - total
+        - page
+        - totalPages
+
+    AdminTaskItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+        reward:
+          type: number
+        availableCount:
+          type: integer
+        description:
+          type: string
+        difficulty:
+          type: string
+          nullable: true
+        completionsToday:
+          type: integer
+        totalCompletions:
+          type: integer
+      required:
+        - id
+        - name
+        - type
+        - reward
+        - availableCount
+        - description
+        - completionsToday
+        - totalCompletions
+
+    AdminTaskList:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminTaskItem"
+      required:
+        - tasks
+
+    AdminUpdateTaskRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        reward:
+          type: number
+        availableCount:
+          type: integer
+        description:
+          type: string
+        difficulty:
+          type: string
+
+    AdminAuditLogItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        adminUsername:
+          type: string
+        action:
+          type: string
+        targetType:
+          type: string
+          nullable: true
+        targetId:
+          type: string
+          nullable: true
+        details:
+          type: object
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - adminUsername
+        - action
+        - createdAt
+
+    AdminAuditLogList:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminAuditLogItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - entries
+        - total
+        - page
+        - totalPages

@@ -1,0 +1,209 @@
+You are a senior full-stack web developer.
+
+Create a fully working multi-page web platform named **MULACENT** that replicates the UI structure, layout behavior, navigation flow, and gradient animation style of https://earnovix.co.ke/, but DO NOT copy branding, assets, or exact colors. Instead:
+
+• Replace the name everywhere with: MULACENT
+• Use a new modern gradient theme:
+  Primary: #4F46E5
+  Secondary: #06B6D4
+  Accent: #22C55E
+  Background dark: #0F172A
+  Background light: #F8FAFC
+
+Maintain smooth gradient transitions similar to the original site.
+
+-----------------------------------
+
+TECH STACK REQUIREMENTS
+
+Build using:
+
+Frontend:
+- Typescript
+- TailwindCSS
+- Vanilla JavaScript
+- Animated gradient backgrounds
+- Responsive mobile-first design
+
+Backend:
+- Node.js + Express OR PHP (choose whichever is simpler inside Replit)
+- Session authentication
+- Secure password hashing
+- Modular routing structure
+
+Database:
+- Supabase Database (This will be added later on, the url and keys will be provided, now focus on the frontend) 
+
+-----------------------------------
+
+
+
+CLONE THESE PAGES (STRUCTURE + UX ONLY)
+
+AUTH PAGES
+
+1. /register
+Clone layout behavior from:
+https://earnovix.co.ke/register.php
+
+Include: 
+- animated gradient background
+- modern validation UI
+- success + error messages
+
+2. /login
+Clone layout behavior from:
+https://earnovix.co.ke/login.php
+
+Include:
+- remember session, users to remain loggedin forever
+- login button animation
+- redirect to dashboard after login
+
+-----------------------------------
+
+USER PAGES
+A. MAIN:
+
+
+3. /dashboard
+
+Clone layout behavior from:
+dashboard.php image uploaded 
+
+Include:
+
+Sidebar navigation
+Top navbar
+Wallet balance card
+Task shortcuts
+Referral summary
+Activity summary cards
+Animated gradient widgets
+Responsive layout
+
+Replace branding text with MULACENT everywhere.
+
+-----------------------------------
+
+4. /profile
+
+Clone layout behavior from:
+profile.php image uploaded 
+
+Include:
+
+Editable fields:
+- username
+- email
+- phone
+- password change section
+- profile avatar placeholder
+
+Include save confirmation alerts.
+
+-----------------------------------
+
+5. /downlines
+
+Clone layout behavior from:
+downlines.php image uploaded
+
+6. /tournament
+
+Clone layout behavior from:
+tournament.php image uploaded  
+
+7. /chat_foreigners
+
+Clone layout behavior from:
+chat_foreigners.php image uploaded
+
+B. STORE
+8.  /products
+
+Clone layout behavior from:
+store.php image uploaded
+
+9.  /Downloads
+
+Clone layout behavior from:
+my_purchases.php image uploaded
+
+C. FINANCE
+10. /withdraw
+
+Clone layout behavior from:
+withdraw.php image uploaded
+
+11. /recharge
+
+Clone layout behavior from:
+recharge.php image uploaded
+
+12. /withdrawal_history
+
+Clone layout behavior from:
+withdrawal_history.php image uploaded
+
+13. /withdrawal_history
+
+Clone layout behavior from:
+withdrawal_history.php image uploaded
+
+14.  /bonus
+
+Clone layout behavior from:
+bonus.php image uploaded
+
+
+
+
+GLOBAL UI REQUIREMENTS
+
+Use:
+
+Animated gradient hero backgrounds
+Glassmorphism cards
+Soft shadow depth
+Rounded-xl corners
+Smooth hover transitions
+Sidebar collapse animation
+Loading spinner component
+Toast notifications
+
+-----------------------------------
+
+AUTHENTICATION FEATURES
+
+Implement:
+
+User registration storage
+Password hashing
+Login session persistence
+Protected routes middleware
+Logout endpoint
+
+Redirect rules:
+
+If logged out → redirect to /login
+If logged in → redirect to /dashboard
+
+-----------------------------------
+
+
+
+
+
+FINAL REQUIREMENTS
+
+Make the UI look premium SaaS quality.
+
+Ensure:
+
+Fully responsive
+Modern gradient animation background
+Clean reusable components
+Readable code comments
+Modular route files
+Secure authentication logic

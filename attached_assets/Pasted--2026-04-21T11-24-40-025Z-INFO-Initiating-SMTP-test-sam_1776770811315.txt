@@ -1,0 +1,138 @@
+[2026-04-21T11:24:40.025Z] [INFO] Initiating SMTP test → samuelasuman90@gmail.com
+[2026-04-21T11:24:40.231Z] [INFO] SMTP Host   : mail.kivantechsolutions.shop
+[2026-04-21T11:24:40.231Z] [INFO] SMTP Port   : 587
+[2026-04-21T11:24:40.231Z] [INFO] SMTP User   : contact@kivantechsolutions.shop
+[2026-04-21T11:24:40.231Z] [INFO] SMTP From   : contact@kivantechsolutions.shop
+[2026-04-21T11:24:40.231Z] [INFO] SMTP Pass   : ✓ set (9 chars)
+[2026-04-21T11:24:40.232Z] [INFO] Recipient   : samuelasuman90@gmail.com
+[2026-04-21T11:24:40.232Z] [INFO] APP_URL     : https://www.mulacent.com
+[2026-04-21T11:24:40.232Z] [INFO] ---
+[2026-04-21T11:24:40.232Z] [INFO] Verifying SMTP connection...
+[2026-04-21T11:24:40.232Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"dns","source":"mail.kivantechsolutions.shop","resolved":"51.91.24.182","cached":true} Resolved %s as %s [cache %s] mail.kivantechsolutions.shop 51.91.24.182 hit
+[2026-04-21T11:24:40.319Z] [INFO] [smtp] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"network","localAddress":"10.29.125.250","localPort":33874,"remoteAddress":"51.91.24.182","remotePort":587} %s established to %s:%s Connection 51.91.24.182 587
+[2026-04-21T11:24:40.500Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"server"} 220-rbx111.truehost.cloud ESMTP Exim 4.99.1 #2 Tue, 21 Apr 2026 11:24:40 +0000 
+220-We do not authorize the use of this system to transport unsolicited, 
+220 and/or bulk e-mail.
+[2026-04-21T11:24:40.595Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"server"} 250-rbx111.truehost.cloud Hello ip-74-220-49-249.virginia-egress.render.com [74.220.49.249]
+250-SIZE 52428800
+250-LIMITS MAILMAX=1000 RCPTMAX=50000
+250-8BITMIME
+250-PIPELINING
+250-PIPECONNECT
+250-AUTH PLAIN LOGIN
+250-STARTTLS
+250-SMTPUTF8
+250 HELP
+[2026-04-21T11:24:40.684Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"server"} 220 TLS go ahead
+[2026-04-21T11:24:40.805Z] [INFO] [smtp] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"smtp"} Connection upgraded with STARTTLS
+[2026-04-21T11:24:40.899Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"server"} 250-rbx111.truehost.cloud Hello ip-74-220-49-249.virginia-egress.render.com [74.220.49.249]
+250-SIZE 52428800
+250-LIMITS MAILMAX=1000 RCPTMAX=50000
+250-8BITMIME
+250-PIPELINING
+250-PIPECONNECT
+250-AUTH PLAIN LOGIN
+250-SMTPUTF8
+250 HELP
+[2026-04-21T11:24:41.004Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"server"} 235 Authentication succeeded
+[2026-04-21T11:24:41.004Z] [INFO] [smtp] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"smtp","username":"contact@kivantechsolutions.shop","action":"authenticated","method":"PLAIN"} User %s authenticated "contact@kivantechsolutions.shop"
+[2026-04-21T11:24:41.004Z] [SUCCESS] SMTP connection verified — server accepted credentials.
+[2026-04-21T11:24:41.004Z] [INFO] Sending email to samuelasuman90@gmail.com...
+[2026-04-21T11:24:41.004Z] [INFO] Subject: MULACENT SMTP Debug Test
+[2026-04-21T11:24:41.004Z] [INFO] Envelope From (MAIL FROM): contact@kivantechsolutions.shop
+[2026-04-21T11:24:41.004Z] [INFO] Header From: "MULACENT" <contact@kivantechsolutions.shop>
+[2026-04-21T11:24:41.005Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"dns","source":"mail.kivantechsolutions.shop","resolved":"51.91.24.182","cached":true} Resolved %s as %s [cache %s] mail.kivantechsolutions.shop 51.91.24.182 hit
+[2026-04-21T11:24:41.096Z] [SMTP] {"component":"smtp-connection","sid":"USPPVcn6QIU","tnx":"server"} 221 rbx111.truehost.cloud closing connection
+[2026-04-21T11:24:41.097Z] [INFO] [smtp] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"network","localAddress":"10.29.125.250","localPort":33882,"remoteAddress":"51.91.24.182","remotePort":587} %s established to %s:%s Connection 51.91.24.182 587
+[2026-04-21T11:24:41.348Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 220-rbx111.truehost.cloud ESMTP Exim 4.99.1 #2 Tue, 21 Apr 2026 11:24:41 +0000 
+220-We do not authorize the use of this system to transport unsolicited, 
+220 and/or bulk e-mail.
+[2026-04-21T11:24:41.433Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 250-rbx111.truehost.cloud Hello ip-74-220-49-249.virginia-egress.render.com [74.220.49.249]
+250-SIZE 52428800
+250-LIMITS MAILMAX=1000 RCPTMAX=50000
+250-8BITMIME
+250-PIPELINING
+250-PIPECONNECT
+250-AUTH PLAIN LOGIN
+250-STARTTLS
+250-SMTPUTF8
+250 HELP
+[2026-04-21T11:24:41.517Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 220 TLS go ahead
+[2026-04-21T11:24:41.622Z] [INFO] [smtp] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"smtp"} Connection upgraded with STARTTLS
+[2026-04-21T11:24:41.705Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 250-rbx111.truehost.cloud Hello ip-74-220-49-249.virginia-egress.render.com [74.220.49.249]
+250-SIZE 52428800
+250-LIMITS MAILMAX=1000 RCPTMAX=50000
+250-8BITMIME
+250-PIPELINING
+250-PIPECONNECT
+250-AUTH PLAIN LOGIN
+250-SMTPUTF8
+250 HELP
+[2026-04-21T11:24:41.811Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 235 Authentication succeeded
+[2026-04-21T11:24:41.811Z] [INFO] [smtp] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"smtp","username":"contact@kivantechsolutions.shop","action":"authenticated","method":"PLAIN"} User %s authenticated "contact@kivantechsolutions.shop"
+[2026-04-21T11:24:41.811Z] [INFO] [smtp] {"component":"smtp-transport","tnx":"send","messageId":"<e4b12cfa-2ae3-9b4d-90e6-6736a204cd27@kivantechsolutions.shop>"} Sending message %s to <%s> <e4b12cfa-2ae3-9b4d-90e6-6736a204cd27@kivantechsolutions.shop> samuelasuman90@gmail.com
+[2026-04-21T11:24:41.898Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 250 OK
+[2026-04-21T11:24:41.993Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 250 Accepted
+[2026-04-21T11:24:42.079Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 354 Enter message, ending with "." on a line by itself
+[2026-04-21T11:24:42.080Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"message"} X-Mailer: MULACENT-Debug/1.0
+X-Priority: 3
+From: MULACENT <contact@kivantechsolutions.shop>
+Sender: contact@kivantechsolutions.shop
+To: samuelasuman90@gmail.com
+Reply-To: contact@kivantechsolutions.shop
+Subject: MULACENT SMTP Debug Test
+Message-ID: <e4b12cfa-2ae3-9b4d-90e6-6736a204cd27@kivantechsolutions.shop>
+Date: Tue, 21 Apr 2026 11:24:41 +0000
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--_NmP-6ee3b04d8b67b84f-Part_1"
+
+----_NmP-6ee3b04d8b67b84f-Part_1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+MULACENT SMTP Test
+
+Hello from MULACENT SMTP Debug Tool! This is a test =
+email to verify the SMTP configuration is working correctly.
+
+Sent at 2026-04-21T11:24:41.004Z
+If you can read this, delivery is working =
+end-to-end.
+----_NmP-6ee3b04d8b67b84f-Part_1
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+
+    <div style=3D"font-family:Arial,sans-serif;background:#0d0518;padding:=
+32px;border-radius:12px;border:1px solid rgba(220,38,38,0.3);">
+      <h2 style=3D"color:#ffffff;margin:0 0 8px;">MULACENT SMTP Test</h2>
+      <p style=3D"color:#94a3b8;font-size:13px;margin:0 0 20px;">This is a =
+test email sent from the SMTP debug page.</p>
+      <div =
+style=3D"background:#1a0508;border:1px solid rgba(255,255,255,0.=
+1);border-radius:8px;padding:16px;">
+        <p style=3D"color:#e2e8f0;font=
+-size:14px;margin:0;white-space:pre-wrap;">Hello from MULACENT SMTP Debug =
+Tool! This is a test email to verify the SMTP configuration is working =
+correctly.</p>
+      </div>
+      <p style=3D"color:#475569;font-size:11px;=
+margin:20px 0 0;">Sent at 2026-04-21T11:24:41.004Z =C2=B7 MULACENT Debug =
+Tool</p>
+    </div>
+----_NmP-6ee3b04d8b67b84f-Part_1--
+[2026-04-21T11:24:42.080Z] [INFO] [smtp] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"message","inByteCount":1794,"outByteCount":1810} <%s bytes encoded mime message (source size %s bytes)> 1810 1794
+[2026-04-21T11:24:42.441Z] [SMTP] {"component":"smtp-connection","sid":"IHYdwH7kglE","tnx":"server"} 250 OK id=1wF9Dd-00000001aUO-3vIu
+[2026-04-21T11:24:42.441Z] [SUCCESS] Email handed off to relay in 1437ms
+[2026-04-21T11:24:42.441Z] [SUCCESS] Message ID  : <e4b12cfa-2ae3-9b4d-90e6-6736a204cd27@kivantechsolutions.shop>
+[2026-04-21T11:24:42.441Z] [SUCCESS] Accepted    : samuelasuman90@gmail.com
+[2026-04-21T11:24:42.441Z] [INFO] Rejected    : none
+[2026-04-21T11:24:42.441Z] [INFO] Pending     : none
+[2026-04-21T11:24:42.441Z] [INFO] Server resp : 250 OK id=1wF9Dd-00000001aUO-3vIu
+[2026-04-21T11:24:42.441Z] [INFO] ---
+[2026-04-21T11:24:42.441Z] [INFO] ⚠ IMPORTANT: 'Accepted' here means the relay server took the email.
+[2026-04-21T11:24:42.441Z] [INFO] It does NOT confirm Gmail/recipient received it. Check the relay's
+[2026-04-21T11:24:42.441Z] [INFO] outgoing mail queue and logs for the Queue ID above to see delivery status.
+[2026-04-21T11:24:42.441Z] [INFO] Common silent-drop causes: missing SPF/DKIM/DMARC, domain reputation, sender policy.
+[2026-04-21T11:24:42.441Z] [SUCCESS] --- DONE: Handoff to SMTP relay complete ---

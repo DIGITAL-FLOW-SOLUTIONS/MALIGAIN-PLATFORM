@@ -1,0 +1,50 @@
+2026-06-18T04:05:33.720958579Z           singleUse: true
+2026-06-18T04:05:33.720960539Z         }
+2026-06-18T04:05:33.720962579Z       },
+2026-06-18T04:05:33.720964639Z       _keepAlive: false,
+2026-06-18T04:05:33.720966619Z       _keepAliveInitialDelayMillis: 0,
+2026-06-18T04:05:33.720968619Z       parsedStatements: {},
+2026-06-18T04:05:33.720970589Z       ssl: { rejectUnauthorized: false },
+2026-06-18T04:05:33.720972559Z       _ending: true,
+2026-06-18T04:05:33.720974529Z       _emitMessage: false,
+2026-06-18T04:05:33.720976439Z       _connecting: true,
+2026-06-18T04:05:33.720978359Z       Symbol(shapeMode): false,
+2026-06-18T04:05:33.720980339Z       Symbol(kCapture): false
+2026-06-18T04:05:33.72098229Z     },
+2026-06-18T04:05:33.72098428Z     _queryQueue: [],
+2026-06-18T04:05:33.72098643Z     binary: false,
+2026-06-18T04:05:33.72098836Z     processID: 727794757,
+2026-06-18T04:05:33.72099033Z     secretKey: -1405849829,
+2026-06-18T04:05:33.72099232Z     ssl: { rejectUnauthorized: false },
+2026-06-18T04:05:33.72099429Z     _connectionTimeoutMillis: 8000,
+2026-06-18T04:05:33.72099627Z     _connectionCallback: null,
+2026-06-18T04:05:33.72100974Z     connectionTimeoutHandle: Timeout {
+2026-06-18T04:05:33.721013331Z       _idleTimeout: -1,
+2026-06-18T04:05:33.721016411Z       _idlePrev: null,
+2026-06-18T04:05:33.721019641Z       _idleNext: null,
+2026-06-18T04:05:33.721022711Z       _idleStart: 99750291,
+2026-06-18T04:05:33.721024671Z       _onTimeout: null,
+2026-06-18T04:05:33.721026721Z       _timerArgs: undefined,
+2026-06-18T04:05:33.721028641Z       _repeat: null,
+2026-06-18T04:05:33.721030551Z       _destroyed: true,
+2026-06-18T04:05:33.721032461Z       Symbol(refed): false,
+2026-06-18T04:05:33.721034401Z       Symbol(kHasPrimitive): false,
+2026-06-18T04:05:33.721036441Z       Symbol(asyncId): 2353096,
+2026-06-18T04:05:33.721038351Z       Symbol(triggerId): 0,
+2026-06-18T04:05:33.721040291Z       Symbol(kAsyncContextFrame): undefined
+2026-06-18T04:05:33.721042351Z     },
+2026-06-18T04:05:33.721044321Z     saslSession: null,
+2026-06-18T04:05:33.721046431Z     release: [Function (anonymous)],
+2026-06-18T04:05:33.721048361Z     readyForQuery: false,
+2026-06-18T04:05:33.721050361Z     hasExecuted: true,
+2026-06-18T04:05:33.721052261Z     _poolUseCount: 1,
+2026-06-18T04:05:33.721054192Z     Symbol(shapeMode): false,
+2026-06-18T04:05:33.721056101Z     Symbol(kCapture): false
+2026-06-18T04:05:33.721058192Z   }
+2026-06-18T04:05:33.721060172Z }
+2026-06-18T04:05:33.721062092Z 
+2026-06-18T04:05:33.721064352Z Node.js v24.14.1
+2026-06-18T04:05:42.675960917Z ==> Running 'node --enable-source-maps artifacts/api-server/dist/index.mjs'
+2026-06-18T04:05:45.065061323Z {"level":30,"time":1781755545064,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","port":10000,"msg":"Server listening"}
+2026-06-18T04:05:57.379945734Z {"level":30,"time":1781755557379,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","msg":"Session table ready"}
+2026-06-18T04:06:17.349432264Z {"level":30,"time":1781755577349,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":3,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":7,"msg":"request completed"}

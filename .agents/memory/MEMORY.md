@@ -1,0 +1,1 @@
+- [Session middleware pool exhaustion fix](session-pool-exhaustion.md) — static files served BEFORE session middleware; dedicated session pool; disableTouch=true

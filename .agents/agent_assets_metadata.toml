@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "P3Ij6GVbdkwnY4hkp1mwq"
+uri = "file://PAYHERO_INTEGRATION_GUIDE.md"
+type = "text"
+title = "PayHero Integration Guide"
+
+[[outputs]]
+id = "U3TrFUNSbhYsLzx7-yK1e"
+uri = "file://DATABASE_SCALE_PLAYBOOK.md"
+type = "text"
+title = "Database Scale Playbook — Senior Engineer Edition"

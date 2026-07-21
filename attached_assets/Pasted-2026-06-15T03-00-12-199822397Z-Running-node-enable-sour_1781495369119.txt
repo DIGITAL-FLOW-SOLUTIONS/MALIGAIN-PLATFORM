@@ -1,0 +1,565 @@
+2026-06-15T03:00:12.199822397Z ==> Running 'node --enable-source-maps artifacts/api-server/dist/index.mjs'
+2026-06-15T03:00:23.55143821Z {"level":30,"time":1781492423550,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","msg":"Session table ready"}
+2026-06-15T03:01:29.798448708Z {"level":30,"time":1781492489798,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","sampleRow":null,"selectErr":{"code":"PGRST002","details":null,"hint":null,"message":"Could not query the database for the schema cache. Retrying."},"msg":"DIAG: transactions table sample row (via supabase)"}
+2026-06-15T03:04:07.416267335Z {"level":50,"time":1781492647416,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","insertErr":{"message":"upstream request timeout"},"msg":"DIAG: insert with type='activation' FAILED — check constraint or enum mismatch"}
+2026-06-15T03:06:44.102200769Z {"level":30,"time":1781492804102,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","retryData":null,"retryErr":{"message":"upstream request timeout"},"msg":"DIAG: retry insert with type='recharge'"}
+2026-06-15T03:06:44.105237054Z {"level":30,"time":1781492804104,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","port":10000,"msg":"Server listening"}
+2026-06-15T03:07:05.855416048Z {"level":30,"time":1781492825855,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":3,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":40,"msg":"request completed"}
+2026-06-15T03:07:07.500504904Z {"level":30,"time":1781492826082,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":1,"method":"HEAD","url":"/activate"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15736,"msg":"request errored"}
+2026-06-15T03:07:07.501636355Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:07:07.501666716Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:07:07.501673696Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:07:07.501679056Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:07:07.503442548Z {"level":30,"time":1781492827503,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":2,"method":"GET","url":"/favicon.ico"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":17066,"msg":"request errored"}
+2026-06-15T03:07:07.506123517Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:07:07.506136307Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:07:07.506140017Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:07:07.506143267Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:07:07.599613349Z {"level":30,"time":1781492827599,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":4,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":95,"msg":"request completed"}
+2026-06-15T03:07:07.600626418Z {"level":30,"time":1781492827600,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":5,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":95,"msg":"request completed"}
+2026-06-15T03:07:07.601520274Z {"level":30,"time":1781492827601,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":6,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":92,"msg":"request completed"}
+2026-06-15T03:07:49.887075357Z {"level":30,"time":1781492869886,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":7,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+2026-06-15T03:08:53.444759027Z {"level":30,"time":1781492933444,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":8,"method":"GET","url":"/assets/index-BOOWAvTK.js"},"res":{"statusCode":200},"responseTime":63058,"msg":"request completed"}
+2026-06-15T03:08:53.620226612Z {"level":30,"time":1781492933619,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":9,"method":"GET","url":"/assets/index-pGBayOx1.css"},"res":{"statusCode":200},"responseTime":63218,"msg":"request completed"}
+2026-06-15T03:08:53.620346685Z {"level":30,"time":1781492933619,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":10,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":8245,"msg":"request completed"}
+2026-06-15T03:08:54.971823694Z {"level":30,"time":1781492934971,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":11,"method":"GET","url":"/images/logo.png"},"res":{"statusCode":200},"responseTime":582,"msg":"request completed"}
+2026-06-15T03:08:55.215257387Z {"level":30,"time":1781492935212,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":12,"method":"GET","url":"/images/auth-bg.png"},"res":{"statusCode":200},"responseTime":295,"msg":"request completed"}
+2026-06-15T03:09:00.384409844Z {"level":30,"time":1781492940384,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":13,"method":"GET","url":"/login"},"res":{"statusCode":200},"responseTime":351,"msg":"request completed"}
+2026-06-15T03:09:00.816729116Z {"level":30,"time":1781492940816,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":14,"method":"GET","url":"/assets/index-pGBayOx1.css"},"res":{"statusCode":304},"responseTime":251,"msg":"request completed"}
+2026-06-15T03:09:00.835193102Z {"level":30,"time":1781492940834,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":15,"method":"GET","url":"/assets/index-BOOWAvTK.js"},"res":{"statusCode":304},"responseTime":247,"msg":"request completed"}
+2026-06-15T03:09:01.431199715Z {"level":30,"time":1781492941430,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":16,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":247,"msg":"request completed"}
+2026-06-15T03:09:01.488774593Z {"level":30,"time":1781492941488,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":17,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":200},"responseTime":253,"msg":"request completed"}
+2026-06-15T03:09:01.979135863Z {"level":30,"time":1781492941978,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":19,"method":"GET","url":"/images/auth-bg.png"},"res":{"statusCode":304},"responseTime":245,"msg":"request completed"}
+2026-06-15T03:09:02.080732473Z {"level":30,"time":1781492942080,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":18,"method":"GET","url":"/images/logo.png"},"res":{"statusCode":304},"responseTime":351,"msg":"request completed"}
+2026-06-15T03:09:05.012477528Z {"level":30,"time":1781492945012,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":20,"method":"GET","url":"/login"},"res":{"statusCode":304},"responseTime":250,"msg":"request completed"}
+2026-06-15T03:09:05.604622191Z {"level":30,"time":1781492945604,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":21,"method":"GET","url":"/assets/index-BOOWAvTK.js"},"res":{"statusCode":304},"responseTime":249,"msg":"request completed"}
+2026-06-15T03:09:05.614729415Z {"level":30,"time":1781492945614,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":22,"method":"GET","url":"/assets/index-pGBayOx1.css"},"res":{"statusCode":304},"responseTime":247,"msg":"request completed"}
+2026-06-15T03:09:06.226923272Z {"level":30,"time":1781492946226,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":23,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":248,"msg":"request completed"}
+2026-06-15T03:09:06.780674876Z {"level":30,"time":1781492946780,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":25,"method":"GET","url":"/images/logo.png"},"res":{"statusCode":304},"responseTime":248,"msg":"request completed"}
+2026-06-15T03:09:06.92314098Z {"level":30,"time":1781492946922,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":24,"method":"GET","url":"/images/auth-bg.png"},"res":{"statusCode":304},"responseTime":395,"msg":"request completed"}
+2026-06-15T03:09:07.654832423Z {"level":30,"time":1781492947654,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":26,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":304},"responseTime":1109,"msg":"request completed"}
+2026-06-15T03:09:11.010332525Z {"level":30,"time":1781492951010,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":27,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":2,"msg":"request completed"}
+2026-06-15T03:09:11.722784768Z {"level":30,"time":1781492951722,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":28,"method":"GET","url":"/assets/index-BOOWAvTK.js"},"res":{"statusCode":304},"responseTime":268,"msg":"request completed"}
+2026-06-15T03:09:11.751334418Z {"level":30,"time":1781492951751,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":29,"method":"GET","url":"/assets/index-pGBayOx1.css"},"res":{"statusCode":304},"responseTime":282,"msg":"request completed"}
+2026-06-15T03:09:12.411047631Z {"level":30,"time":1781492952410,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":30,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":244,"msg":"request completed"}
+2026-06-15T03:09:13.022919282Z {"level":30,"time":1781492953022,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":32,"method":"GET","url":"/images/auth-bg.png"},"res":{"statusCode":304},"responseTime":246,"msg":"request completed"}
+2026-06-15T03:09:13.050839271Z {"level":30,"time":1781492953050,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":31,"method":"GET","url":"/images/logo.png"},"res":{"statusCode":304},"responseTime":275,"msg":"request completed"}
+2026-06-15T03:11:15.108459868Z {"level":30,"time":1781493075108,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":33,"method":"GET","url":"/admin/"},"res":{"statusCode":200},"responseTime":35,"msg":"request completed"}
+2026-06-15T03:11:31.282290066Z {"level":30,"time":1781493091281,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":34,"method":"GET","url":"/admin/assets/index-BbEf7CLZ.css"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15725,"msg":"request errored"}
+2026-06-15T03:11:31.282836856Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:11:31.282850306Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:11:31.282855707Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:11:31.282860567Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:11:31.75478881Z {"level":30,"time":1781493091754,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":35,"method":"GET","url":"/admin/assets/index-nm6gTTUw.js"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15719,"msg":"request errored"}
+2026-06-15T03:11:31.755132866Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:11:31.755145486Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:11:31.755151076Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:11:31.755156347Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:11:47.820150413Z {"level":30,"time":1781493107819,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":36,"method":"GET","url":"/admin/favicon.svg"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15719,"msg":"request errored"}
+2026-06-15T03:11:47.820345506Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:11:47.820352966Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:11:47.820355806Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:11:47.820358597Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:11:58.537552005Z {"level":30,"time":1781493118535,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":37,"method":"GET","url":"/admin/"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+2026-06-15T03:12:14.58007171Z {"level":30,"time":1781493134579,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":38,"method":"GET","url":"/admin/assets/index-nm6gTTUw.js"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15729,"msg":"request errored"}
+2026-06-15T03:12:14.580392636Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:12:14.580401586Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:12:14.580407346Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:12:14.580412527Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:12:14.581347213Z {"level":30,"time":1781493134580,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":39,"method":"GET","url":"/admin/assets/index-BbEf7CLZ.css"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15712,"msg":"request errored"}
+2026-06-15T03:12:14.581486166Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:12:14.581494296Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:12:14.581497556Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:12:14.581500186Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:12:16.549737086Z {"level":30,"time":1781493136549,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":40,"method":"GET","url":"/admin/favicon.svg"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":1614,"msg":"request errored"}
+2026-06-15T03:12:16.550709443Z error: (EDBHANDLEREXITED) DbHandler exited. Check logs for more information
+2026-06-15T03:12:16.550726584Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:12:16.550731134Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:12:16.550735224Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:12:23.647475567Z {"level":30,"time":1781493143647,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":41,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+2026-06-15T03:12:29.110762017Z {"level":30,"time":1781493149110,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":42,"method":"GET","url":"/assets/index-pGBayOx1.css"},"res":{"statusCode":null},"responseTime":5150,"msg":"request aborted"}
+2026-06-15T03:12:29.120449553Z {"level":30,"time":1781493149120,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":43,"method":"GET","url":"/assets/index-BOOWAvTK.js"},"res":{"statusCode":null},"responseTime":5126,"msg":"request aborted"}
+2026-06-15T03:15:51.564809858Z {"level":30,"time":1781493351564,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":44,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-06-15T03:15:51.953688279Z {"level":30,"time":1781493351953,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":45,"method":"GET","url":"/assets/index-pGBayOx1.css"},"res":{"statusCode":200},"responseTime":3,"msg":"request completed"}
+2026-06-15T03:15:51.974773712Z {"level":30,"time":1781493351974,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":46,"method":"GET","url":"/assets/index-BOOWAvTK.js"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+2026-06-15T03:15:52.922181273Z {"level":30,"time":1781493352921,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":47,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+2026-06-15T03:15:52.939799814Z {"level":30,"time":1781493352939,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":48,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-06-15T03:15:53.332624027Z {"level":30,"time":1781493353332,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":50,"method":"GET","url":"/images/logo.png"},"res":{"statusCode":200},"responseTime":6,"msg":"request completed"}
+2026-06-15T03:15:53.398851132Z {"level":30,"time":1781493353398,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":51,"method":"GET","url":"/images/auth-bg.png"},"res":{"statusCode":200},"responseTime":51,"msg":"request completed"}
+2026-06-15T03:16:04.926423268Z {"level":30,"time":1781493364926,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":52,"method":"GET","url":"/admin/"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+2026-06-15T03:16:21.258328314Z {"level":30,"time":1781493381257,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":53,"method":"GET","url":"/admin/assets/index-BbEf7CLZ.css"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15724,"msg":"request errored"}
+2026-06-15T03:16:21.258377704Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:16:21.258385685Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:16:21.258391535Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:16:21.258396575Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:16:21.275861131Z {"level":30,"time":1781493381275,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":54,"method":"GET","url":"/admin/assets/index-nm6gTTUw.js"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":15715,"msg":"request errored"}
+2026-06-15T03:16:21.275913432Z error: (ECHECKOUTTIMEOUT) unable to check out connection from the pool after 15000ms in Session mode
+2026-06-15T03:16:21.275922332Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:16:21.275926272Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:16:21.275929532Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:16:29.411234597Z error: (EDBHANDLEREXITED) DbHandler exited. Check logs for more information
+2026-06-15T03:16:29.411261387Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:45:11)
+2026-06-15T03:16:29.411265367Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-06-15T03:16:29.411268957Z     at async PGStore._asyncQuery (/opt/render/project/src/node_modules/.pnpm/connect-pg-simple@10.0.0/node_modules/connect-pg-simple/index.js:322:21)
+2026-06-15T03:16:29.414386234Z {"level":30,"time":1781493389410,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","req":{"id":55,"method":"GET","url":"/admin/favicon.svg"},"res":{"statusCode":500},"err":{"type":"Error","message":"failed with status code 500","stack":"Error: failed with status code 500\n    at onResFinished (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:115:39)\n    at ServerResponse.onResponseComplete (/opt/render/project/src/node_modules/.pnpm/pino-http@10.5.0/node_modules/pino-http/logger.js:178:14)\n    at ServerResponse.emit (node:events:520:35)\n    at onFinish (node:_http_outgoing:1026:10)\n    at callback (node:internal/streams/writable:764:21)\n    at afterWrite (node:internal/streams/writable:708:5)\n    at afterWriteTick (node:internal/streams/writable:694:10)\n    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)"},"responseTime":7696,"msg":"request errored"}
+2026-06-15T03:16:29.424804973Z node:events:486
+2026-06-15T03:16:29.424829083Z       throw er; // Unhandled 'error' event
+2026-06-15T03:16:29.424832003Z       ^
+2026-06-15T03:16:29.424834443Z 
+2026-06-15T03:16:29.424837473Z error: (EDBHANDLEREXITED) connection to database closed. Check logs for more information
+2026-06-15T03:16:29.424841063Z     at parseErrorMessage (/opt/render/project/src/node_modules/.pnpm/pg-protocol@1.13.0/node_modules/pg-protocol/src/parser.ts:394:9)
+2026-06-15T03:16:29.424843583Z     at Parser.handlePacket (/opt/render/project/src/node_modules/.pnpm/pg-protocol@1.13.0/node_modules/pg-protocol/src/parser.ts:212:19)
+2026-06-15T03:16:29.424846013Z     at Parser.parse (/opt/render/project/src/node_modules/.pnpm/pg-protocol@1.13.0/node_modules/pg-protocol/src/parser.ts:105:30)
+2026-06-15T03:16:29.424850893Z     at TLSSocket.<anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-protocol@1.13.0/node_modules/pg-protocol/src/index.ts:7:48)
+2026-06-15T03:16:29.424853773Z     at TLSSocket.emit (node:events:508:28)
+2026-06-15T03:16:29.424856643Z     at addChunk (node:internal/streams/readable:563:12)
+2026-06-15T03:16:29.424859814Z     at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)
+2026-06-15T03:16:29.424862274Z     at Readable.push (node:internal/streams/readable:394:5)
+2026-06-15T03:16:29.424864774Z     at TLSWrap.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-06-15T03:16:29.424867274Z Emitted 'error' event on BoundPool instance at:
+2026-06-15T03:16:29.424869784Z     at Client2.idleListener (/opt/render/project/src/node_modules/.pnpm/pg-pool@3.13.0_pg@8.20.0/node_modules/pg-pool/index.js:62:10)
+2026-06-15T03:16:29.424872264Z     at Client2.emit (node:events:508:28)
+2026-06-15T03:16:29.424887724Z     at Client2._handleErrorEvent (/opt/render/project/src/node_modules/.pnpm/pg@8.20.0/node_modules/pg/lib/client.js:393:10)
+2026-06-15T03:16:29.424890724Z     at Client2._handleErrorMessage (/opt/render/project/src/node_modules/.pnpm/pg@8.20.0/node_modules/pg/lib/client.js:404:12)
+2026-06-15T03:16:29.424895674Z     at Connection2.emit (node:events:508:28)
+2026-06-15T03:16:29.424898244Z     at <anonymous> (/opt/render/project/src/node_modules/.pnpm/pg@8.20.0/node_modules/pg/lib/connection.js:115:12)
+2026-06-15T03:16:29.424900974Z     at Parser.parse (/opt/render/project/src/node_modules/.pnpm/pg-protocol@1.13.0/node_modules/pg-protocol/src/parser.ts:106:9)
+2026-06-15T03:16:29.424903514Z     at TLSSocket.<anonymous> (/opt/render/project/src/node_modules/.pnpm/pg-protocol@1.13.0/node_modules/pg-protocol/src/index.ts:7:48)
+2026-06-15T03:16:29.424906014Z     at TLSSocket.emit (node:events:508:28)
+2026-06-15T03:16:29.424908474Z     at addChunk (node:internal/streams/readable:563:12) {
+2026-06-15T03:16:29.424910964Z   length: 102,
+2026-06-15T03:16:29.424913904Z   severity: 'FATAL',
+2026-06-15T03:16:29.424916235Z   code: 'XX000',
+2026-06-15T03:16:29.424918624Z   detail: undefined,
+2026-06-15T03:16:29.424920995Z   hint: undefined,
+2026-06-15T03:16:29.424923505Z   position: undefined,
+2026-06-15T03:16:29.424926855Z   internalPosition: undefined,
+2026-06-15T03:16:29.424929345Z   internalQuery: undefined,
+2026-06-15T03:16:29.424932075Z   where: undefined,
+2026-06-15T03:16:29.424934435Z   schema: undefined,
+2026-06-15T03:16:29.424936785Z   table: undefined,
+2026-06-15T03:16:29.424939135Z   column: undefined,
+2026-06-15T03:16:29.424958325Z   dataType: undefined,
+2026-06-15T03:16:29.424964095Z   constraint: undefined,
+2026-06-15T03:16:29.424966495Z   file: undefined,
+2026-06-15T03:16:29.424968925Z   line: undefined,
+2026-06-15T03:16:29.424971445Z   routine: undefined,
+2026-06-15T03:16:29.424973905Z   client: Client2 {
+2026-06-15T03:16:29.424976416Z     _events: [Object: null prototype] { error: [Function (anonymous)] },
+2026-06-15T03:16:29.424978946Z     _eventsCount: 1,
+2026-06-15T03:16:29.424981266Z     _maxListeners: undefined,
+2026-06-15T03:16:29.424983866Z     connectionParameters: ConnectionParameters {
+2026-06-15T03:16:29.424986256Z       user: 'postgres.etfppmwtyzerpwjsobro',
+2026-06-15T03:16:29.424988566Z       database: 'postgres',
+2026-06-15T03:16:29.424991076Z       port: 5432,
+2026-06-15T03:16:29.424993466Z       host: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.424995936Z       binary: false,
+2026-06-15T03:16:29.424998426Z       options: undefined,
+2026-06-15T03:16:29.425001076Z       ssl: { rejectUnauthorized: false },
+2026-06-15T03:16:29.425003546Z       client_encoding: '',
+2026-06-15T03:16:29.425005906Z       replication: undefined,
+2026-06-15T03:16:29.425008336Z       isDomainSocket: false,
+2026-06-15T03:16:29.425010736Z       application_name: undefined,
+2026-06-15T03:16:29.425013086Z       fallback_application_name: undefined,
+2026-06-15T03:16:29.425015436Z       statement_timeout: false,
+2026-06-15T03:16:29.425017766Z       lock_timeout: false,
+2026-06-15T03:16:29.425020266Z       idle_in_transaction_session_timeout: false,
+2026-06-15T03:16:29.425022657Z       query_timeout: false,
+2026-06-15T03:16:29.425025017Z       connect_timeout: 0
+2026-06-15T03:16:29.425027766Z     },
+2026-06-15T03:16:29.425030366Z     user: 'postgres.etfppmwtyzerpwjsobro',
+2026-06-15T03:16:29.425032917Z     database: 'postgres',
+2026-06-15T03:16:29.425035247Z     port: 5432,
+2026-06-15T03:16:29.425042417Z     host: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.425044997Z     replication: undefined,
+2026-06-15T03:16:29.425047487Z     _Promise: [Function: Promise],
+2026-06-15T03:16:29.425049907Z     _types: TypeOverrides2 {
+2026-06-15T03:16:29.425052377Z       _types: {
+2026-06-15T03:16:29.425054857Z         getTypeParser: [Function: getTypeParser],
+2026-06-15T03:16:29.425057427Z         setTypeParser: [Function: setTypeParser],
+2026-06-15T03:16:29.425059927Z         arrayParser: { create: [Function: create] },
+2026-06-15T03:16:29.425062337Z         builtins: {
+2026-06-15T03:16:29.425064837Z           BOOL: 16,
+2026-06-15T03:16:29.425067247Z           BYTEA: 17,
+2026-06-15T03:16:29.425069697Z           CHAR: 18,
+2026-06-15T03:16:29.425072147Z           INT8: 20,
+2026-06-15T03:16:29.425074547Z           INT2: 21,
+2026-06-15T03:16:29.425076917Z           INT4: 23,
+2026-06-15T03:16:29.425079327Z           REGPROC: 24,
+2026-06-15T03:16:29.425081707Z           TEXT: 25,
+2026-06-15T03:16:29.425084218Z           OID: 26,
+2026-06-15T03:16:29.425086678Z           TID: 27,
+2026-06-15T03:16:29.425089098Z           XID: 28,
+2026-06-15T03:16:29.425091508Z           CID: 29,
+2026-06-15T03:16:29.425093968Z           JSON: 114,
+2026-06-15T03:16:29.425096448Z           XML: 142,
+2026-06-15T03:16:29.425098848Z           PG_NODE_TREE: 194,
+2026-06-15T03:16:29.425101248Z           SMGR: 210,
+2026-06-15T03:16:29.425103688Z           PATH: 602,
+2026-06-15T03:16:29.425106148Z           POLYGON: 604,
+2026-06-15T03:16:29.425108568Z           CIDR: 650,
+2026-06-15T03:16:29.425110958Z           FLOAT4: 700,
+2026-06-15T03:16:29.425113528Z           FLOAT8: 701,
+2026-06-15T03:16:29.425115958Z           ABSTIME: 702,
+2026-06-15T03:16:29.425118418Z           RELTIME: 703,
+2026-06-15T03:16:29.425120828Z           TINTERVAL: 704,
+2026-06-15T03:16:29.425123218Z           CIRCLE: 718,
+2026-06-15T03:16:29.425128968Z           MACADDR8: 774,
+2026-06-15T03:16:29.425131698Z           MONEY: 790,
+2026-06-15T03:16:29.425134248Z           MACADDR: 829,
+2026-06-15T03:16:29.425136648Z           INET: 869,
+2026-06-15T03:16:29.425138999Z           ACLITEM: 1033,
+2026-06-15T03:16:29.425141419Z           BPCHAR: 1042,
+2026-06-15T03:16:29.425143789Z           VARCHAR: 1043,
+2026-06-15T03:16:29.425146069Z           DATE: 1082,
+2026-06-15T03:16:29.425148729Z           TIME: 1083,
+2026-06-15T03:16:29.425151179Z           TIMESTAMP: 1114,
+2026-06-15T03:16:29.425153659Z           TIMESTAMPTZ: 1184,
+2026-06-15T03:16:29.425156079Z           INTERVAL: 1186,
+2026-06-15T03:16:29.425158469Z           TIMETZ: 1266,
+2026-06-15T03:16:29.425160889Z           BIT: 1560,
+2026-06-15T03:16:29.425163389Z           VARBIT: 1562,
+2026-06-15T03:16:29.425165849Z           NUMERIC: 1700,
+2026-06-15T03:16:29.425168319Z           REFCURSOR: 1790,
+2026-06-15T03:16:29.425170739Z           REGPROCEDURE: 2202,
+2026-06-15T03:16:29.425173289Z           REGOPER: 2203,
+2026-06-15T03:16:29.425175689Z           REGOPERATOR: 2204,
+2026-06-15T03:16:29.425178159Z           REGCLASS: 2205,
+2026-06-15T03:16:29.425180519Z           REGTYPE: 2206,
+2026-06-15T03:16:29.425182969Z           UUID: 2950,
+2026-06-15T03:16:29.425185459Z           TXID_SNAPSHOT: 2970,
+2026-06-15T03:16:29.42518792Z           PG_LSN: 3220,
+2026-06-15T03:16:29.425190389Z           PG_NDISTINCT: 3361,
+2026-06-15T03:16:29.425193009Z           PG_DEPENDENCIES: 3402,
+2026-06-15T03:16:29.425195609Z           TSVECTOR: 3614,
+2026-06-15T03:16:29.42519817Z           TSQUERY: 3615,
+2026-06-15T03:16:29.42520525Z           GTSVECTOR: 3642,
+2026-06-15T03:16:29.42520785Z           REGCONFIG: 3734,
+2026-06-15T03:16:29.42521024Z           REGDICTIONARY: 3769,
+2026-06-15T03:16:29.42521255Z           JSONB: 3802,
+2026-06-15T03:16:29.42521491Z           REGNAMESPACE: 4089,
+2026-06-15T03:16:29.42521726Z           REGROLE: 4096
+2026-06-15T03:16:29.42521964Z         }
+2026-06-15T03:16:29.42522208Z       },
+2026-06-15T03:16:29.42522665Z       text: {},
+2026-06-15T03:16:29.42522912Z       binary: {}
+2026-06-15T03:16:29.42523151Z     },
+2026-06-15T03:16:29.42523395Z     _ending: true,
+2026-06-15T03:16:29.42523626Z     _ended: false,
+2026-06-15T03:16:29.42523865Z     _connecting: false,
+2026-06-15T03:16:29.42524096Z     _connected: true,
+2026-06-15T03:16:29.42524333Z     _connectionError: false,
+2026-06-15T03:16:29.425245721Z     _queryable: false,
+2026-06-15T03:16:29.425248061Z     _activeQuery: null,
+2026-06-15T03:16:29.42525051Z     enableChannelBinding: false,
+2026-06-15T03:16:29.425252881Z     connection: Connection2 {
+2026-06-15T03:16:29.425255271Z       _events: [Object: null prototype] {
+2026-06-15T03:16:29.425257741Z         newListener: [Function (anonymous)],
+2026-06-15T03:16:29.425260171Z         connect: [Function (anonymous)],
+2026-06-15T03:16:29.425262601Z         sslconnect: [Function (anonymous)],
+2026-06-15T03:16:29.425265281Z         authenticationCleartextPassword: [Function: bound _handleAuthCleartextPassword],
+2026-06-15T03:16:29.425267731Z         authenticationMD5Password: [Function: bound _handleAuthMD5Password],
+2026-06-15T03:16:29.425270191Z         authenticationSASL: [Function: bound _handleAuthSASL],
+2026-06-15T03:16:29.425272581Z         authenticationSASLContinue: [Function: bound _handleAuthSASLContinue] AsyncFunction,
+2026-06-15T03:16:29.425275001Z         authenticationSASLFinal: [Function: bound _handleAuthSASLFinal],
+2026-06-15T03:16:29.425277391Z         backendKeyData: [Function: bound _handleBackendKeyData],
+2026-06-15T03:16:29.425279771Z         error: [Function: bound _handleErrorEvent],
+2026-06-15T03:16:29.425282121Z         errorMessage: [Function: bound _handleErrorMessage],
+2026-06-15T03:16:29.425284511Z         readyForQuery: [Function: bound _handleReadyForQuery],
+2026-06-15T03:16:29.425286851Z         notice: [Function: bound _handleNotice],
+2026-06-15T03:16:29.425289181Z         rowDescription: [Function: bound _handleRowDescription],
+2026-06-15T03:16:29.425291521Z         dataRow: [Function: bound _handleDataRow],
+2026-06-15T03:16:29.425293871Z         portalSuspended: [Function: bound _handlePortalSuspended],
+2026-06-15T03:16:29.425296291Z         emptyQuery: [Function: bound _handleEmptyQuery],
+2026-06-15T03:16:29.425298671Z         commandComplete: [Function: bound _handleCommandComplete],
+2026-06-15T03:16:29.425301122Z         parseComplete: [Function: bound _handleParseComplete],
+2026-06-15T03:16:29.425303471Z         copyInResponse: [Function: bound _handleCopyInResponse],
+2026-06-15T03:16:29.425305811Z         copyData: [Function: bound _handleCopyData],
+2026-06-15T03:16:29.425308152Z         notification: [Function: bound _handleNotification],
+2026-06-15T03:16:29.425310582Z         end: [
+2026-06-15T03:16:29.425312932Z           [Function: bound onceWrapper] {
+2026-06-15T03:16:29.425315352Z             listener: [Function (anonymous)]
+2026-06-15T03:16:29.425317752Z           },
+2026-06-15T03:16:29.425320082Z           [Function: bound onceWrapper] {
+2026-06-15T03:16:29.425322442Z             listener: [Function (anonymous)]
+2026-06-15T03:16:29.425324842Z           },
+2026-06-15T03:16:29.425327242Z           [Function: bound onceWrapper] {
+2026-06-15T03:16:29.425333742Z             listener: [Function (anonymous)]
+2026-06-15T03:16:29.425336322Z           }
+2026-06-15T03:16:29.425338752Z         ]
+2026-06-15T03:16:29.425341122Z       },
+2026-06-15T03:16:29.425343622Z       _eventsCount: 23,
+2026-06-15T03:16:29.425345992Z       _maxListeners: undefined,
+2026-06-15T03:16:29.425348432Z       stream: <ref *1> TLSSocket {
+2026-06-15T03:16:29.425350902Z         _tlsOptions: {
+2026-06-15T03:16:29.425353323Z           allowHalfOpen: undefined,
+2026-06-15T03:16:29.425355683Z           pipe: false,
+2026-06-15T03:16:29.425358123Z           secureContext: SecureContext { context: SecureContext {} },
+2026-06-15T03:16:29.425360463Z           isServer: false,
+2026-06-15T03:16:29.425362772Z           requestCert: true,
+2026-06-15T03:16:29.425365073Z           rejectUnauthorized: false,
+2026-06-15T03:16:29.425367493Z           session: undefined,
+2026-06-15T03:16:29.425369833Z           ALPNProtocols: undefined,
+2026-06-15T03:16:29.425372193Z           requestOCSP: undefined,
+2026-06-15T03:16:29.425374523Z           enableTrace: undefined,
+2026-06-15T03:16:29.425376943Z           pskCallback: undefined,
+2026-06-15T03:16:29.425379283Z           highWaterMark: undefined,
+2026-06-15T03:16:29.425381603Z           onread: undefined,
+2026-06-15T03:16:29.425385733Z           signal: undefined
+2026-06-15T03:16:29.425388203Z         },
+2026-06-15T03:16:29.425390593Z         _secureEstablished: true,
+2026-06-15T03:16:29.425392913Z         _securePending: false,
+2026-06-15T03:16:29.425395263Z         _newSessionPending: false,
+2026-06-15T03:16:29.425397823Z         _controlReleased: true,
+2026-06-15T03:16:29.425400193Z         secureConnecting: false,
+2026-06-15T03:16:29.425402543Z         _SNICallback: null,
+2026-06-15T03:16:29.425404983Z         servername: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.425407393Z         alpnProtocol: false,
+2026-06-15T03:16:29.425409733Z         authorized: false,
+2026-06-15T03:16:29.425412113Z         authorizationError: 'SELF_SIGNED_CERT_IN_CHAIN',
+2026-06-15T03:16:29.425414513Z         encrypted: true,
+2026-06-15T03:16:29.425416944Z         _events: [Object: null prototype] {
+2026-06-15T03:16:29.425419264Z           close: [Function: onSocketCloseDestroySSL],
+2026-06-15T03:16:29.425421774Z           end: [ [Function: onReadableStreamEnd], [Function (anonymous)] ],
+2026-06-15T03:16:29.425426234Z           error: [Function: reportStreamError],
+2026-06-15T03:16:29.425428904Z           newListener: [ [Function: keylogNewListener], [Function: newListener] ],
+2026-06-15T03:16:29.425431384Z           secure: [Function: onConnectSecure],
+2026-06-15T03:16:29.425433794Z           data: [Function (anonymous)]
+2026-06-15T03:16:29.425436204Z         },
+2026-06-15T03:16:29.425438654Z         _eventsCount: 6,
+2026-06-15T03:16:29.425441044Z         connecting: false,
+2026-06-15T03:16:29.425443404Z         _hadError: false,
+2026-06-15T03:16:29.425445834Z         _parent: Socket {
+2026-06-15T03:16:29.425448144Z           connecting: false,
+2026-06-15T03:16:29.425450434Z           _hadError: false,
+2026-06-15T03:16:29.425452814Z           _parent: null,
+2026-06-15T03:16:29.425455214Z           _host: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.425457604Z           _closeAfterHandlingError: false,
+2026-06-15T03:16:29.425460004Z           _events: {
+2026-06-15T03:16:29.425462374Z             close: [Array],
+2026-06-15T03:16:29.425464745Z             error: [Array],
+2026-06-15T03:16:29.425467145Z             prefinish: undefined,
+2026-06-15T03:16:29.425474365Z             finish: undefined,
+2026-06-15T03:16:29.425476895Z             drain: undefined,
+2026-06-15T03:16:29.425479345Z             data: undefined,
+2026-06-15T03:16:29.425481695Z             end: [Function: onReadableStreamEnd],
+2026-06-15T03:16:29.425484075Z             readable: undefined,
+2026-06-15T03:16:29.425486545Z             connect: [Function]
+2026-06-15T03:16:29.425489025Z           },
+2026-06-15T03:16:29.425491515Z           _readableState: ReadableState {
+2026-06-15T03:16:29.425493855Z             highWaterMark: 65536,
+2026-06-15T03:16:29.425496285Z             buffer: [],
+2026-06-15T03:16:29.425498755Z             bufferIndex: 0,
+2026-06-15T03:16:29.425501155Z             length: 0,
+2026-06-15T03:16:29.425503685Z             pipes: [],
+2026-06-15T03:16:29.425506055Z             awaitDrainWriters: null,
+2026-06-15T03:16:29.425508375Z             Symbol(kState): 60303668
+2026-06-15T03:16:29.425510715Z           },
+2026-06-15T03:16:29.425513175Z           _writableState: WritableState {
+2026-06-15T03:16:29.425515585Z             highWaterMark: 65536,
+2026-06-15T03:16:29.425518035Z             length: 0,
+2026-06-15T03:16:29.425520455Z             corked: 0,
+2026-06-15T03:16:29.425522815Z             onwrite: [Function: bound onwrite],
+2026-06-15T03:16:29.425525255Z             writelen: 0,
+2026-06-15T03:16:29.425527546Z             bufferedIndex: 0,
+2026-06-15T03:16:29.425529926Z             pendingcb: 0,
+2026-06-15T03:16:29.425532276Z             Symbol(kState): 17563956,
+2026-06-15T03:16:29.425534786Z             Symbol(kBufferedValue): null,
+2026-06-15T03:16:29.425537126Z             Symbol(kWriteCbValue): null
+2026-06-15T03:16:29.425539526Z           },
+2026-06-15T03:16:29.425541876Z           allowHalfOpen: false,
+2026-06-15T03:16:29.425545036Z           _maxListeners: undefined,
+2026-06-15T03:16:29.425547406Z           _eventsCount: 4,
+2026-06-15T03:16:29.425549796Z           _sockname: null,
+2026-06-15T03:16:29.425552176Z           _pendingData: null,
+2026-06-15T03:16:29.425554486Z           _pendingEncoding: '',
+2026-06-15T03:16:29.425556876Z           server: null,
+2026-06-15T03:16:29.425559346Z           _server: null,
+2026-06-15T03:16:29.425561876Z           autoSelectFamilyAttemptedAddresses: [ '54.247.26.119:5432' ],
+2026-06-15T03:16:29.425564376Z           Symbol(async_id_symbol): 3517,
+2026-06-15T03:16:29.425566796Z           Symbol(kHandle): null,
+2026-06-15T03:16:29.425569226Z           Symbol(lastWriteQueueSize): 0,
+2026-06-15T03:16:29.425571556Z           Symbol(timeout): null,
+2026-06-15T03:16:29.425573896Z           Symbol(kBuffer): null,
+2026-06-15T03:16:29.425576247Z           Symbol(kBufferCb): null,
+2026-06-15T03:16:29.425578616Z           Symbol(kBufferGen): null,
+2026-06-15T03:16:29.425581027Z           Symbol(shapeMode): true,
+2026-06-15T03:16:29.425583447Z           Symbol(kCapture): false,
+2026-06-15T03:16:29.425585917Z           Symbol(kSetNoDelay): true,
+2026-06-15T03:16:29.425588317Z           Symbol(kSetKeepAlive): false,
+2026-06-15T03:16:29.425590757Z           Symbol(kSetKeepAliveInitialDelay): 0,
+2026-06-15T03:16:29.425593267Z           Symbol(kBytesRead): 4480,
+2026-06-15T03:16:29.425595677Z           Symbol(kBytesWritten): 2279
+2026-06-15T03:16:29.425598057Z         },
+2026-06-15T03:16:29.425600467Z         _host: null,
+2026-06-15T03:16:29.425602857Z         _closeAfterHandlingError: false,
+2026-06-15T03:16:29.425605297Z         _readableState: ReadableState {
+2026-06-15T03:16:29.425607687Z           highWaterMark: 65536,
+2026-06-15T03:16:29.425614177Z           buffer: [],
+2026-06-15T03:16:29.425616697Z           bufferIndex: 0,
+2026-06-15T03:16:29.425619167Z           length: 0,
+2026-06-15T03:16:29.425621527Z           pipes: [],
+2026-06-15T03:16:29.425623977Z           awaitDrainWriters: null,
+2026-06-15T03:16:29.425626537Z           Symbol(kState): 194519348
+2026-06-15T03:16:29.425628868Z         },
+2026-06-15T03:16:29.425631388Z         _writableState: WritableState {
+2026-06-15T03:16:29.425633817Z           highWaterMark: 65536,
+2026-06-15T03:16:29.425636328Z           length: 0,
+2026-06-15T03:16:29.425638748Z           corked: 0,
+2026-06-15T03:16:29.425641128Z           onwrite: [Function: bound onwrite],
+2026-06-15T03:16:29.425643568Z           writelen: 0,
+2026-06-15T03:16:29.425646108Z           bufferedIndex: 0,
+2026-06-15T03:16:29.425648528Z           pendingcb: 0,
+2026-06-15T03:16:29.425651018Z           Symbol(kState): 1091450164,
+2026-06-15T03:16:29.425653388Z           Symbol(kBufferedValue): null,
+2026-06-15T03:16:29.425655968Z           Symbol(kWriteCbValue): null
+2026-06-15T03:16:29.425658408Z         },
+2026-06-15T03:16:29.425660828Z         allowHalfOpen: false,
+2026-06-15T03:16:29.425663158Z         _maxListeners: undefined,
+2026-06-15T03:16:29.425665638Z         _sockname: null,
+2026-06-15T03:16:29.425668028Z         _pendingData: null,
+2026-06-15T03:16:29.425670478Z         _pendingEncoding: '',
+2026-06-15T03:16:29.425672808Z         server: undefined,
+2026-06-15T03:16:29.425675208Z         _server: null,
+2026-06-15T03:16:29.425677648Z         ssl: null,
+2026-06-15T03:16:29.425680118Z         _requestCert: true,
+2026-06-15T03:16:29.425682689Z         _rejectUnauthorized: false,
+2026-06-15T03:16:29.425685238Z         Symbol(alpncallback): null,
+2026-06-15T03:16:29.425687678Z         Symbol(res): TLSWrap {
+2026-06-15T03:16:29.425690178Z           _parent: TCP {
+2026-06-15T03:16:29.425692718Z             reading: [Getter/Setter],
+2026-06-15T03:16:29.425695289Z             onconnection: null,
+2026-06-15T03:16:29.425697889Z             Symbol(owner_symbol): [Socket],
+2026-06-15T03:16:29.425700569Z             Symbol(handle_onclose): [Function (anonymous)]
+2026-06-15T03:16:29.425703149Z           },
+2026-06-15T03:16:29.425705659Z           _parentWrap: Socket {
+2026-06-15T03:16:29.425708089Z             connecting: false,
+2026-06-15T03:16:29.425710539Z             _hadError: false,
+2026-06-15T03:16:29.425712969Z             _parent: null,
+2026-06-15T03:16:29.425715369Z             _host: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.425717829Z             _closeAfterHandlingError: false,
+2026-06-15T03:16:29.425720219Z             _events: [Object],
+2026-06-15T03:16:29.425722539Z             _readableState: [ReadableState],
+2026-06-15T03:16:29.425724939Z             _writableState: [WritableState],
+2026-06-15T03:16:29.425727799Z             allowHalfOpen: false,
+2026-06-15T03:16:29.42574201Z             _maxListeners: undefined,
+2026-06-15T03:16:29.425744919Z             _eventsCount: 4,
+2026-06-15T03:16:29.425747299Z             _sockname: null,
+2026-06-15T03:16:29.42574971Z             _pendingData: null,
+2026-06-15T03:16:29.42575214Z             _pendingEncoding: '',
+2026-06-15T03:16:29.42575669Z             server: null,
+2026-06-15T03:16:29.42575921Z             _server: null,
+2026-06-15T03:16:29.42576173Z             autoSelectFamilyAttemptedAddresses: [Array],
+2026-06-15T03:16:29.42576408Z             Symbol(async_id_symbol): 3517,
+2026-06-15T03:16:29.42576654Z             Symbol(kHandle): null,
+2026-06-15T03:16:29.42577335Z             Symbol(lastWriteQueueSize): 0,
+2026-06-15T03:16:29.42577585Z             Symbol(timeout): null,
+2026-06-15T03:16:29.42577826Z             Symbol(kBuffer): null,
+2026-06-15T03:16:29.4257807Z             Symbol(kBufferCb): null,
+2026-06-15T03:16:29.42578317Z             Symbol(kBufferGen): null,
+2026-06-15T03:16:29.42578556Z             Symbol(shapeMode): true,
+2026-06-15T03:16:29.42578801Z             Symbol(kCapture): false,
+2026-06-15T03:16:29.42579042Z             Symbol(kSetNoDelay): true,
+2026-06-15T03:16:29.425792891Z             Symbol(kSetKeepAlive): false,
+2026-06-15T03:16:29.425795431Z             Symbol(kSetKeepAliveInitialDelay): 0,
+2026-06-15T03:16:29.42579794Z             Symbol(kBytesRead): 4480,
+2026-06-15T03:16:29.425800391Z             Symbol(kBytesWritten): 2279
+2026-06-15T03:16:29.425802771Z           },
+2026-06-15T03:16:29.425805231Z           _secureContext: SecureContext { context: SecureContext {} },
+2026-06-15T03:16:29.425807681Z           reading: true,
+2026-06-15T03:16:29.425810091Z           onkeylog: [Function: onkeylog],
+2026-06-15T03:16:29.425812481Z           onhandshakestart: [Function: noop],
+2026-06-15T03:16:29.425815311Z           onhandshakedone: [Function (anonymous)],
+2026-06-15T03:16:29.425817671Z           onocspresponse: [Function: onocspresponse],
+2026-06-15T03:16:29.425820171Z           onnewsession: [Function: onnewsessionclient],
+2026-06-15T03:16:29.425822671Z           onerror: [Function: onerror],
+2026-06-15T03:16:29.425825331Z           Symbol(owner_symbol): [Circular *1]
+2026-06-15T03:16:29.425827801Z         },
+2026-06-15T03:16:29.425830231Z         Symbol(verified): true,
+2026-06-15T03:16:29.425832641Z         Symbol(pendingSession): null,
+2026-06-15T03:16:29.425835091Z         Symbol(async_id_symbol): 3522,
+2026-06-15T03:16:29.425837551Z         Symbol(kHandle): null,
+2026-06-15T03:16:29.425839961Z         Symbol(lastWriteQueueSize): 0,
+2026-06-15T03:16:29.425842511Z         Symbol(timeout): null,
+2026-06-15T03:16:29.425845031Z         Symbol(kBuffer): null,
+2026-06-15T03:16:29.425847632Z         Symbol(kBufferCb): null,
+2026-06-15T03:16:29.425850021Z         Symbol(kBufferGen): null,
+2026-06-15T03:16:29.425852552Z         Symbol(shapeMode): true,
+2026-06-15T03:16:29.425855101Z         Symbol(kCapture): false,
+2026-06-15T03:16:29.425857492Z         Symbol(kSetNoDelay): false,
+2026-06-15T03:16:29.425859842Z         Symbol(kSetKeepAlive): false,
+2026-06-15T03:16:29.425862242Z         Symbol(kSetKeepAliveInitialDelay): 0,
+2026-06-15T03:16:29.425864732Z         Symbol(kBytesRead): 802,
+2026-06-15T03:16:29.425867082Z         Symbol(kBytesWritten): 445,
+2026-06-15T03:16:29.425869562Z         Symbol(connect-options): {
+2026-06-15T03:16:29.425872082Z           rejectUnauthorized: false,
+2026-06-15T03:16:29.425875182Z           ciphers: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA',
+2026-06-15T03:16:29.425879132Z           checkServerIdentity: [Function: checkServerIdentity],
+2026-06-15T03:16:29.425881702Z           minDHSize: 1024,
+2026-06-15T03:16:29.425884082Z           socket: Socket {
+2026-06-15T03:16:29.425886492Z             connecting: false,
+2026-06-15T03:16:29.425888972Z             _hadError: false,
+2026-06-15T03:16:29.425891282Z             _parent: null,
+2026-06-15T03:16:29.425897782Z             _host: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.425900452Z             _closeAfterHandlingError: false,
+2026-06-15T03:16:29.425902862Z             _events: [Object],
+2026-06-15T03:16:29.425905182Z             _readableState: [ReadableState],
+2026-06-15T03:16:29.425907513Z             _writableState: [WritableState],
+2026-06-15T03:16:29.425909942Z             allowHalfOpen: false,
+2026-06-15T03:16:29.425912342Z             _maxListeners: undefined,
+2026-06-15T03:16:29.425914743Z             _eventsCount: 4,
+2026-06-15T03:16:29.425917123Z             _sockname: null,
+2026-06-15T03:16:29.425919503Z             _pendingData: null,
+2026-06-15T03:16:29.425921913Z             _pendingEncoding: '',
+2026-06-15T03:16:29.425924603Z             server: null,
+2026-06-15T03:16:29.425927023Z             _server: null,
+2026-06-15T03:16:29.425929463Z             autoSelectFamilyAttemptedAddresses: [Array],
+2026-06-15T03:16:29.425931893Z             Symbol(async_id_symbol): 3517,
+2026-06-15T03:16:29.425934413Z             Symbol(kHandle): null,
+2026-06-15T03:16:29.425936873Z             Symbol(lastWriteQueueSize): 0,
+2026-06-15T03:16:29.425939313Z             Symbol(timeout): null,
+2026-06-15T03:16:29.425955693Z             Symbol(kBuffer): null,
+2026-06-15T03:16:29.425961094Z             Symbol(kBufferCb): null,
+2026-06-15T03:16:29.425963583Z             Symbol(kBufferGen): null,
+2026-06-15T03:16:29.425965994Z             Symbol(shapeMode): true,
+2026-06-15T03:16:29.425968504Z             Symbol(kCapture): false,
+2026-06-15T03:16:29.425970914Z             Symbol(kSetNoDelay): true,
+2026-06-15T03:16:29.425973494Z             Symbol(kSetKeepAlive): false,
+2026-06-15T03:16:29.425976114Z             Symbol(kSetKeepAliveInitialDelay): 0,
+2026-06-15T03:16:29.425978584Z             Symbol(kBytesRead): 4480,
+2026-06-15T03:16:29.425981064Z             Symbol(kBytesWritten): 2279
+2026-06-15T03:16:29.425983564Z           },
+2026-06-15T03:16:29.425986014Z           servername: 'aws-1-eu-west-1.pooler.supabase.com',
+2026-06-15T03:16:29.425988444Z           singleUse: true
+2026-06-15T03:16:29.425990844Z         }
+2026-06-15T03:16:29.425993264Z       },
+2026-06-15T03:16:29.425995824Z       _keepAlive: false,
+2026-06-15T03:16:29.425998284Z       _keepAliveInitialDelayMillis: 0,
+2026-06-15T03:16:29.426000734Z       parsedStatements: {},
+2026-06-15T03:16:29.426003124Z       ssl: { rejectUnauthorized: false },
+2026-06-15T03:16:29.426005534Z       _ending: true,
+2026-06-15T03:16:29.426007864Z       _emitMessage: false,
+2026-06-15T03:16:29.426010264Z       _connecting: true,
+2026-06-15T03:16:29.426012704Z       Symbol(shapeMode): false,
+2026-06-15T03:16:29.426015084Z       Symbol(kCapture): false
+2026-06-15T03:16:29.426017544Z     },
+2026-06-15T03:16:29.426019864Z     _queryQueue: [],
+2026-06-15T03:16:29.426022515Z     binary: false,
+2026-06-15T03:16:29.426024935Z     processID: 684487318,
+2026-06-15T03:16:29.426027285Z     secretKey: 1335739244,
+2026-06-15T03:16:29.426029775Z     ssl: { rejectUnauthorized: false },
+2026-06-15T03:16:29.426032235Z     _connectionTimeoutMillis: 0,
+2026-06-15T03:16:29.426034815Z     _connectionCallback: null,
+2026-06-15T03:16:29.426037415Z     saslSession: null,
+2026-06-15T03:16:29.426042535Z     release: [Function (anonymous)],
+2026-06-15T03:16:29.426045335Z     readyForQuery: false,
+2026-06-15T03:16:29.426048205Z     hasExecuted: true,
+2026-06-15T03:16:29.426051225Z     _poolUseCount: 1,
+2026-06-15T03:16:29.426054055Z     Symbol(shapeMode): false,
+2026-06-15T03:16:29.426061095Z     Symbol(kCapture): false
+2026-06-15T03:16:29.426063975Z   }
+2026-06-15T03:16:29.426066725Z }
+2026-06-15T03:16:29.426075776Z 
+2026-06-15T03:16:29.426078625Z Node.js v24.14.1
+2026-06-15T03:16:37.664900846Z ==> Running 'node --enable-source-maps artifacts/api-server/dist/index.mjs'
+2026-06-15T03:17:06.735911988Z {"level":30,"time":1781493426735,"pid":51,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-5cb97c7f7-k4dcx","msg":"Session table ready"}

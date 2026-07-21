@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pnpm install --no-frozen-lockfile && pnpm --filter @workspace/mulacent run build && pnpm --filter @workspace/admin run build && pnpm --filter @workspace/api-server run build"
+
+[deploy]
+startCommand = "node --enable-source-maps ./artifacts/api-server/dist/index.mjs"
+healthcheckPath = "/api/healthz"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

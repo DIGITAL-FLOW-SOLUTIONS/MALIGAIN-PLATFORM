@@ -1,0 +1,48 @@
+[2026-04-21T15:48:06.352Z] [INFO] Initiating SMTP test → nzanasamuel9@gmail.com
+[2026-04-21T15:48:24.354Z] [INFO] SMTP Host   : smtp.resend.com
+[2026-04-21T15:48:24.354Z] [INFO] SMTP Port   : 465
+[2026-04-21T15:48:24.354Z] [INFO] SMTP User   : resend
+[2026-04-21T15:48:24.354Z] [INFO] SMTP From   : noreply@mulacent.com
+[2026-04-21T15:48:24.354Z] [INFO] SMTP Pass   : ✓ set (36 chars)
+[2026-04-21T15:48:24.354Z] [INFO] Recipient   : nzanasamuel9@gmail.com
+[2026-04-21T15:48:24.354Z] [INFO] APP_URL     : https://www.mulacent.com
+[2026-04-21T15:48:24.354Z] [INFO] ---
+[2026-04-21T15:48:24.354Z] [INFO] Verifying SMTP connection...
+[2026-04-21T15:48:24.364Z] [SMTP] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"dns","source":"smtp.resend.com","resolved":"54.205.195.44","cached":false} Resolved %s as %s [cache %s] smtp.resend.com 54.205.195.44 miss
+[2026-04-21T15:48:24.371Z] [INFO] [smtp] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"network","localAddress":"10.28.3.164","localPort":40176,"remoteAddress":"54.205.195.44","remotePort":465} %s established to %s:%s Secure connection 54.205.195.44 465
+[2026-04-21T15:48:24.472Z] [SMTP] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"server"} 220 Resend SMTP Relay ESMTP
+[2026-04-21T15:48:24.473Z] [SMTP] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"server"} 250-Resend SMTP Relay Nice to meet you, [10.0.31.199]
+250-PIPELINING
+250-8BITMIME
+250-SMTPUTF8
+250-AUTH PLAIN LOGIN
+250 SIZE 41943040
+[2026-04-21T15:48:24.478Z] [SMTP] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"server"} 235 Authentication successful
+[2026-04-21T15:48:24.478Z] [INFO] [smtp] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"smtp","username":"resend","action":"authenticated","method":"PLAIN"} User %s authenticated "resend"
+[2026-04-21T15:48:24.478Z] [SUCCESS] SMTP connection verified — server accepted credentials.
+[2026-04-21T15:48:24.478Z] [INFO] Sending email to nzanasamuel9@gmail.com...
+[2026-04-21T15:48:24.478Z] [INFO] Subject: MULACENT SMTP Debug Test
+[2026-04-21T15:48:24.478Z] [INFO] Envelope From (MAIL FROM): resend
+[2026-04-21T15:48:24.478Z] [INFO] Header From: "MULACENT" <noreply@mulacent.com>
+[2026-04-21T15:48:24.483Z] [SMTP] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"dns","source":"smtp.resend.com","resolved":"54.157.71.137","cached":true} Resolved %s as %s [cache %s] smtp.resend.com 54.157.71.137 hit
+[2026-04-21T15:48:24.483Z] [SMTP] {"component":"smtp-connection","sid":"m0SrCWS1F5U","tnx":"server"} 221 Bye
+[2026-04-21T15:48:24.491Z] [INFO] [smtp] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"network","localAddress":"10.28.3.164","localPort":35232,"remoteAddress":"54.157.71.137","remotePort":465} %s established to %s:%s Secure connection 54.157.71.137 465
+[2026-04-21T15:48:24.593Z] [SMTP] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"server"} 220 Resend SMTP Relay ESMTP
+[2026-04-21T15:48:24.594Z] [SMTP] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"server"} 250-Resend SMTP Relay Nice to meet you, [10.0.10.125]
+250-PIPELINING
+250-8BITMIME
+250-SMTPUTF8
+250-AUTH PLAIN LOGIN
+250 SIZE 41943040
+[2026-04-21T15:48:24.599Z] [SMTP] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"server"} 235 Authentication successful
+[2026-04-21T15:48:24.599Z] [INFO] [smtp] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"smtp","username":"resend","action":"authenticated","method":"PLAIN"} User %s authenticated "resend"
+[2026-04-21T15:48:24.599Z] [INFO] [smtp] {"component":"smtp-transport","tnx":"send","messageId":"<59a9452f-b1b0-3d47-cf32-c6c8d92b744e@localhost>"} Sending message %s to <%s> <59a9452f-b1b0-3d47-cf32-c6c8d92b744e@localhost> nzanasamuel9@gmail.com
+[2026-04-21T15:48:24.604Z] [SMTP] {"component":"smtp-connection","sid":"RPPqTV2IWFw","tnx":"server"} 550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.
+[2026-04-21T15:48:24.604Z] [ERROR] [smtp error] {"component":"smtp-transport","err":{"code":"EENVELOPE","response":"550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.","responseCode":550,"command":"MAIL FROM"},"tnx":"send"} Send error for %s: %s <59a9452f-b1b0-3d47-cf32-c6c8d92b744e@localhost> Mail command failed: 550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.
+[2026-04-21T15:48:24.604Z] [ERROR] [smtp error] {"component":"mail","err":{"code":"EENVELOPE","response":"550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.","responseCode":550,"command":"MAIL FROM"},"tnx":"transport","action":"send"} Send Error: %s Mail command failed: 550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.
+[2026-04-21T15:48:24.604Z] [ERROR] Send failed after 126ms
+[2026-04-21T15:48:24.604Z] [ERROR] Error     : Mail command failed: 550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.
+[2026-04-21T15:48:24.604Z] [ERROR] Code      : EENVELOPE
+[2026-04-21T15:48:24.604Z] [ERROR] Command   : MAIL FROM
+[2026-04-21T15:48:24.604Z] [ERROR] Response  : 550 Invalid `from` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.
+[2026-04-21T15:48:24.604Z] [ERROR] ResponseCode: 550

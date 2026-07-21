@@ -1,0 +1,21 @@
+packages:
+  "framer-motion": "For page transitions, list animations, and fluid interactive elements"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility function to efficiently merge Tailwind CSS classes"
+  "date-fns": "For human-readable date formatting in history and tournaments"
+  "recharts": "For rendering earnings and activity charts on the dashboard"
+  "react-hook-form": "For robust form state management"
+  "@hookform/resolvers": "For integrating Zod validation with react-hook-form"
+
+images:
+  - path: "artifacts/mulacent/public/images/logo.png"
+    description: "Sleek modern geometric logo mark for a premium tech platform, stylized letter M, gradient indigo and cyan, transparent dark background"
+    aspect_ratio: "1:1"
+  - path: "artifacts/mulacent/public/images/auth-bg.png"
+    description: "Abstract 3D flowing liquid background with deep indigo, neon cyan, and vivid green, premium dark tech aesthetic, volumetric lighting"
+    aspect_ratio: "16:9"
+
+notes:
+  - "The app relies on @workspace/api-client-react for TanStack Query hooks"
+  - "All routing uses wouter"
+  - "Authentication checks /api/auth/me to maintain session"

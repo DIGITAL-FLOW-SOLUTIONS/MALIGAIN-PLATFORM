@@ -1,0 +1,50 @@
+2026-06-18T06:08:10.229907533Z       _connecting: true,
+2026-06-18T06:08:10.229910473Z       Symbol(shapeMode): false,
+2026-06-18T06:08:10.229913713Z       Symbol(kCapture): false
+2026-06-18T06:08:10.229916603Z     },
+2026-06-18T06:08:10.229918603Z     _queryQueue: [],
+2026-06-18T06:08:10.229920543Z     binary: false,
+2026-06-18T06:08:10.229922463Z     processID: 899413286,
+2026-06-18T06:08:10.229924443Z     secretKey: 1863721641,
+2026-06-18T06:08:10.229927684Z     ssl: { rejectUnauthorized: false },
+2026-06-18T06:08:10.229929734Z     _connectionTimeoutMillis: 8000,
+2026-06-18T06:08:10.229943554Z     _connectionCallback: null,
+2026-06-18T06:08:10.229946904Z     connectionTimeoutHandle: Timeout {
+2026-06-18T06:08:10.229949934Z       _idleTimeout: -1,
+2026-06-18T06:08:10.229952904Z       _idlePrev: null,
+2026-06-18T06:08:10.229956235Z       _idleNext: null,
+2026-06-18T06:08:10.229958684Z       _idleStart: 1175161,
+2026-06-18T06:08:10.229960604Z       _onTimeout: null,
+2026-06-18T06:08:10.229962504Z       _timerArgs: undefined,
+2026-06-18T06:08:10.229964465Z       _repeat: null,
+2026-06-18T06:08:10.229966345Z       _destroyed: true,
+2026-06-18T06:08:10.229968245Z       Symbol(refed): false,
+2026-06-18T06:08:10.229970185Z       Symbol(kHasPrimitive): false,
+2026-06-18T06:08:10.229972085Z       Symbol(asyncId): 17628,
+2026-06-18T06:08:10.229974045Z       Symbol(triggerId): 0,
+2026-06-18T06:08:10.229975935Z       Symbol(kAsyncContextFrame): undefined
+2026-06-18T06:08:10.229978735Z     },
+2026-06-18T06:08:10.229982065Z     saslSession: null,
+2026-06-18T06:08:10.229985325Z     release: [Function (anonymous)],
+2026-06-18T06:08:10.229988575Z     readyForQuery: false,
+2026-06-18T06:08:10.229991535Z     hasExecuted: true,
+2026-06-18T06:08:10.229994705Z     _poolUseCount: 1,
+2026-06-18T06:08:10.229997645Z     Symbol(shapeMode): false,
+2026-06-18T06:08:10.230000716Z     Symbol(kCapture): false
+2026-06-18T06:08:10.230003436Z   }
+2026-06-18T06:08:10.230005446Z }
+2026-06-18T06:08:10.230007366Z 
+2026-06-18T06:08:10.230009346Z Node.js v24.14.1
+2026-06-18T06:08:17.868188197Z ==> Running 'node --enable-source-maps artifacts/api-server/dist/index.mjs'
+2026-06-18T06:08:20.161440609Z {"level":30,"time":1781762900159,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","port":10000,"msg":"Server listening"}
+2026-06-18T06:08:27.826059517Z {"level":30,"time":1781762907825,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","msg":"Session table ready"}
+2026-06-18T06:08:37.874215166Z {"level":30,"time":1781762917873,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":2,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":8,"msg":"request completed"}
+2026-06-18T06:08:38.373199439Z {"level":30,"time":1781762918372,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":3,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+2026-06-18T06:08:38.692661138Z {"level":30,"time":1781762918691,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":4,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":2,"msg":"request completed"}
+2026-06-18T06:08:38.960431586Z {"level":30,"time":1781762918960,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":7,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+2026-06-18T06:08:39.930273062Z {"level":30,"time":1781762919929,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":9,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":0,"msg":"request completed"}
+2026-06-18T06:08:39.937546893Z {"level":30,"time":1781762919937,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":10,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+2026-06-18T06:08:42.632262639Z {"level":30,"time":1781762922631,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":13,"method":"GET","url":"/register"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+2026-06-18T06:08:43.765387954Z {"level":30,"time":1781762923765,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":14,"method":"GET","url":"/api/auth/me"},"res":{"statusCode":401},"responseTime":1,"msg":"request completed"}
+2026-06-18T06:08:43.766147534Z {"level":30,"time":1781762923765,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":15,"method":"GET","url":"/favicon.svg"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+2026-06-18T06:08:45.054665078Z {"level":30,"time":1781762925054,"pid":52,"hostname":"srv-d7unrjdckfvc73be1lu0-hibernate-7f7f56595d-d4mbx","req":{"id":17,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
