@@ -51,6 +51,8 @@ function LoadingSpinner() {
 
 // ---------------------------------------------------------------------------
 // Shared query options for the launch-status check.
+// No placeholderData — we must know the real status before rendering anything
+// so we never flash the login page to a user who should see /launch.
 // ---------------------------------------------------------------------------
 const launchQueryOptions = {
   queryKey: ["launch-status"],
@@ -62,17 +64,19 @@ const launchQueryOptions = {
   refetchInterval: 30_000,
   staleTime: 10_000,
   retry: false,
-  placeholderData: { enabled: false, launchDate: "" },
 } as const;
 
 // ---------------------------------------------------------------------------
-// Launch gate — redirects to /launch when the site is not yet open.
-// Uses the current location so it never redirects when we're already there,
-// avoiding an infinite redirect loop.
+// Launch gate — holds rendering until the API responds, then either redirects
+// to /launch (if enabled) or reveals the app normally.
 // ---------------------------------------------------------------------------
 function LaunchGate({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
-  const { data } = useQuery(launchQueryOptions);
+  const { data, isLoading } = useQuery(launchQueryOptions);
+
+  // Block render while we don't yet know the launch status — this is the key
+  // fix that prevents the flash of login before redirecting to /launch.
+  if (isLoading) return <LoadingSpinner />;
 
   if (data?.enabled && location !== "/launch") {
     return <Redirect to="/launch" />;
@@ -82,13 +86,16 @@ function LaunchGate({ children }: { children: React.ReactNode }) {
 }
 
 // ---------------------------------------------------------------------------
-// /launch route — a real URL so refreshing it always works.
-// Redirects back to / once the launch window ends.
+// /launch route — a real, bookmarkable URL so refreshing always works.
+// Shows a spinner while the status is being fetched, then either shows the
+// launch page or redirects home if launch has ended.
 // ---------------------------------------------------------------------------
 function LaunchRoute() {
-  const { data, refetch } = useQuery(launchQueryOptions);
+  const { data, isLoading, refetch } = useQuery(launchQueryOptions);
 
-  // Launch is over (or API returned disabled) — send user to home.
+  if (isLoading) return <LoadingSpinner />;
+
+  // Launch is over — send the user to the app.
   if (!data?.enabled) {
     return <Redirect to="/" />;
   }
