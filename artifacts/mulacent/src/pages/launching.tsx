@@ -226,8 +226,161 @@ export default function LaunchingPage({ launchDate, onExpired }: LaunchingPagePr
         </div>
 
         {/* Tagline */}
-        <p className="text-white/25 text-sm leading-relaxed px-4">
+        <p className="text-white/40 text-sm leading-relaxed px-4 mb-10">
           Something big is coming. Get ready to earn, grow, and win with your team.
+        </p>
+
+        {/* ── WAYS TO EARN ─────────────────────────────────────────────── */}
+        <div className="w-full mb-8">
+          {/* Section header */}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(220,38,38,0.4))" }} />
+            <div
+              className="flex items-center gap-2 px-4 py-1.5 rounded-full"
+              style={{ background: "rgba(220,38,38,0.12)", border: "1px solid rgba(220,38,38,0.3)" }}
+            >
+              <span className="text-base">✅</span>
+              <span className="text-red-400 font-bold uppercase" style={{ fontSize: 10, letterSpacing: "0.18em" }}>
+                Ways to Earn
+              </span>
+            </div>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(220,38,38,0.4), transparent)" }} />
+          </div>
+
+          {/* Platform tagline */}
+          <p className="text-white/50 text-xs text-center mb-5" style={{ letterSpacing: "0.04em" }}>
+            📌 Your trusted platform to earn money online — anytime, anywhere!
+          </p>
+
+          {/* Earning methods grid */}
+          <div
+            className="w-full rounded-2xl p-4 mb-5"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+          >
+            <p className="text-white/30 text-xs uppercase font-semibold mb-4 text-center" style={{ letterSpacing: "0.16em" }}>
+              With an active account, earn daily through:
+            </p>
+            <div className="grid grid-cols-1 gap-2.5">
+              {[
+                { icon: "🎁", label: "Welcome Bonus", sub: "Receive a bonus upon joining" },
+                { icon: "💬", label: "Chat with Lonely Foreigners", sub: "Earn while you chat" },
+                { icon: "💰", label: "Invest Money", sub: "Grow your capital" },
+                { icon: "▶️", label: "Watch YouTube Videos", sub: "Earn per video watched" },
+                { icon: "🎵", label: "Watch TikTok Videos", sub: "Get paid to scroll" },
+                { icon: "♟️", label: "Play Games", sub: "Chess & Draughts" },
+                { icon: "📢", label: "Click Ads", sub: "Simple clicks, real earnings" },
+                { icon: "❓", label: "Trivia Questions", sub: "Answer & earn" },
+                { icon: "🎰", label: "Spinning", sub: "Try your luck daily" },
+              ].map(({ icon, label, sub }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-xl px-3.5 py-2.5"
+                  style={{
+                    background: "rgba(220,38,38,0.06)",
+                    border: "1px solid rgba(220,38,38,0.15)",
+                  }}
+                >
+                  <span className="text-xl flex-shrink-0 w-8 text-center">{icon}</span>
+                  <div className="text-left">
+                    <p className="text-white font-semibold text-sm leading-tight">{label}</p>
+                    <p className="text-white/40 text-xs mt-0.5">{sub}</p>
+                  </div>
+                  <span className="ml-auto text-red-500/50 text-xs font-bold">💸</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Team Earnings */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(220,38,38,0.3))" }} />
+            <span className="text-white/50 font-bold uppercase" style={{ fontSize: 10, letterSpacing: "0.18em" }}>
+              🎮 Team Earnings
+            </span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(220,38,38,0.3), transparent)" }} />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 mb-2">
+            {[
+              { level: "L1", desc: "Direct referrals", color: "rgba(220,38,38,0.25)" },
+              { level: "L2", desc: "2nd generation", color: "rgba(220,38,38,0.15)" },
+              { level: "L3", desc: "3rd generation", color: "rgba(220,38,38,0.08)" },
+            ].map(({ level, desc, color }) => (
+              <div
+                key={level}
+                className="flex flex-col items-center justify-center rounded-2xl py-4 px-2"
+                style={{
+                  background: color,
+                  border: "1px solid rgba(220,38,38,0.25)",
+                  boxShadow: "0 0 16px rgba(220,38,38,0.08)",
+                }}
+              >
+                <span
+                  className="text-white font-black mb-1"
+                  style={{ fontSize: 22, letterSpacing: "-0.01em" }}
+                >
+                  {level}
+                </span>
+                <span className="text-white/40 text-center" style={{ fontSize: 9, letterSpacing: "0.06em" }}>
+                  {desc}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="text-white/25 text-xs text-center mt-1">
+            Earn from every level your team builds below you
+          </p>
+        </div>
+
+        {/* ── BENEFITS ─────────────────────────────────────────────────── */}
+        <div className="w-full mb-4">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(220,38,38,0.4))" }} />
+            <div
+              className="flex items-center gap-2 px-4 py-1.5 rounded-full"
+              style={{ background: "rgba(220,38,38,0.12)", border: "1px solid rgba(220,38,38,0.3)" }}
+            >
+              <span className="text-base">⭐</span>
+              <span className="text-red-400 font-bold uppercase" style={{ fontSize: 10, letterSpacing: "0.18em" }}>
+                Benefits
+              </span>
+            </div>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(220,38,38,0.4), transparent)" }} />
+          </div>
+
+          <div
+            className="w-full rounded-2xl p-4"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+          >
+            <div className="grid grid-cols-1 gap-3">
+              {[
+                { icon: "🔹", label: "Weekly Agent Bonus", sub: "Rewarded every week for top performance" },
+                { icon: "📱", label: "Automatic Activations", sub: "Seamless onboarding, no manual steps" },
+                { icon: "🎧", label: "Customer Care Support 24/7", sub: "We're always here for you" },
+                { icon: "💸", label: "Instant Withdrawals", sub: "Get your money fast, any time" },
+              ].map(({ icon, label, sub }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-xl px-3.5 py-3"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(220,38,38,0.08) 0%, rgba(255,255,255,0.02) 100%)",
+                    border: "1px solid rgba(220,38,38,0.15)",
+                  }}
+                >
+                  <span className="text-xl flex-shrink-0 w-8 text-center">{icon}</span>
+                  <div className="text-left">
+                    <p className="text-white font-semibold text-sm leading-tight">{label}</p>
+                    <p className="text-white/40 text-xs mt-0.5">{sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer note */}
+        <p className="text-white/20 text-xs text-center mt-4 mb-2 px-4">
+          Join MALIGAIN today and start your earning journey 🚀
         </p>
 
       </div>
