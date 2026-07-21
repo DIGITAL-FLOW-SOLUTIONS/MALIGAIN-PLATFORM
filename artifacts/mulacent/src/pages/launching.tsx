@@ -133,16 +133,18 @@ export default function LaunchingPage({ launchDate, onExpired }: LaunchingPagePr
         {/* Logo mark */}
         <div className="mb-8 flex flex-col items-center gap-3">
           <div
-            className="flex items-center justify-center rounded-2xl"
+            className="flex items-center justify-center rounded-2xl overflow-hidden"
             style={{
-              width: 64,
-              height: 64,
-              background: "linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%)",
+              width: 72,
+              height: 72,
               boxShadow: "0 0 40px rgba(220,38,38,0.35), 0 4px 24px rgba(0,0,0,0.5)",
-              border: "1px solid rgba(220,38,38,0.4)",
             }}
           >
-            <span className="text-white font-black text-3xl" style={{ letterSpacing: "-0.02em" }}>M</span>
+            <img
+              src="/images/logo.png"
+              alt="MALIGAIN"
+              style={{ width: 72, height: 72, objectFit: "cover" }}
+            />
           </div>
 
           <div>
