@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
+import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,38 +50,58 @@ function LoadingSpinner() {
 }
 
 // ---------------------------------------------------------------------------
-// Launch gate — fetches /api/settings/launch every 30 s.
-// The API server enforces NODE_ENV === "production"; in dev it always returns
-// { enabled: false }, so this has zero effect during local development.
+// Shared query options for the launch-status check.
+// ---------------------------------------------------------------------------
+const launchQueryOptions = {
+  queryKey: ["launch-status"],
+  queryFn: async () => {
+    const res = await fetch("/api/settings/launch");
+    if (!res.ok) return { enabled: false, launchDate: "" };
+    return res.json() as Promise<{ enabled: boolean; launchDate: string }>;
+  },
+  refetchInterval: 30_000,
+  staleTime: 10_000,
+  retry: false,
+  placeholderData: { enabled: false, launchDate: "" },
+} as const;
+
+// ---------------------------------------------------------------------------
+// Launch gate — redirects to /launch when the site is not yet open.
+// Uses the current location so it never redirects when we're already there,
+// avoiding an infinite redirect loop.
 // ---------------------------------------------------------------------------
 function LaunchGate({ children }: { children: React.ReactNode }) {
-  const { data, refetch } = useQuery({
-    queryKey: ["launch-status"],
-    queryFn: async () => {
-      const res = await fetch("/api/settings/launch");
-      if (!res.ok) return { enabled: false, launchDate: "" };
-      return res.json() as Promise<{ enabled: boolean; launchDate: string }>;
-    },
-    refetchInterval: 30_000,
-    staleTime: 10_000,
-    retry: false,
-    // Don't block initial render with suspense — show spinner only briefly
-    placeholderData: { enabled: false, launchDate: "" },
-  });
+  const [location] = useLocation();
+  const { data } = useQuery(launchQueryOptions);
 
-  if (data?.enabled) {
-    return (
-      <LaunchingPage
-        launchDate={data.launchDate}
-        onExpired={() => {
-          // Countdown hit zero — re-check the server immediately
-          setTimeout(() => refetch(), 500);
-        }}
-      />
-    );
+  if (data?.enabled && location !== "/launch") {
+    return <Redirect to="/launch" />;
   }
 
   return <>{children}</>;
+}
+
+// ---------------------------------------------------------------------------
+// /launch route — a real URL so refreshing it always works.
+// Redirects back to / once the launch window ends.
+// ---------------------------------------------------------------------------
+function LaunchRoute() {
+  const { data, refetch } = useQuery(launchQueryOptions);
+
+  // Launch is over (or API returned disabled) — send user to home.
+  if (!data?.enabled) {
+    return <Redirect to="/" />;
+  }
+
+  return (
+    <LaunchingPage
+      launchDate={data.launchDate}
+      onExpired={() => {
+        // Countdown hit zero — re-check the server immediately.
+        setTimeout(() => refetch(), 500);
+      }}
+    />
+  );
 }
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -167,6 +187,7 @@ function CameroonPayRoute() {
 function Router() {
   return (
     <Switch>
+      <Route path="/launch" component={LaunchRoute} />
       <Route path="/" component={() => <Redirect to="/dashboard" />} />
       <Route path="/login" component={() => <PublicOnlyRoute component={Login} />} />
       <Route path="/register" component={() => <PublicOnlyRoute component={Register} />} />
