@@ -6,7 +6,6 @@ import { useLocation } from "wouter";
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  Clock,
   CheckCircle2,
   XCircle,
   Receipt,
@@ -20,16 +19,16 @@ import { cn } from "@/lib/utils";
 type Filter = "all" | "withdrawal" | "recharge";
 
 const TYPE_META: Record<string, { label: string; color: string; icon: typeof ArrowDownLeft }> = {
-  recharge:   { label: "Deposit",     color: "bg-cyan-500/20 text-cyan-400",    icon: ArrowDownLeft },
-  withdrawal: { label: "Withdrawal",  color: "bg-rose-500/20 text-rose-400",    icon: ArrowUpRight },
-  bonus:      { label: "Bonus",       color: "bg-amber-500/20 text-amber-400",  icon: TrendingUp },
-  commission: { label: "Commission",  color: "bg-violet-500/20 text-violet-400",icon: TrendingUp },
+  recharge:   { label: "Deposit",     color: "bg-primary/10 text-primary",         icon: ArrowDownLeft },
+  withdrawal: { label: "Withdrawal",  color: "bg-destructive/10 text-destructive",  icon: ArrowUpRight },
+  bonus:      { label: "Bonus",       color: "bg-amber-100 text-amber-600",         icon: TrendingUp },
+  commission: { label: "Commission",  color: "bg-secondary/10 text-secondary",      icon: TrendingUp },
 };
 
 const STATUS_META = {
-  completed: { color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30", icon: CheckCircle2, label: "Paid" },
-  pending:   { color: "text-amber-400",   bg: "bg-amber-500/15 border-amber-500/30",     icon: Hourglass,    label: "Pending" },
-  failed:    { color: "text-rose-400",    bg: "bg-rose-500/15 border-rose-500/30",        icon: XCircle,      label: "Declined" },
+  completed: { color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200", icon: CheckCircle2, label: "Paid" },
+  pending:   { color: "text-amber-600",   bg: "bg-amber-50 border-amber-200",     icon: Hourglass,    label: "Pending" },
+  failed:    { color: "text-destructive", bg: "bg-destructive/5 border-destructive/20", icon: XCircle, label: "Declined" },
 };
 
 export default function History() {
@@ -59,15 +58,14 @@ export default function History() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-white leading-tight">
-            Withdrawal <span className="text-cyan-400">History</span>
+          <h1 className="text-2xl font-black text-foreground leading-tight">
+            Withdrawal <span className="text-primary">History</span>
           </h1>
-          <p className="text-slate-500 text-xs mt-0.5">Track all your transactions</p>
+          <p className="text-muted-foreground text-xs mt-0.5">Track all your transactions</p>
         </div>
         <button
           onClick={() => navigate("/withdraw")}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs text-white transition-all active:scale-95 shadow-lg shadow-violet-500/25 border border-transparent"
-          style={{ background: "linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)" }}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold text-xs text-primary-foreground bg-primary transition-all active:scale-95 shadow-sm"
         >
           <Plus className="w-3.5 h-3.5" /> New Request
         </button>
@@ -76,35 +74,29 @@ export default function History() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-3">
         {/* Paid out */}
-        <div
-          className="rounded-2xl p-4 relative overflow-hidden border border-cyan-500/25"
-          style={{ background: "linear-gradient(135deg, #0e3a4a 0%, #0a1f35 100%)" }}
-        >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-400/15 blur-2xl rounded-full pointer-events-none" />
+        <div className="rounded-2xl p-4 relative overflow-hidden border border-primary/20 bg-card shadow-sm">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 blur-2xl rounded-full pointer-events-none" />
           <div className="relative z-10 flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center flex-shrink-0">
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+            <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+              <CheckCircle2 className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <p className="text-white font-black text-xl leading-none">{fmt(paidOut)}</p>
-              <p className="text-cyan-400/70 text-[10px] font-bold uppercase tracking-widest mt-1">Paid Out</p>
+              <p className="text-foreground font-black text-xl leading-none">{fmt(paidOut)}</p>
+              <p className="text-primary text-[10px] font-bold uppercase tracking-widest mt-1">Paid Out</p>
             </div>
           </div>
         </div>
 
         {/* Pending */}
-        <div
-          className="rounded-2xl p-4 relative overflow-hidden border border-fuchsia-500/25"
-          style={{ background: "linear-gradient(135deg, #2d0a3f 0%, #1a0a2e 100%)" }}
-        >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-fuchsia-400/15 blur-2xl rounded-full pointer-events-none" />
+        <div className="rounded-2xl p-4 relative overflow-hidden border border-secondary/20 bg-card shadow-sm">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-secondary/5 blur-2xl rounded-full pointer-events-none" />
           <div className="relative z-10 flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-fuchsia-500/20 border border-fuchsia-500/30 flex items-center justify-center flex-shrink-0">
-              <Hourglass className="w-4 h-4 text-fuchsia-400" />
+            <div className="w-9 h-9 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center flex-shrink-0">
+              <Hourglass className="w-4 h-4 text-secondary" />
             </div>
             <div>
-              <p className="text-white font-black text-xl leading-none">{pending}</p>
-              <p className="text-fuchsia-400/70 text-[10px] font-bold uppercase tracking-widest mt-1">
+              <p className="text-foreground font-black text-xl leading-none">{pending}</p>
+              <p className="text-secondary text-[10px] font-bold uppercase tracking-widest mt-1">
                 Pending · {total} Total
               </p>
             </div>
@@ -113,19 +105,19 @@ export default function History() {
       </div>
 
       {/* Transactions card */}
-      <div className="bg-[#1a0508] border border-red-900/30 rounded-2xl overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
 
         {/* Card header */}
-        <div className="px-4 pt-4 pb-3 border-b border-white/5 space-y-2.5">
+        <div className="px-4 pt-4 pb-3 border-b border-border space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-sm bg-cyan-500 flex-shrink-0" />
-              <span className="text-white font-black text-sm">Transactions</span>
+              <div className="w-2.5 h-2.5 rounded-sm bg-primary flex-shrink-0" />
+              <span className="text-foreground font-black text-sm">Transactions</span>
             </div>
-            <span className="text-slate-500 text-[10px] font-bold">{total} records</span>
+            <span className="text-muted-foreground text-[10px] font-bold">{total} records</span>
           </div>
-          {/* Filter tabs — full width on mobile */}
-          <div className="flex bg-black/40 border border-white/8 rounded-lg p-0.5">
+          {/* Filter tabs */}
+          <div className="flex bg-muted border border-border rounded-lg p-0.5">
             {FILTERS.map(({ key, label }) => (
               <button
                 key={key}
@@ -133,8 +125,8 @@ export default function History() {
                 className={cn(
                   "flex-1 py-1.5 rounded-md text-[11px] font-bold capitalize transition-all",
                   filter === key
-                    ? "bg-violet-600 text-white shadow"
-                    : "text-slate-500 hover:text-slate-300"
+                    ? "bg-primary text-primary-foreground shadow"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {label}
@@ -144,27 +136,26 @@ export default function History() {
         </div>
 
         {/* List */}
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-border">
           {isLoading ? (
             <div className="py-12 flex flex-col items-center gap-3">
-              <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
-              <span className="text-slate-500 text-xs">Loading transactions…</span>
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <span className="text-muted-foreground text-xs">Loading transactions…</span>
             </div>
           ) : txs.length === 0 ? (
             <div className="py-14 flex flex-col items-center gap-4 px-6 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center">
-                <Receipt className="w-6 h-6 text-slate-600" />
+              <div className="w-14 h-14 rounded-2xl bg-muted border border-border flex items-center justify-center">
+                <Receipt className="w-6 h-6 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-white font-black text-base">No Withdrawals Yet</p>
-                <p className="text-slate-500 text-xs mt-1 max-w-xs">
+                <p className="text-foreground font-black text-base">No Withdrawals Yet</p>
+                <p className="text-muted-foreground text-xs mt-1 max-w-xs">
                   Your withdrawal history will appear here once you make your first request.
                 </p>
               </div>
               <button
                 onClick={() => navigate("/withdraw")}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-black text-sm text-white shadow-lg shadow-violet-500/25 transition-all active:scale-95"
-                style={{ background: "linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)" }}
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-black text-sm text-primary-foreground bg-primary shadow-sm transition-all active:scale-95"
               >
                 <Zap className="w-3.5 h-3.5" /> Make First Withdrawal
               </button>
@@ -172,13 +163,13 @@ export default function History() {
           ) : (
             txs.map((tx) => {
               const isPositive = tx.type === "recharge" || tx.type === "bonus" || tx.type === "commission";
-              const typeMeta = TYPE_META[tx.type] ?? { label: tx.type, color: "bg-slate-500/20 text-slate-400", icon: Receipt };
+              const typeMeta = TYPE_META[tx.type] ?? { label: tx.type, color: "bg-muted text-muted-foreground", icon: Receipt };
               const statusMeta = STATUS_META[tx.status as keyof typeof STATUS_META] ?? STATUS_META.pending;
               const TypeIcon = typeMeta.icon;
               const StatusIcon = statusMeta.icon;
 
               return (
-                <div key={tx.id} className="flex items-center gap-3 px-4 py-4 hover:bg-white/[0.02] transition-colors">
+                <div key={tx.id} className="flex items-center gap-3 px-4 py-4 hover:bg-muted/50 transition-colors">
                   {/* Icon */}
                   <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0", typeMeta.color)}>
                     <TypeIcon className="w-4 h-4" />
@@ -186,13 +177,13 @@ export default function History() {
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-bold text-sm capitalize leading-tight">{typeMeta.label}</p>
-                    <p className="text-slate-500 text-[11px] mt-0.5 truncate">{tx.description || formatDate(tx.createdAt)}</p>
+                    <p className="text-foreground font-bold text-sm capitalize leading-tight">{typeMeta.label}</p>
+                    <p className="text-muted-foreground text-[11px] mt-0.5 truncate">{tx.description || formatDate(tx.createdAt)}</p>
                   </div>
 
                   {/* Status + Amount */}
                   <div className="text-right flex-shrink-0">
-                    <p className={cn("font-black text-sm leading-tight", isPositive ? "text-emerald-400" : "text-white")}>
+                    <p className={cn("font-black text-sm leading-tight", isPositive ? "text-emerald-600" : "text-foreground")}>
                       {isPositive ? "+" : "-"}{fmt(tx.amount)}
                     </p>
                     <div className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border mt-1", statusMeta.bg)}>

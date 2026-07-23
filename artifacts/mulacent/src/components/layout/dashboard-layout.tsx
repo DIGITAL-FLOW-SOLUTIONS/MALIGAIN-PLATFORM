@@ -9,7 +9,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   return (
-    <div className="flex min-h-screen text-foreground" style={{ background: "#0d0518" }}>
+    <div className="flex min-h-screen bg-background text-foreground">
       <Sidebar mobileOpen={mobileMenuOpen} setMobileOpen={setMobileMenuOpen} />
       
       <div className="flex-1 flex flex-col min-w-0">

@@ -49,11 +49,11 @@ type ProfileForm = z.infer<typeof profileSchema>;
 type PasswordForm = z.infer<typeof passwordSchema>;
 
 function inputCls() {
-  return "w-full bg-[#0d0508] border border-red-900/30 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all placeholder:text-slate-600";
+  return "w-full bg-background border border-input rounded-xl py-3 px-4 text-foreground text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground";
 }
 
 function labelCls() {
-  return "text-[10px] font-bold tracking-widest uppercase text-red-400/70 mb-1.5 block";
+  return "text-[10px] font-bold tracking-widest uppercase text-muted-foreground mb-1.5 block";
 }
 
 export default function Profile() {
@@ -123,29 +123,29 @@ export default function Profile() {
       icon: Users,
       value: stats?.totalActivated ?? 0,
       label: "Active Refs",
-      gradient: "from-cyan-500 to-blue-600",
-      bg: "bg-cyan-500/10",
+      gradient: "from-primary to-accent",
+      bg: "bg-primary/10",
     },
     {
       icon: ArrowDownCircle,
       value: fmt(balances?.totalWithdrawn || 0),
       label: "Withdrawn",
-      gradient: "from-emerald-500 to-teal-600",
-      bg: "bg-emerald-500/10",
+      gradient: "from-emerald-500 to-teal-500",
+      bg: "bg-emerald-50",
     },
     {
       icon: Activity,
       value: txData?.transactions?.length ?? 0,
       label: "Transactions",
-      gradient: "from-amber-500 to-orange-600",
-      bg: "bg-amber-500/10",
+      gradient: "from-amber-500 to-orange-500",
+      bg: "bg-amber-50",
     },
     {
       icon: Hash,
       value: user?.referralCode ?? "—",
       label: "Ref Code",
-      gradient: "from-violet-500 to-purple-600",
-      bg: "bg-violet-500/10",
+      gradient: "from-secondary to-violet-500",
+      bg: "bg-secondary/10",
       mono: true,
     },
   ];
@@ -154,39 +154,40 @@ export default function Profile() {
     <div className="space-y-5">
       {/* Header Banner */}
       <div
-        className="relative rounded-2xl p-6 border border-white/5 overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(135deg, #1a0508 0%, #250a10 50%, #1a0508 100%)",
-        }}
+        className="relative rounded-2xl p-6 border border-primary/20 overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #5b8dee 0%, #8b6ff5 100%)" }}
       >
-        <div className="absolute inset-0 opacity-30 pointer-events-none" style={{ background: "radial-gradient(ellipse at 60% 0%, rgba(220,38,38,0.3) 0%, transparent 60%)" }} />
+        <div className="absolute inset-0 opacity-20 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 60% 0%, rgba(255,255,255,0.4) 0%, transparent 60%)" }} />
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="w-18 h-18 min-w-[4.5rem] min-h-[4.5rem] rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white text-xl font-black shadow-xl shadow-red-500/30 border-4 border-[#1a0508]" style={{ width: "4.5rem", height: "4.5rem" }}>
+          <div
+            className="min-w-[4.5rem] min-h-[4.5rem] rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-white text-xl font-black shadow-xl"
+            style={{ width: "4.5rem", height: "4.5rem" }}
+          >
             {user?.avatarInitials || "U"}
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold text-white break-words">{user?.username}</h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
               {user?.email && (
-                <span className="flex items-center gap-1.5 text-slate-400 text-xs">
+                <span className="flex items-center gap-1.5 text-white/70 text-xs">
                   <Mail className="w-3 h-3" /> {user.email}
                 </span>
               )}
               {user?.createdAt && (
-                <span className="flex items-center gap-1.5 text-slate-400 text-xs">
+                <span className="flex items-center gap-1.5 text-white/70 text-xs">
                   <Calendar className="w-3 h-3" /> Joined {new Date(user.createdAt as string).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
               )}
               {user?.country && (
-                <span className="flex items-center gap-1.5 text-slate-400 text-xs">
+                <span className="flex items-center gap-1.5 text-white/70 text-xs">
                   <Globe className="w-3 h-3" /> {countryLabel(user.country)}
                 </span>
               )}
             </div>
             <div className="mt-2">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 rounded-full">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-white border border-white/30 bg-white/15 px-2.5 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 bg-emerald-300 rounded-full animate-pulse" />
                 Active
               </span>
             </div>
@@ -197,13 +198,13 @@ export default function Profile() {
       {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {STAT_CARDS.map(({ icon: Icon, value, label, gradient, bg, mono }) => (
-          <div key={label} className={`${bg} border border-white/5 rounded-2xl p-4 flex items-center gap-3`}>
+          <div key={label} className={`${bg} border border-border rounded-2xl p-4 flex items-center gap-3 bg-card shadow-sm`}>
             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
               <Icon className="w-4 h-4 text-white" />
             </div>
             <div className="min-w-0">
-              <p className={`text-base font-bold text-white truncate ${mono ? "font-mono text-sm" : ""}`}>{String(value)}</p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">{label}</p>
+              <p className={`text-base font-bold text-foreground truncate ${mono ? "font-mono text-sm" : ""}`}>{String(value)}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
             </div>
           </div>
         ))}
@@ -214,46 +215,46 @@ export default function Profile() {
         {/* Left Column */}
         <div className="space-y-5">
           {/* Profile Information */}
-          <div className="bg-[#1a0508] border border-red-900/20 rounded-2xl p-5">
+          <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-red-500/20 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-3.5 h-3.5 text-red-400" />
+              <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-3.5 h-3.5 text-primary" />
               </div>
-              <h3 className="text-white font-semibold text-sm">Profile Information</h3>
+              <h3 className="text-foreground font-semibold text-sm">Profile Information</h3>
             </div>
             <div className="space-y-4">
               <div>
                 <p className={labelCls()}>Username</p>
-                <p className="text-white font-semibold text-base">{user?.username}</p>
+                <p className="text-foreground font-semibold text-base">{user?.username}</p>
               </div>
               <div>
                 <p className={labelCls()}>Email</p>
-                <p className="text-white font-semibold text-base">{user?.email}</p>
+                <p className="text-foreground font-semibold text-base">{user?.email}</p>
               </div>
               <div>
                 <p className={labelCls()}>Phone</p>
-                <p className="text-white font-semibold text-base">{user?.phone || "—"}</p>
+                <p className="text-foreground font-semibold text-base">{user?.phone || "—"}</p>
               </div>
               <div>
                 <p className={labelCls()}>Country</p>
-                <p className="text-white font-semibold text-base">{countryLabel(user?.country)}</p>
+                <p className="text-foreground font-semibold text-base">{countryLabel(user?.country)}</p>
               </div>
               <div>
                 <p className={labelCls()}>Status</p>
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                   {user?.status || "Active"}
                 </span>
               </div>
               <div>
                 <p className={labelCls()}>Referral Link</p>
-                <div className="flex items-center gap-2 bg-[#0d0508] border border-red-900/30 rounded-xl px-3 py-2.5">
-                  <p className="text-slate-400 text-xs font-mono truncate flex-1">
+                <div className="flex items-center gap-2 bg-muted border border-border rounded-xl px-3 py-2.5">
+                  <p className="text-muted-foreground text-xs font-mono truncate flex-1">
                     {stats?.inviteLink || "—"}
                   </p>
                   <button
                     onClick={handleCopyLink}
-                    className="flex-shrink-0 flex items-center gap-1 text-[11px] font-bold bg-red-500/20 text-red-400 px-2.5 py-1 rounded-lg hover:bg-red-500/30 transition-colors"
+                    className="flex-shrink-0 flex items-center gap-1 text-[11px] font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-lg hover:bg-primary/20 transition-colors"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -263,20 +264,20 @@ export default function Profile() {
           </div>
 
           {/* My Upline */}
-          <div className="bg-[#1a0508] border border-red-900/20 rounded-2xl p-5">
+          <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-violet-500/20 rounded-lg flex items-center justify-center">
-                <Users className="w-3.5 h-3.5 text-violet-400" />
+              <div className="w-7 h-7 bg-secondary/10 rounded-lg flex items-center justify-center">
+                <Users className="w-3.5 h-3.5 text-secondary" />
               </div>
-              <h3 className="text-white font-semibold text-sm">My Upline</h3>
+              <h3 className="text-foreground font-semibold text-sm">My Upline</h3>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm">
                 ML
               </div>
               <div>
-                <p className="text-white font-semibold">MALIGAIN</p>
-                <p className="flex items-center gap-1 text-slate-400 text-xs mt-0.5">
+                <p className="text-foreground font-semibold">MALIGAIN</p>
+                <p className="flex items-center gap-1 text-muted-foreground text-xs mt-0.5">
                   <Globe className="w-3 h-3" /> {countryLabel(user?.country)}
                 </p>
               </div>
@@ -287,12 +288,12 @@ export default function Profile() {
         {/* Right Column */}
         <div className="space-y-5">
           {/* Update Profile */}
-          <div className="bg-[#1a0508] border border-red-900/20 rounded-2xl p-5">
+          <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-red-500/20 rounded-lg flex items-center justify-center">
-                <Save className="w-3.5 h-3.5 text-red-400" />
+              <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Save className="w-3.5 h-3.5 text-primary" />
               </div>
-              <h3 className="text-white font-semibold text-sm">Update Profile</h3>
+              <h3 className="text-foreground font-semibold text-sm">Update Profile</h3>
             </div>
             <form onSubmit={handleProfileSubmit(onProfileSave)} className="space-y-4">
               <div>
@@ -314,15 +315,14 @@ export default function Profile() {
                   <select
                     {...regProfile("country")}
                     className={`${inputCls()} appearance-none cursor-pointer`}
-                    style={{ colorScheme: "dark" }}
                   >
                     {COUNTRIES.map((c) => (
-                      <option key={c.value} value={c.value} className="bg-[#1a0508] text-white">
+                      <option key={c.value} value={c.value}>
                         {c.label}
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
                     <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
@@ -332,8 +332,7 @@ export default function Profile() {
               <button
                 type="submit"
                 disabled={updateMutation.isPending}
-                className="w-full py-3 rounded-xl font-semibold text-white text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)" }}
+                className="w-full py-3 rounded-xl font-semibold text-primary-foreground text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90 bg-primary disabled:opacity-60"
               >
                 {updateMutation.isPending ? (
                   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -349,12 +348,12 @@ export default function Profile() {
           </div>
 
           {/* Change Password */}
-          <div className="bg-[#1a0508] border border-red-900/20 rounded-2xl p-5">
+          <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-amber-500/20 rounded-lg flex items-center justify-center">
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <div className="w-7 h-7 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                <Lock className="w-3.5 h-3.5 text-amber-600" />
               </div>
-              <h3 className="text-white font-semibold text-sm">Change Password</h3>
+              <h3 className="text-foreground font-semibold text-sm">Change Password</h3>
             </div>
             <form onSubmit={handlePassSubmit(onPassSave)} className="space-y-4">
               <div>
@@ -368,7 +367,7 @@ export default function Profile() {
                     placeholder="••••••••"
                     className={`${inputCls()} pr-11`}
                   />
-                  <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                  <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                     {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
@@ -384,11 +383,11 @@ export default function Profile() {
                     placeholder="••••••••"
                     className={`${inputCls()} pr-11`}
                   />
-                  <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                  <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                     {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-600 mt-1">Minimum 6 characters</p>
+                <p className="text-[11px] text-muted-foreground mt-1">Minimum 6 characters</p>
               </div>
               <div>
                 <label className={labelCls()}>Confirm Password</label>
@@ -399,19 +398,18 @@ export default function Profile() {
                     placeholder="••••••••"
                     className={`${inputCls()} pr-11`}
                   />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
                 {passErrors.confirmPassword && (
-                  <p className="text-red-400 text-xs mt-1">{passErrors.confirmPassword.message}</p>
+                  <p className="text-destructive text-xs mt-1">{passErrors.confirmPassword.message}</p>
                 )}
               </div>
               <button
                 type="submit"
                 disabled={changePasswordMutation.isPending}
-                className="w-full py-3 rounded-xl font-semibold text-white text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" }}
+                className="w-full py-3 rounded-xl font-semibold text-amber-50 text-sm flex items-center justify-center gap-2 transition-all hover:opacity-90 bg-amber-500 disabled:opacity-60"
               >
                 {changePasswordMutation.isPending ? (
                   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -429,36 +427,36 @@ export default function Profile() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-[#1a0508] border border-red-900/20 rounded-2xl p-5">
+      <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 bg-blue-500/20 rounded-lg flex items-center justify-center">
-            <Activity className="w-3.5 h-3.5 text-blue-400" />
+          <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center">
+            <Activity className="w-3.5 h-3.5 text-primary" />
           </div>
-          <h3 className="text-white font-semibold text-sm">Recent Activity</h3>
+          <h3 className="text-foreground font-semibold text-sm">Recent Activity</h3>
         </div>
         <div className="space-y-1">
           {txData?.transactions && txData.transactions.length > 0 ? (
             txData.transactions.map((tx: any) => {
               const isPositive = ["recharge", "bonus", "commission", "referral"].includes(tx.type);
               return (
-                <div key={tx.id} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
+                <div key={tx.id} className="flex items-center justify-between py-3 border-b border-border last:border-0">
                   <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${isPositive ? "bg-emerald-500/15" : "bg-red-500/15"}`}>
-                      <Activity className={`w-4 h-4 ${isPositive ? "text-emerald-400" : "text-red-400"}`} />
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${isPositive ? "bg-emerald-50" : "bg-destructive/10"}`}>
+                      <Activity className={`w-4 h-4 ${isPositive ? "text-emerald-600" : "text-destructive"}`} />
                     </div>
                     <div>
-                      <p className="text-white text-sm font-medium">{tx.description}</p>
-                      <p className="text-slate-500 text-xs mt-0.5">{formatDate(tx.createdAt)}</p>
+                      <p className="text-foreground text-sm font-medium">{tx.description}</p>
+                      <p className="text-muted-foreground text-xs mt-0.5">{formatDate(tx.createdAt)}</p>
                     </div>
                   </div>
-                  <span className={`text-sm font-bold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
+                  <span className={`text-sm font-bold ${isPositive ? "text-emerald-600" : "text-destructive"}`}>
                     {isPositive ? "+" : "-"}{fmt(tx.amount)}
                   </span>
                 </div>
               );
             })
           ) : (
-            <p className="text-slate-500 text-sm text-center py-6">No recent activity</p>
+            <p className="text-muted-foreground text-sm text-center py-6">No recent activity</p>
           )}
         </div>
       </div>
