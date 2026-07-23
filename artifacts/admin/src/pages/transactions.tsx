@@ -5,10 +5,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 function TypeBadge({ type }: { type: string }) {
   const colors: Record<string, string> = {
-    recharge: "bg-blue-100 text-blue-700",
-    withdrawal: "bg-purple-100 text-purple-700",
-    credit: "bg-green-100 text-green-700",
-    debit: "bg-red-100 text-red-700",
+    recharge: "bg-primary/10 text-primary",
+    withdrawal: "bg-secondary/10 text-secondary",
+    credit: "bg-emerald-100 text-emerald-700",
+    debit: "bg-destructive/10 text-destructive",
     referral_bonus: "bg-primary/10 text-primary",
     commission: "bg-amber-100 text-amber-700",
   };
@@ -21,9 +21,9 @@ function TypeBadge({ type }: { type: string }) {
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    completed: "bg-green-100 text-green-700",
+    completed: "bg-emerald-100 text-emerald-700",
     pending: "bg-amber-100 text-amber-700",
-    failed: "bg-red-100 text-red-700",
+    failed: "bg-destructive/10 text-destructive",
   };
   return (
     <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] ?? "bg-muted text-muted-foreground"}`}>

@@ -81,7 +81,7 @@ export default function Control() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b border-border-2 border-primary" />
       </div>
     );
   }
@@ -93,24 +93,24 @@ export default function Control() {
 
       {/* Page heading */}
       <div className="flex items-center gap-3">
-        <Sliders className="h-6 w-6 text-indigo-500 shrink-0" />
+        <Sliders className="h-6 w-6 text-primary shrink-0" />
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Control Panel</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-0.5">Manage activation fees and referral bonus rates per country</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Control Panel</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Manage activation fees and referral bonus rates per country</p>
         </div>
       </div>
 
       {/* ── Activation Fees ───────────────────────────────────────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-wrap items-center gap-3">
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+        <div className="px-4 sm:px-6 py-4 border-b border-border flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <DollarSign className="h-5 w-5 text-indigo-500 shrink-0" />
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Activation Fees</h2>
+            <DollarSign className="h-5 w-5 text-primary shrink-0" />
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">Activation Fees</h2>
           </div>
           <button
             onClick={() => saveFeeMut.mutate()}
             disabled={saveFeeMut.isPending}
-            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 w-full sm:w-auto justify-center"
+            className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 w-full sm:w-auto justify-center"
           >
             <Save className="h-4 w-4" />
             {saveFeeMut.isPending ? "Saving…" : "Save Fees"}
@@ -122,13 +122,13 @@ export default function Control() {
             const { name, currency, flag } = COUNTRY_LABELS[code];
             return (
               <div key={code} className="space-y-1.5">
-                <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                <label className="flex items-center gap-1.5 text-sm font-medium text-foreground/80">
                   <span>{flag}</span>
                   <span>{name}</span>
-                  <span className="text-xs text-gray-400 font-normal">({currency})</span>
+                  <span className="text-xs text-muted-foreground font-normal">({currency})</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
-                  <span className="px-3 py-2.5 bg-gray-50 text-gray-500 text-sm border-r border-gray-300 font-mono shrink-0">
+                <div className="flex items-center border border-input rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                  <span className="px-3 py-2.5 bg-muted/30 text-muted-foreground text-sm border-r border-input font-mono shrink-0">
                     {currency}
                   </span>
                   <input
@@ -138,7 +138,7 @@ export default function Control() {
                     step="1"
                     value={fees[code]}
                     onChange={e => setFees(prev => ({ ...prev, [code]: parseFloat(e.target.value) || 0 }))}
-                    className="flex-1 min-w-0 px-3 py-2.5 text-sm text-gray-900 bg-white outline-none"
+                    className="flex-1 min-w-0 px-3 py-2.5 text-sm text-foreground bg-card outline-none"
                   />
                 </div>
                 {code === "CM" && (
@@ -154,15 +154,15 @@ export default function Control() {
       </div>
 
       {/* ── Referral Bonus Table ──────────────────────────────────────── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
 
         {/* Section header */}
-        <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-wrap items-start gap-3">
+        <div className="px-4 sm:px-6 py-4 border-b border-border flex flex-wrap items-start gap-3">
           <div className="flex items-start gap-2 flex-1 min-w-0">
-            <GitBranch className="h-5 w-5 text-indigo-500 shrink-0 mt-0.5" />
+            <GitBranch className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <div className="min-w-0">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Referral Bonus Table</h2>
-              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground">Referral Bonus Table</h2>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
                 Bonus paid to the <strong>upline</strong> in their currency when a new member activates.
               </p>
             </div>
@@ -170,7 +170,7 @@ export default function Control() {
           <button
             onClick={() => saveBonusMut.mutate()}
             disabled={saveBonusMut.isPending}
-            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 w-full sm:w-auto justify-center"
+            className="flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 w-full sm:w-auto justify-center"
           >
             <Save className="h-4 w-4" />
             {saveBonusMut.isPending ? "Saving…" : "Save Bonuses"}
@@ -178,7 +178,7 @@ export default function Control() {
         </div>
 
         {/* Upline tabs — show code on mobile, full name on sm+ */}
-        <div className="border-b border-gray-200 bg-gray-50">
+        <div className="border-b border-border bg-muted/30">
           <div className="flex overflow-x-auto px-3 sm:px-6 py-2 gap-1 scrollbar-hide">
             {COUNTRIES.map(code => {
               const { name, currency, flag } = COUNTRY_LABELS[code];
@@ -189,14 +189,14 @@ export default function Control() {
                   onClick={() => setActiveUpline(code)}
                   className={`flex flex-col items-center px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
                     active
-                      ? "bg-indigo-600 text-white shadow-sm"
-                      : "text-gray-600 hover:bg-white hover:shadow-sm"
+                      ? "bg-primary text-white shadow-sm"
+                      : "text-muted-foreground hover:bg-card hover:shadow-sm"
                   }`}
                 >
                   <span className="text-base leading-none mb-0.5">{flag}</span>
                   <span className="hidden sm:block">{name}</span>
                   <span className="sm:hidden">{code}</span>
-                  <span className={`text-[10px] mt-0.5 ${active ? "text-indigo-200" : "text-gray-400"}`}>
+                  <span className={`text-[10px] mt-0.5 ${active ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
                     {currency}
                   </span>
                 </button>
@@ -206,8 +206,8 @@ export default function Control() {
         </div>
 
         {/* Context label */}
-        <div className="px-4 sm:px-6 py-3 bg-indigo-50 border-b border-indigo-100">
-          <p className="text-xs sm:text-sm text-indigo-700">
+        <div className="px-4 sm:px-6 py-3 bg-primary/10 border-b border-border border-indigo-100">
+          <p className="text-xs sm:text-sm text-primary">
             <strong>{COUNTRY_LABELS[activeUpline].flag} {COUNTRY_LABELS[activeUpline].name}</strong> upline earns bonuses in{" "}
             <strong>{uplineCurrency}</strong> when members from each country below activate.
           </p>
@@ -218,22 +218,22 @@ export default function Control() {
           {COUNTRIES.map(down => {
             const { name, currency, flag } = COUNTRY_LABELS[down];
             return (
-              <div key={down} className="border border-gray-200 rounded-xl p-4 space-y-3 bg-gray-50">
+              <div key={down} className="border border-border rounded-xl p-4 space-y-3 bg-muted/30">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{flag}</span>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">{name}</p>
-                    <p className="text-xs text-gray-400">New member from {currency}</p>
+                    <p className="text-sm font-semibold text-foreground">{name}</p>
+                    <p className="text-xs text-muted-foreground">New member from {currency}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
                   {([0, 1, 2] as const).map(lvl => (
                     <div key={lvl} className="flex items-center gap-2">
-                      <span className="w-8 shrink-0 text-xs font-bold text-indigo-600 uppercase tracking-wide">
+                      <span className="w-8 shrink-0 text-xs font-bold text-primary uppercase tracking-wide">
                         L{lvl + 1}
                       </span>
-                      <div className="flex-1 flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
-                        <span className="px-2 py-2 bg-gray-50 text-gray-400 text-xs border-r border-gray-200 font-mono shrink-0">
+                      <div className="flex-1 flex items-center border border-input rounded-lg overflow-hidden bg-card focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                        <span className="px-2 py-2 bg-muted/30 text-muted-foreground text-xs border-r border-border font-mono shrink-0">
                           {uplineCurrency}
                         </span>
                         <input
@@ -243,7 +243,7 @@ export default function Control() {
                           step="1"
                           value={bonusTable[activeUpline][down][lvl]}
                           onChange={e => setBonus(activeUpline, down, lvl, e.target.value)}
-                          className="flex-1 min-w-0 px-3 py-2 text-sm text-gray-900 bg-white outline-none"
+                          className="flex-1 min-w-0 px-3 py-2 text-sm text-foreground bg-card outline-none"
                         />
                       </div>
                     </div>
@@ -259,32 +259,32 @@ export default function Control() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 pr-4 font-semibold text-gray-700 w-44">
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 pr-4 font-semibold text-foreground/80 w-44">
                     New Member Country
                   </th>
                   {(["L1 Bonus", "L2 Bonus", "L3 Bonus"] as const).map((label, i) => (
-                    <th key={i} className="text-center py-2 px-3 font-semibold text-gray-700 w-40">
+                    <th key={i} className="text-center py-2 px-3 font-semibold text-foreground/80 w-40">
                       {label}
-                      <span className="block text-xs font-normal text-gray-400">
+                      <span className="block text-xs font-normal text-muted-foreground">
                         {i === 0 ? "Direct referral" : i === 1 ? "2nd level" : "3rd level"}
                       </span>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-border">
                 {COUNTRIES.map(down => (
-                  <tr key={down} className="hover:bg-gray-50">
+                  <tr key={down} className="hover:bg-muted/30">
                     <td className="py-3 pr-4">
                       <span className="mr-1.5">{COUNTRY_LABELS[down].flag}</span>
-                      <span className="font-medium text-gray-900">{COUNTRY_LABELS[down].name}</span>
-                      <span className="ml-1.5 text-xs text-gray-400">{COUNTRY_LABELS[down].currency}</span>
+                      <span className="font-medium text-foreground">{COUNTRY_LABELS[down].name}</span>
+                      <span className="ml-1.5 text-xs text-muted-foreground">{COUNTRY_LABELS[down].currency}</span>
                     </td>
                     {([0, 1, 2] as const).map(lvl => (
                       <td key={lvl} className="py-3 px-3">
-                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
-                          <span className="px-2 py-1.5 bg-gray-50 text-gray-400 text-xs border-r border-gray-300 font-mono shrink-0">
+                        <div className="flex items-center border border-input rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                          <span className="px-2 py-1.5 bg-muted/30 text-muted-foreground text-xs border-r border-input font-mono shrink-0">
                             {uplineCurrency}
                           </span>
                           <input
@@ -294,7 +294,7 @@ export default function Control() {
                             step="1"
                             value={bonusTable[activeUpline][down][lvl]}
                             onChange={e => setBonus(activeUpline, down, lvl, e.target.value)}
-                            className="w-full px-2 py-1.5 text-sm text-gray-900 bg-white outline-none min-w-0"
+                            className="w-full px-2 py-1.5 text-sm text-foreground bg-card outline-none min-w-0"
                           />
                         </div>
                       </td>
@@ -307,7 +307,7 @@ export default function Control() {
         </div>
 
         <div className="px-4 sm:px-6 pb-4">
-          <p className="text-xs text-gray-400">Set a bonus to 0 to disable that level for that country combination.</p>
+          <p className="text-xs text-muted-foreground">Set a bonus to 0 to disable that level for that country combination.</p>
         </div>
       </div>
     </div>

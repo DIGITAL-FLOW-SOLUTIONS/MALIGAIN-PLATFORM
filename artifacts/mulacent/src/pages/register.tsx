@@ -13,15 +13,15 @@ function TermsDialog({ open, onClose, onAccept }: { open: boolean; onClose: () =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-slate-100 flex-shrink-0">
-          <h2 className="text-slate-800 font-bold text-base">Terms of Service &amp; Refund Policy</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
+      <div className="relative w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-border flex-shrink-0">
+          <h2 className="text-foreground font-bold text-base">Terms of Service &amp; Refund Policy</h2>
+          <button onClick={onClose} className="text-muted-foreground hover:text-muted-foreground transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="overflow-y-auto px-6 py-4 space-y-4 flex-1 text-sm text-slate-600">
+        <div className="overflow-y-auto px-6 py-4 space-y-4 flex-1 text-sm text-muted-foreground">
           {[
             { title: "1. Nature of Service", body: "MALIGAIN provides a digital subscription service. The registration fee grants immediate access to our Digital Marketing Hub and affiliate portal." },
             { title: "2. No-Refund Policy", body: "Due to the digital nature of our products, the registration fee is strictly non-refundable once the account is activated." },
@@ -31,7 +31,7 @@ function TermsDialog({ open, onClose, onAccept }: { open: boolean; onClose: () =
             { title: "6. Earnings Disclaimer", body: "Earnings are based on your referral activity. MALIGAIN does not guarantee any specific income. Results vary by individual effort." },
           ].map((s) => (
             <div key={s.title}>
-              <p className="text-blue-600 font-bold text-xs uppercase tracking-wide mb-1">{s.title}</p>
+              <p className="text-primary font-bold text-xs uppercase tracking-wide mb-1">{s.title}</p>
               <p>{s.body}</p>
             </div>
           ))}
@@ -41,7 +41,7 @@ function TermsDialog({ open, onClose, onAccept }: { open: boolean; onClose: () =
           </div>
         </div>
 
-        <div className="flex gap-3 px-6 py-4 border-t border-slate-100 flex-shrink-0">
+        <div className="flex gap-3 px-6 py-4 border-t border-border flex-shrink-0">
           <button
             onClick={onAccept}
             className="flex-1 py-2.5 rounded-xl font-semibold text-white text-sm transition-all"
@@ -51,7 +51,7 @@ function TermsDialog({ open, onClose, onAccept }: { open: boolean; onClose: () =
           </button>
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl font-semibold text-slate-600 text-sm bg-slate-100 hover:bg-slate-200 transition-all"
+            className="px-5 py-2.5 rounded-xl font-semibold text-muted-foreground text-sm bg-muted hover:bg-muted/80 transition-all"
           >
             Close
           </button>
@@ -94,7 +94,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 function FieldIcon({ status }: { status: FieldStatus | "valid" }) {
-  if (status === "checking") return <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />;
+  if (status === "checking") return <Loader2 className="w-4 h-4 text-primary animate-spin" />;
   if (status === "available" || status === "valid") return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
   if (status === "taken" || status === "invalid") return <XCircle className="w-4 h-4 text-red-500" />;
   return null;
@@ -106,7 +106,7 @@ function fieldCls(status: FieldStatus | "valid" | "error" | "idle") {
     return `${base} border-emerald-400 ring-2 ring-emerald-400/20`;
   if (status === "taken" || status === "invalid" || status === "error")
     return `${base} border-red-400 ring-2 ring-red-400/20`;
-  return `${base} border-slate-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-400/20`;
+  return `${base} border-border focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20`;
 }
 
 // WealthEarn palette
@@ -195,7 +195,7 @@ export default function Register() {
   const usernameValid = usernameValue.length >= 3 && !errors.username;
   const passwordValid = passwordValue.length >= 6 && !errors.password;
 
-  const inputCls = "flex-1 bg-transparent py-3 px-4 text-slate-800 text-sm focus:outline-none placeholder:text-slate-400";
+  const inputCls = "flex-1 bg-transparent py-3 px-4 text-foreground text-sm focus:outline-none placeholder:text-muted-foreground";
 
   return (
     <>
@@ -258,21 +258,21 @@ export default function Register() {
             <div className="flex lg:hidden items-center gap-3 mb-6 justify-center">
               <img src={`${BASE}images/logo.png`} alt="Logo" className="w-12 h-12 rounded-xl object-cover" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
               <div>
-                <h1 className="font-black tracking-widest text-slate-800" style={{ fontSize: 22, letterSpacing: "0.15em" }}>MALIGAIN</h1>
-                <p className="text-slate-400 text-xs">Digital Agency Platform</p>
+                <h1 className="font-black tracking-widest text-foreground" style={{ fontSize: 22, letterSpacing: "0.15em" }}>MALIGAIN</h1>
+                <p className="text-muted-foreground text-xs">Digital Agency Platform</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+            <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
               <div className="mb-5">
-                <h2 className="text-slate-800 font-bold text-xl mb-1">Create account</h2>
-                <p className="text-slate-500 text-sm">Start earning today — it only takes a minute.</p>
+                <h2 className="text-foreground font-bold text-xl mb-1">Create account</h2>
+                <p className="text-muted-foreground text-sm">Start earning today — it only takes a minute.</p>
               </div>
 
               {refCode && (
-                <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 mb-4">
-                  <span className="text-blue-500 text-sm">🎫</span>
-                  <p className="text-blue-700 text-xs">
+                <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-xl px-4 py-2.5 mb-4">
+                  <span className="text-primary text-sm">🎫</span>
+                  <p className="text-primary text-xs">
                     Invited by{" "}
                     <span className="font-bold">{referrerName ?? refCode}</span>
                   </p>
@@ -283,8 +283,8 @@ export default function Register() {
 
                 {/* Username */}
                 <div>
-                  <label className="text-slate-600 text-sm font-medium mb-1.5 block">Username <span className="text-slate-400 font-normal">(display name)</span></label>
-                  <div className={`relative flex items-center bg-slate-50 rounded-xl ${fieldCls(errors.username ? "error" : usernameValid ? "valid" : "idle")}`}>
+                  <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Username <span className="text-muted-foreground font-normal">(display name)</span></label>
+                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.username ? "error" : usernameValid ? "valid" : "idle")}`}>
                     <input {...register("username")} type="text" placeholder="Your display name" autoComplete="username" className={inputCls} />
                     <span className="pr-3"><FieldIcon status={errors.username ? "invalid" : usernameValid ? "valid" : "idle"} /></span>
                   </div>
@@ -293,8 +293,8 @@ export default function Register() {
 
                 {/* Email */}
                 <div>
-                  <label className="text-slate-600 text-sm font-medium mb-1.5 block">Email</label>
-                  <div className={`relative flex items-center bg-slate-50 rounded-xl ${fieldCls(errors.email ? "error" : emailStatus === "available" ? "available" : emailStatus === "taken" ? "taken" : "idle")}`}>
+                  <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Email</label>
+                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.email ? "error" : emailStatus === "available" ? "available" : emailStatus === "taken" ? "taken" : "idle")}`}>
                     <input {...register("email")} type="email" placeholder="you@email.com" autoComplete="email" className={inputCls} />
                     <span className="pr-3"><FieldIcon status={errors.email ? "invalid" : emailStatus === "idle" ? "idle" : emailStatus} /></span>
                   </div>
@@ -305,8 +305,8 @@ export default function Register() {
 
                 {/* Phone */}
                 <div>
-                  <label className="text-slate-600 text-sm font-medium mb-1.5 block">Phone</label>
-                  <div className={`relative flex items-center bg-slate-50 rounded-xl ${fieldCls(errors.phone ? "error" : phoneStatus === "available" ? "available" : phoneStatus === "taken" ? "taken" : "idle")}`}>
+                  <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Phone</label>
+                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.phone ? "error" : phoneStatus === "available" ? "available" : phoneStatus === "taken" ? "taken" : "idle")}`}>
                     <input {...register("phone")} type="tel" placeholder="07XXXXXXXX" autoComplete="tel" className={inputCls} />
                     <span className="pr-3"><FieldIcon status={errors.phone ? "invalid" : phoneStatus === "idle" ? "idle" : phoneStatus} /></span>
                   </div>
@@ -317,14 +317,14 @@ export default function Register() {
 
                 {/* Country */}
                 <div>
-                  <label className="text-slate-600 text-sm font-medium mb-1.5 block">Country</label>
-                  <div className={`relative bg-slate-50 rounded-xl ${fieldCls(errors.country ? "error" : "idle")}`}>
-                    <select {...register("country")} className="w-full bg-transparent py-3 px-4 text-slate-800 text-sm focus:outline-none appearance-none cursor-pointer">
+                  <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Country</label>
+                  <div className={`relative bg-muted/50 rounded-xl ${fieldCls(errors.country ? "error" : "idle")}`}>
+                    <select {...register("country")} className="w-full bg-transparent py-3 px-4 text-foreground text-sm focus:outline-none appearance-none cursor-pointer">
                       {COUNTRIES.map((c) => (
                         <option key={c.value} value={c.value}>{c.label}</option>
                       ))}
                     </select>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
                       <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
@@ -334,12 +334,12 @@ export default function Register() {
 
                 {/* Password */}
                 <div>
-                  <label className="text-slate-600 text-sm font-medium mb-1.5 block">Password</label>
-                  <div className={`relative flex items-center bg-slate-50 rounded-xl ${fieldCls(errors.password ? "error" : passwordValid ? "valid" : "idle")}`}>
+                  <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Password</label>
+                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.password ? "error" : passwordValid ? "valid" : "idle")}`}>
                     <input {...register("password")} type={showPassword ? "text" : "password"} placeholder="Min. 6 characters" autoComplete="new-password" className={inputCls} />
                     <div className="flex items-center gap-1.5 pr-3 flex-shrink-0">
                       <FieldIcon status={errors.password ? "invalid" : passwordValid ? "valid" : "idle"} />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-muted-foreground hover:text-muted-foreground transition-colors">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
@@ -350,12 +350,12 @@ export default function Register() {
                 {/* Terms */}
                 <div>
                   <label className="flex items-start gap-2 cursor-pointer mt-1">
-                    <input type="checkbox" {...register("agreeTerms")} className="w-4 h-4 mt-0.5 rounded border-slate-300 accent-blue-500 flex-shrink-0" />
-                    <span className="text-slate-600 text-xs leading-relaxed">
+                    <input type="checkbox" {...register("agreeTerms")} className="w-4 h-4 mt-0.5 rounded border-input accent-primary flex-shrink-0" />
+                    <span className="text-muted-foreground text-xs leading-relaxed">
                       I agree to the{" "}
-                      <button type="button" onClick={() => setTermsOpen(true)} className="text-blue-500 font-semibold hover:text-blue-600 transition-colors underline-offset-2 hover:underline">Terms of Service</button>
+                      <button type="button" onClick={() => setTermsOpen(true)} className="text-primary font-semibold hover:text-primary transition-colors underline-offset-2 hover:underline">Terms of Service</button>
                       {" "}and{" "}
-                      <button type="button" onClick={() => setTermsOpen(true)} className="text-blue-500 font-semibold hover:text-blue-600 transition-colors underline-offset-2 hover:underline">No-Refund Policy</button>
+                      <button type="button" onClick={() => setTermsOpen(true)} className="text-primary font-semibold hover:text-primary transition-colors underline-offset-2 hover:underline">No-Refund Policy</button>
                     </span>
                   </label>
                   {errors.agreeTerms && <p className="text-red-500 text-xs mt-1 ml-6 flex items-center gap-1"><XCircle className="w-3 h-3" /> {errors.agreeTerms.message}</p>}
@@ -384,13 +384,13 @@ export default function Register() {
                 </button>
               </form>
 
-              <p className="text-center mt-5 text-sm text-slate-500">
+              <p className="text-center mt-5 text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link href="/login" className="text-blue-500 hover:text-blue-600 font-semibold transition-colors">Sign In</Link>
+                <Link href="/login" className="text-primary hover:text-primary font-semibold transition-colors">Sign In</Link>
               </p>
             </div>
 
-            <p className="text-center mt-5 text-xs text-slate-400">© 2026 MALIGAIN. All rights reserved.</p>
+            <p className="text-center mt-5 text-xs text-muted-foreground">© 2026 MALIGAIN. All rights reserved.</p>
           </div>
         </div>
       </div>

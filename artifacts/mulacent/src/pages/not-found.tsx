@@ -9,8 +9,8 @@ export default function NotFound() {
         <div className="w-20 h-20 bg-destructive/20 rounded-full flex items-center justify-center mx-auto text-destructive">
           <AlertCircle className="w-10 h-10" />
         </div>
-        <h1 className="text-6xl font-display font-black text-white">404</h1>
-        <p className="text-xl text-white/80">Page not found</p>
+        <h1 className="text-6xl font-display font-black text-foreground">404</h1>
+        <p className="text-xl text-foreground/80">Page not found</p>
         <p className="text-muted-foreground">The page you are looking for doesn't exist or has been moved.</p>
         <div className="pt-4">
           <Link href="/">

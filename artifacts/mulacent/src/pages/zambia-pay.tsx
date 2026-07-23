@@ -86,34 +86,25 @@ export default function ZambiaPay() {
     : "PAY WITH AIRTEL ZAMBIA (AUTOMATIC PAYMENT)";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0d0518]">
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <img
-          src={`${import.meta.env.BASE_URL}images/auth-bg.png`}
-          alt="Background"
-          className="w-full h-full object-cover opacity-70"
-        />
-        <div className="absolute inset-0 bg-[#0d0518]/60" />
-      </div>
-
-      <div className="w-full max-w-sm z-10">
-        <div className="bg-white rounded-2xl p-6 shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="w-full max-w-sm">
+        <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
           <div className="flex items-center gap-3 mb-5">
             <img
               src={`${import.meta.env.BASE_URL}images/logo.png`}
               alt="Logo"
               className="w-10 h-10 rounded-full object-cover"
             />
-            <span className="text-[#3b1fa8] font-black text-xl tracking-wide">
+            <span className="text-primary font-black text-xl tracking-wide">
               MALIGAIN
             </span>
           </div>
 
-          <h2 className="text-[#3b1fa8] font-bold text-center text-base underline mb-5 leading-snug">
+          <h2 className="text-primary font-bold text-center text-base underline mb-5 leading-snug">
             {title}
           </h2>
 
-          <div className="space-y-2 text-sm text-gray-800 mb-5">
+          <div className="space-y-2 text-sm text-foreground mb-5">
             <p>
               1. Dial <span className="font-black">*115#</span> on your{" "}
               <span className="font-black">
@@ -125,12 +116,12 @@ export default function ZambiaPay() {
             <p>4. Select Kenya</p>
             <div className="flex items-center gap-2">
               <p>5. Enter Number</p>
-              <span className="font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">
+              <span className="font-bold text-foreground bg-gray-100 px-2 py-0.5 rounded">
                 {paymentId}
               </span>
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded transition-colors"
+                className="flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground text-xs px-3 py-1 rounded transition-colors"
               >
                 {copied ? (
                   <Check className="w-3 h-3" />
@@ -153,8 +144,8 @@ export default function ZambiaPay() {
             <p>8. Enter PIN</p>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-3 mb-4">
-            <p className="text-sm text-gray-700 mb-2">
+          <div className="bg-muted/30 rounded-xl p-3 mb-4">
+            <p className="text-sm text-foreground/80 mb-2">
               Enter number you used to pay. Enter it below and press confirm
             </p>
             <input
@@ -162,20 +153,14 @@ export default function ZambiaPay() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Enter mobile 260.. user"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#3b1fa8]/30 focus:border-[#3b1fa8] placeholder:text-gray-400"
+              className="w-full border border-input rounded-lg px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-muted-foreground"
             />
           </div>
 
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 transition-all mb-3"
-            style={{
-              background: loading
-                ? "rgba(34,197,94,0.4)"
-                : "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
-              boxShadow: loading ? "none" : "0 4px 18px rgba(22,163,74,0.3)",
-            }}
+            className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all mb-3 shadow-sm disabled:opacity-50"
           >
             {loading ? (
               <svg
@@ -204,7 +189,7 @@ export default function ZambiaPay() {
           <div className="text-center">
             <button
               onClick={logout}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-xs text-muted-foreground hover:text-muted-foreground transition-colors"
             >
               ← Logout
             </button>

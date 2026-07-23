@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useLocation, useSearch } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { getGetCurrentUserQueryKey } from "@workspace/api-client-react";
+import { CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
 
 type PaymentState = "pending" | "completed" | "failed" | "timeout";
 
@@ -98,141 +99,85 @@ export default function PaymentStatus() {
   const isPending = status === "pending";
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ background: "#0d0518" }}
-    >
-      <div className="absolute inset-0 z-0">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse at 30% 40%, rgba(120,0,200,0.25) 0%, transparent 55%), radial-gradient(ellipse at 70% 70%, rgba(180,0,120,0.15) 0%, transparent 50%)",
-          }}
-        />
-        {[...Array(24)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: Math.random() * 3 + 1 + "px",
-              height: Math.random() * 3 + 1 + "px",
-              background:
-                i % 4 === 0
-                  ? "#f5c518"
-                  : i % 4 === 1
-                  ? "#c800e0"
-                  : i % 4 === 2
-                  ? "#ffffff"
-                  : "#e040fb",
-              opacity: Math.random() * 0.6 + 0.15,
-              left: Math.random() * 100 + "%",
-              top: Math.random() * 100 + "%",
-            }}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="w-full max-w-sm">
+        <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
 
-      <div className="w-full max-w-sm z-10">
-        <div
-          className="rounded-2xl p-7 border shadow-2xl backdrop-blur-sm"
-          style={{
-            background: "rgba(20, 10, 35, 0.92)",
-            borderColor: "rgba(180,0,200,0.2)",
-          }}
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <img
-              src={`${import.meta.env.BASE_URL}images/logo.png`}
-              alt="Logo"
-              className="w-10 h-10 rounded-full object-cover border-2 border-purple-500/40"
-            />
-            <div>
-              <h1 className="text-white font-bold text-sm leading-tight">MALIGAIN</h1>
-              <p className="text-xs tracking-widest uppercase" style={{ color: "rgba(200,0,224,0.8)" }}>
-                Payment Status
-              </p>
+          {/* Header */}
+          <div className="relative px-6 pt-6 pb-5 bg-gradient-to-br from-primary to-secondary overflow-hidden">
+            <div className="absolute inset-0 opacity-20"
+              style={{ background: "radial-gradient(ellipse at top right, rgba(255,255,255,0.4) 0%, transparent 60%)" }} />
+            <div className="relative z-10 flex items-center gap-3">
+              <img
+                src={`${import.meta.env.BASE_URL}images/logo.png`}
+                alt="Logo"
+                className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
+              />
+              <div>
+                <h1 className="text-white font-bold text-sm leading-tight">MALIGAIN</h1>
+                <p className="text-white/70 text-xs tracking-widest uppercase">Payment Status</p>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col items-center py-6 text-center">
+          <div className="p-7 flex flex-col items-center text-center">
             {isPending ? (
               <>
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
-                  style={{ background: "rgba(180,0,200,0.15)", border: "2px solid rgba(180,0,200,0.3)" }}
-                >
-                  <div
-                    className="w-9 h-9 border-4 rounded-full animate-spin"
-                    style={{ borderColor: "rgba(180,0,200,0.3)", borderTopColor: "#c800e0" }}
-                  />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-5 bg-primary/10 border-2 border-primary/20">
+                  <div className="w-9 h-9 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
                 </div>
-                <h2 className="text-white font-bold text-lg mb-2">Awaiting Payment</h2>
-                <p className="text-gray-400 text-sm leading-relaxed mb-4">{message}</p>
-                <p className="text-xs" style={{ color: "rgba(180,0,200,0.7)" }}>
+                <h2 className="text-foreground font-bold text-lg mb-2">Awaiting Payment</h2>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4">{message}</p>
+                <p className="text-primary text-xs font-semibold">
                   {MAX_WAIT - elapsed}s remaining
                 </p>
-                <div
-                  className="w-full h-1 rounded-full mt-4 overflow-hidden"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
+                <div className="w-full h-1.5 rounded-full mt-4 overflow-hidden bg-muted">
                   <div
-                    className="h-full rounded-full transition-all duration-1000"
-                    style={{
-                      width: `${Math.min((elapsed / MAX_WAIT) * 100, 100)}%`,
-                      background: "linear-gradient(90deg, #c800e0, #ff6de0)",
-                    }}
+                    className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-primary to-secondary"
+                    style={{ width: `${Math.min((elapsed / MAX_WAIT) * 100, 100)}%` }}
                   />
                 </div>
               </>
+
             ) : isSuccess ? (
               <>
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
-                  style={{ background: "rgba(16,185,129,0.15)", border: "2px solid rgba(16,185,129,0.4)" }}
-                >
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
-                    <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-5 bg-emerald-100 border-2 border-emerald-200">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-600" />
                 </div>
-                <h2 className="font-bold text-lg mb-2" style={{ color: "#10b981" }}>
-                  Payment Successful
-                </h2>
-                <p className="text-gray-400 text-sm leading-relaxed mb-6">{message}</p>
-                <div className="w-full h-px mb-5" style={{ background: "rgba(255,255,255,0.07)" }} />
+                <h2 className="font-bold text-lg mb-2 text-emerald-600">Payment Successful</h2>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6">{message}</p>
+                <div className="w-full h-px mb-5 bg-border" />
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className="w-full py-3.5 rounded-xl font-bold text-sm text-white"
-                  style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)" }}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 transition-all shadow-sm"
                 >
                   Go to Dashboard
                 </button>
               </>
+
             ) : (
               <>
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
-                  style={{ background: "rgba(239,68,68,0.12)", border: "2px solid rgba(239,68,68,0.35)" }}
-                >
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18" strokeLinecap="round" />
-                    <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
-                  </svg>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-5 bg-destructive/10 border-2 border-destructive/20">
+                  <XCircle className="w-8 h-8 text-destructive" />
                 </div>
-                <h2 className="font-bold text-lg mb-2" style={{ color: "#ef4444" }}>
-                  Payment Failed
-                </h2>
-                <p className="text-gray-400 text-sm leading-relaxed mb-6">{message}</p>
-                <div className="w-full h-px mb-5" style={{ background: "rgba(255,255,255,0.07)" }} />
+                <h2 className="font-bold text-lg mb-2 text-destructive">Payment Failed</h2>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6">{message}</p>
+                <div className="w-full h-px mb-5 bg-border" />
                 <button
                   onClick={() => navigate(backPath)}
-                  className="w-full py-3.5 rounded-xl font-bold text-sm text-white"
-                  style={{ background: "linear-gradient(135deg, #c800e0 0%, #a000c0 100%)" }}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 transition-all shadow-sm"
                 >
                   Try Again
                 </button>
               </>
             )}
+
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
+            </button>
           </div>
         </div>
       </div>
