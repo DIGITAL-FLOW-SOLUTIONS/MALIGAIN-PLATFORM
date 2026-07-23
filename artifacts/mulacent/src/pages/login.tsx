@@ -158,7 +158,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoggingIn}
-                className="w-full py-3 rounded-xl font-semibold text-white text-sm transition-all flex items-center justify-center gap-2 mt-1 disabled:opacity-60"
+                className="w-full py-3 font-semibold text-white text-sm transition-all flex items-center justify-center gap-2 mt-1 disabled:opacity-60"
                 style={{ background: "linear-gradient(135deg, #5b8dee 0%, #3b6fd4 100%)", boxShadow: "0 4px 16px rgba(91,141,238,0.4)" }}
               >
                 {isLoggingIn ? (

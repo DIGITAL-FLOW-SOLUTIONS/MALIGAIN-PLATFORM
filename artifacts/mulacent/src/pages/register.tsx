@@ -44,14 +44,14 @@ function TermsDialog({ open, onClose, onAccept }: { open: boolean; onClose: () =
         <div className="flex gap-3 px-6 py-4 border-t border-border flex-shrink-0">
           <button
             onClick={onAccept}
-            className="flex-1 py-2.5 rounded-xl font-semibold text-white text-sm transition-all"
+            className="flex-1 py-2.5 font-semibold text-white text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #5b8dee 0%, #3b6fd4 100%)" }}
           >
             I Agree &amp; Accept
           </button>
           <button
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl font-semibold text-muted-foreground text-sm bg-muted hover:bg-muted/80 transition-all"
+            className="px-5 py-2.5 font-semibold text-muted-foreground text-sm bg-muted hover:bg-muted/80 transition-all"
           >
             Close
           </button>
@@ -373,7 +373,7 @@ export default function Register() {
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="w-full py-3 rounded-xl font-semibold text-white text-sm transition-all flex items-center justify-center gap-2 mt-1 disabled:opacity-60"
+                  className="w-full py-3 font-semibold text-white text-sm transition-all flex items-center justify-center gap-2 mt-1 disabled:opacity-60"
                   style={{ background: "linear-gradient(135deg, #5b8dee 0%, #3b6fd4 100%)", boxShadow: "0 4px 16px rgba(91,141,238,0.4)" }}
                 >
                   {isRegistering ? (
