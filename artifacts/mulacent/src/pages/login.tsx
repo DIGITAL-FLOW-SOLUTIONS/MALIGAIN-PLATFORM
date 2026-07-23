@@ -117,7 +117,7 @@ export default function Login() {
                   type="text"
                   placeholder="username, 07XXXXXXXX or you@email.com"
                   autoComplete="username"
-                  className="w-full border border-slate-200 bg-slate-50 rounded-xl py-3 px-4 text-slate-800 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all placeholder:text-slate-400"
+                  className="w-full border border-slate-200 bg-slate-50 py-3 px-4 text-slate-800 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all placeholder:text-slate-400"
                 />
                 {errors.identifier && <p className="text-red-500 text-xs mt-1">{errors.identifier.message}</p>}
               </div>
@@ -133,7 +133,7 @@ export default function Login() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     autoComplete="current-password"
-                    className="w-full border border-slate-200 bg-slate-50 rounded-xl py-3 px-4 pr-11 text-slate-800 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all placeholder:text-slate-400"
+                    className="w-full border border-slate-200 bg-slate-50 py-3 px-4 pr-11 text-slate-800 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all placeholder:text-slate-400"
                   />
                   <button
                     type="button"

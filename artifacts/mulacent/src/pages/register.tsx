@@ -283,7 +283,7 @@ export default function Register() {
                 {/* Username */}
                 <div>
                   <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Username <span className="text-muted-foreground font-normal">(display name)</span></label>
-                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.username ? "error" : usernameValid ? "valid" : "idle")}`}>
+                  <div className={`relative flex items-center bg-muted/50 ${fieldCls(errors.username ? "error" : usernameValid ? "valid" : "idle")}`}>
                     <input
                       {...register("username")}
                       type="text"
@@ -303,7 +303,7 @@ export default function Register() {
                 {/* Email */}
                 <div>
                   <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Email</label>
-                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.email ? "error" : emailStatus === "available" ? "available" : emailStatus === "taken" ? "taken" : "idle")}`}>
+                  <div className={`relative flex items-center bg-muted/50 ${fieldCls(errors.email ? "error" : emailStatus === "available" ? "available" : emailStatus === "taken" ? "taken" : "idle")}`}>
                     <input {...register("email")} type="email" placeholder="you@email.com" autoComplete="email" className={inputCls} />
                     <span className="pr-3"><FieldIcon status={errors.email ? "invalid" : emailStatus === "idle" ? "idle" : emailStatus} /></span>
                   </div>
@@ -315,7 +315,7 @@ export default function Register() {
                 {/* Phone */}
                 <div>
                   <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Phone</label>
-                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.phone ? "error" : phoneStatus === "available" ? "available" : phoneStatus === "taken" ? "taken" : "idle")}`}>
+                  <div className={`relative flex items-center bg-muted/50 ${fieldCls(errors.phone ? "error" : phoneStatus === "available" ? "available" : phoneStatus === "taken" ? "taken" : "idle")}`}>
                     <input {...register("phone")} type="tel" placeholder="07XXXXXXXX" autoComplete="tel" className={inputCls} />
                     <span className="pr-3"><FieldIcon status={errors.phone ? "invalid" : phoneStatus === "idle" ? "idle" : phoneStatus} /></span>
                   </div>
@@ -327,7 +327,7 @@ export default function Register() {
                 {/* Country */}
                 <div>
                   <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Country</label>
-                  <div className={`relative bg-muted/50 rounded-xl ${fieldCls(errors.country ? "error" : "idle")}`}>
+                  <div className={`relative bg-muted/50 ${fieldCls(errors.country ? "error" : "idle")}`}>
                     <select {...register("country")} className="w-full bg-transparent py-3 px-4 text-foreground text-sm focus:outline-none appearance-none cursor-pointer">
                       {COUNTRIES.map((c) => (
                         <option key={c.value} value={c.value}>{c.label}</option>
@@ -344,7 +344,7 @@ export default function Register() {
                 {/* Password */}
                 <div>
                   <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Password</label>
-                  <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.password ? "error" : passwordValid ? "valid" : "idle")}`}>
+                  <div className={`relative flex items-center bg-muted/50 ${fieldCls(errors.password ? "error" : passwordValid ? "valid" : "idle")}`}>
                     <input {...register("password")} type={showPassword ? "text" : "password"} placeholder="Min. 6 characters" autoComplete="new-password" className={inputCls} />
                     <div className="flex items-center gap-1.5 pr-3 flex-shrink-0">
                       <FieldIcon status={errors.password ? "invalid" : passwordValid ? "valid" : "idle"} />
