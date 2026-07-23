@@ -264,7 +264,7 @@ export default function Register() {
 
             <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
               <div className="mb-5">
-                <h2 className="text-foreground font-bold text-xl mb-1">Create account</h2>
+                <h2 className="text-foreground font-bold text-xl mb-1">CREATE ACCOUNT</h2>
                 <p className="text-muted-foreground text-sm">Start earning today — it only takes a minute.</p>
               </div>
 
