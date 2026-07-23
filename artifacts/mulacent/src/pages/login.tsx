@@ -80,7 +80,6 @@ export default function Login() {
               { icon: "🏆", title: "Tournaments", desc: "Compete and win big rewards" },
             ].map((item) => (
               <div key={item.title} className="flex items-center gap-3 text-left px-4 py-3 rounded-xl" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
-                <span style={{ fontSize: 22 }}>{item.icon}</span>
                 <div>
                   <p className="text-white font-semibold text-sm">{item.title}</p>
                   <p className="text-blue-200/60 text-xs">{item.desc}</p>
