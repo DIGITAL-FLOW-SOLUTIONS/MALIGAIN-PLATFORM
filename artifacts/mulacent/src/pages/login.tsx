@@ -105,7 +105,7 @@ export default function Login() {
 
           <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
             <div className="mb-6">
-              <h2 className="text-slate-800 font-bold text-xl mb-1">Sign in</h2>
+              <h2 className="text-slate-800 font-bold text-xl mb-1">LOGIN</h2>
               <p className="text-slate-500 text-sm">Welcome back! Use your username, phone, or email to continue.</p>
             </div>
 
