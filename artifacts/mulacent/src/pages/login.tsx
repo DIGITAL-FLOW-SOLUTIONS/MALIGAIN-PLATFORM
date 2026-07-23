@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
-  identifier: z.string().min(1, "Phone number or email is required"),
+  identifier: z.string().min(1, "Username, phone number, or email is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().default(false),
 });
@@ -106,16 +106,16 @@ export default function Login() {
           <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
             <div className="mb-6">
               <h2 className="text-slate-800 font-bold text-xl mb-1">Sign in</h2>
-              <p className="text-slate-500 text-sm">Welcome back! Use your phone or email to continue.</p>
+              <p className="text-slate-500 text-sm">Welcome back! Use your username, phone, or email to continue.</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" autoComplete="on">
               <div>
-                <label className="text-slate-600 text-sm font-medium mb-1.5 block">Phone Number or Email</label>
+                <label className="text-slate-600 text-sm font-medium mb-1.5 block">Username, Phone Number or Email</label>
                 <input
                   {...register("identifier")}
                   type="text"
-                  placeholder="07XXXXXXXX or you@email.com"
+                  placeholder="username, 07XXXXXXXX or you@email.com"
                   autoComplete="username"
                   className="w-full border border-slate-200 bg-slate-50 rounded-xl py-3 px-4 text-slate-800 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all placeholder:text-slate-400"
                 />

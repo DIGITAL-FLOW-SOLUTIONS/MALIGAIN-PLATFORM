@@ -184,28 +184,25 @@ router.post("/register", async (req: Request, res: Response) => {
 router.post("/login", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const identifier: string = email ?? "";
+    const identifier: string = (email ?? "").trim();
 
     if (!identifier || !password) {
       res.status(400).json({
         error: "ValidationError",
-        message: "Phone number or email and password are required",
+        message: "Username, phone number, or email and password are required",
       });
       return;
     }
 
-    const isPhone = !identifier.includes("@");
     const { rows: users } = await pool.query(
-      isPhone
-        ? `SELECT * FROM users WHERE phone = $1 LIMIT 1`
-        : `SELECT * FROM users WHERE email = $1 LIMIT 1`,
+      `SELECT * FROM users WHERE email = $1 OR phone = $1 OR username = $1 LIMIT 1`,
       [identifier],
     );
 
     if (users.length === 0) {
       res.status(401).json({
         error: "AuthError",
-        message: "Invalid credentials. Please check your phone number or email and password.",
+        message: "Invalid credentials. Please check your username, phone number, or email and password.",
       });
       return;
     }

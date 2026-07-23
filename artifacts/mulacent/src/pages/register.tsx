@@ -284,7 +284,17 @@ export default function Register() {
                 <div>
                   <label className="text-muted-foreground text-sm font-medium mb-1.5 block">Username <span className="text-muted-foreground font-normal">(display name)</span></label>
                   <div className={`relative flex items-center bg-muted/50 rounded-xl ${fieldCls(errors.username ? "error" : usernameValid ? "valid" : "idle")}`}>
-                    <input {...register("username")} type="text" placeholder="Your display name" autoComplete="username" className={inputCls} />
+                    <input
+                      {...register("username")}
+                      type="text"
+                      placeholder="Your display name"
+                      autoComplete="username"
+                      className={inputCls}
+                      onInput={(e) => {
+                        const el = e.currentTarget;
+                        el.value = el.value.replace(/\s/g, "");
+                      }}
+                    />
                     <span className="pr-3"><FieldIcon status={errors.username ? "invalid" : usernameValid ? "valid" : "idle"} /></span>
                   </div>
                   {errors.username && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><XCircle className="w-3 h-3" /> {errors.username.message}</p>}
