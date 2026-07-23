@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useRoute } from "wouter";
 import { useAdmin } from "@/hooks/useAdmin";
-import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard, Users, CreditCard, CheckSquare, ClipboardList,
   ListOrdered, LogOut, Shield, Menu, X, UserCog, ArrowDownToLine, Gift, Settings, Sliders,
@@ -26,8 +25,10 @@ function NavItem({ href, label, icon: Icon }: { href: string; label: string; ico
   const [active] = useRoute(href === "/" ? "/" : `${href}*`);
   return (
     <Link href={href}>
-      <span className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-        active ? "bg-indigo-600 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"
+      <span className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+        active
+          ? "bg-primary/10 text-primary"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}>
         <Icon className="h-4 w-4 shrink-0" />
         {label}
@@ -41,38 +42,40 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {open && (
         <div className="fixed inset-0 z-20 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />
       )}
 
       <aside className={`
-        fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 flex flex-col transition-transform duration-200
+        fixed inset-y-0 left-0 z-30 w-64 bg-sidebar border-r border-sidebar-border flex flex-col transition-transform duration-200
         lg:relative lg:translate-x-0
         ${open ? "translate-x-0" : "-translate-x-full"}
       `}>
-        <div className="flex items-center gap-2 px-4 py-5 border-b border-gray-700">
-          <Shield className="h-6 w-6 text-indigo-400" />
-          <span className="text-white font-bold text-lg">MALIGAIN Admin</span>
-          <button className="ml-auto lg:hidden text-gray-400" onClick={() => setOpen(false)}>
+        <div className="flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border">
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <Shield className="h-4 w-4 text-primary" />
+          </div>
+          <span className="text-foreground font-bold text-base">MALIGAIN Admin</span>
+          <button className="ml-auto lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
           {NAV.map(n => <NavItem key={n.href} {...n} />)}
         </nav>
 
-        <div className="px-3 py-4 border-t border-gray-700">
-          <div className="flex items-center gap-3 px-4 py-2 mb-2">
-            <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+        <div className="px-3 py-4 border-t border-sidebar-border">
+          <div className="flex items-center gap-3 px-3 py-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold shrink-0">
               {admin?.username?.substring(0, 2).toUpperCase()}
             </div>
-            <span className="text-gray-300 text-sm font-medium truncate">{admin?.username}</span>
+            <span className="text-foreground text-sm font-medium truncate">{admin?.username}</span>
           </div>
           <button
             onClick={logout}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg text-sm text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <LogOut className="h-4 w-4" />
             Logout
@@ -81,11 +84,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center lg:hidden">
-          <button onClick={() => setOpen(true)} className="text-gray-500 hover:text-gray-700">
+        <header className="bg-card border-b border-border px-4 py-3 flex items-center lg:hidden">
+          <button onClick={() => setOpen(true)} className="text-muted-foreground hover:text-foreground">
             <Menu className="h-5 w-5" />
           </button>
-          <span className="ml-3 font-semibold text-gray-800">MALIGAIN Admin</span>
+          <span className="ml-3 font-semibold text-foreground">MALIGAIN Admin</span>
         </header>
         <main className="flex-1 overflow-y-auto p-6">
           {children}
