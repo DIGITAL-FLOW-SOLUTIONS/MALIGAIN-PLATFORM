@@ -69,6 +69,13 @@ const COUNTRIES = [
   { value: "UG", label: "Uganda" },
   { value: "TZ", label: "Tanzania" },
   { value: "ZM", label: "Zambia" },
+  { value: "CG", label: "Congo" },
+  { value: "NG", label: "Nigeria" },
+  { value: "MW", label: "Malawi" },
+  { value: "BW", label: "Botswana" },
+  { value: "SS", label: "South Sudan" },
+  { value: "RW", label: "Rwanda" },
+  { value: "BI", label: "Burundi" },
 ];
 
 const registerSchema = z.object({
