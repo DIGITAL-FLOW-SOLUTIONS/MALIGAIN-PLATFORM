@@ -173,11 +173,6 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 h-px bg-slate-200" />
-              <span className="text-slate-400 text-xs">or continue with</span>
-              <div className="flex-1 h-px bg-slate-200" />
-            </div>
 
             <div className="flex gap-3 justify-center">
               {/* Facebook */}
