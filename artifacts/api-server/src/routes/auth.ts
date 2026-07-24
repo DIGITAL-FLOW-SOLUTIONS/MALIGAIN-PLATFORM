@@ -1,5 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import bcrypt from "bcryptjs";
+import { createClient } from "@supabase/supabase-js";
 import { pool } from "../lib/db";
 import { supabase } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
@@ -306,6 +307,76 @@ router.post("/activate", requireAuth, async (req: Request, res: Response) => {
   } catch (err) {
     req.log.error({ err }, "Activate error");
     res.status(500).json({ error: "ServerError", message: "Activation failed. Please try again." });
+  }
+});
+
+// ── Password Reset ──────────────────────────────────────────────────
+const SUPABASE_URL = process.env["SUPABASE_URL"] ?? "";
+const SUPABASE_ANON_KEY = process.env["SUPABASE_ANON_KEY"] ?? "";
+const APP_URL = process.env["APP_URL"] ?? "";
+
+router.post("/forgot-password", async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes("@")) {
+      res.status(400).json({ error: "ValidationError", message: "A valid email is required" });
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+      redirectTo: `${APP_URL}/update-password`,
+    });
+
+    if (error) throw error;
+
+    res.json({ message: "If that email is registered, you will receive password reset instructions shortly." });
+  } catch (err) {
+    req.log.error({ err }, "Forgot-password error");
+    res.status(500).json({ error: "ServerError", message: "Failed to send reset email" });
+  }
+});
+
+router.post("/reset-password", async (req: Request, res: Response) => {
+  try {
+    const { accessToken, password } = req.body;
+
+    if (!accessToken) {
+      res.status(400).json({ error: "ValidationError", message: "Access token is required" });
+      return;
+    }
+    if (!password || password.length < 6) {
+      res.status(400).json({ error: "ValidationError", message: "Password must be at least 6 characters" });
+      return;
+    }
+
+    // Create an anon-key client to work with the user's session
+    const anonClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Set the session using the recovery access token
+    const { error: sessionError } = await anonClient.auth.setSession({
+      access_token: accessToken,
+      refresh_token: "",
+    });
+    if (sessionError) throw sessionError;
+
+    // Verify the session is valid by getting the user
+    const { data: userData, error: userError } = await anonClient.auth.getUser();
+    if (userError || !userData.user?.email) throw userError ?? new Error("Invalid token");
+
+    const email = userData.user.email;
+
+    // Update password in Supabase Auth
+    const { error: updateError } = await anonClient.auth.updateUser({ password });
+    if (updateError) throw updateError;
+
+    // Also update password in the local DB to keep custom auth in sync
+    const passwordHash = await bcrypt.hash(password, 12);
+    await pool.query(`UPDATE users SET password_hash = $1 WHERE email = $2`, [passwordHash, email]);
+
+    res.json({ message: "Password updated successfully. You can now log in with your new password." });
+  } catch (err) {
+    req.log.error({ err }, "Reset-password error");
+    res.status(500).json({ error: "ServerError", message: "Failed to reset password. The link may have expired." });
   }
 });
 

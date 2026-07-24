@@ -9,6 +9,8 @@ import LaunchingPage from "@/pages/launching";
 
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import ForgotPassword from "@/pages/forgot-password";
+import UpdatePassword from "@/pages/update-password";
 import Activate from "@/pages/activate";
 import PaymentStatus from "@/pages/payment-status";
 import Dashboard from "@/pages/dashboard";
@@ -238,6 +240,8 @@ function Router() {
       <Route path="/" component={() => <Redirect to="/dashboard" />} />
       <Route path="/login" component={() => <PublicOnlyRoute component={Login} />} />
       <Route path="/register" component={() => <PublicOnlyRoute component={Register} />} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/update-password" component={UpdatePassword} />
       <Route path="/activate" component={() => <ActivateRoute />} />
       <Route path="/payment-status" component={() => <PaymentStatusRoute />} />
 
