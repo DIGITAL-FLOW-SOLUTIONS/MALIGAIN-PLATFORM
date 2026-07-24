@@ -20,6 +20,13 @@ const COUNTRIES = [
   { value: "GH", label: "🇬🇭 Ghana" },
   { value: "ZM", label: "🇿🇲 Zambia" },
   { value: "CM", label: "🇨🇲 Cameroon" },
+  { value: "BW", label: "🇧🇼 Botswana" },
+  { value: "RW", label: "🇷🇼 Rwanda" },
+  { value: "CG", label: "🇨🇩 Congo" },
+  { value: "MW", label: "🇲🇼 Malawi" },
+  { value: "NG", label: "🇳🇬 Nigeria" },
+  { value: "SS", label: "🇸🇸 South Sudan" },
+  { value: "BI", label: "🇧🇮 Burundi" },
 ];
 
 function StatusBadge({ status }: { status: string }) {

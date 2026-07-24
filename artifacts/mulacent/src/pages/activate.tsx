@@ -8,18 +8,19 @@ const COUNTRY_FEES: Record<
   string,
   { label: string; amount: string; currency: string; hint: string }
 > = {
-  KE: { label: "Kenya",       amount: "100",   currency: "KES", hint: "Accepts: 07XX..., 254XX..., +254XX..." },
+  KE: { label: "Kenya",       amount: "350",   currency: "KES", hint: "Accepts: 07XX..., 254XX..., +254XX..." },
   CM: { label: "Cameroon",    amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
-  GH: { label: "Ghana",       amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
-  NG: { label: "Nigeria",     amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
-  UG: { label: "Uganda",      amount: "10000", currency: "UGX", hint: "Pay via MTN or Airtel Uganda" },
-  ZM: { label: "Zambia",      amount: "100",   currency: "ZK",  hint: "Pay via MTN or Airtel Zambia" },
+  GH: { label: "Ghana",       amount: "60",    currency: "GHS", hint: "Pay via Eversend link below" },
+  NG: { label: "Nigeria",     amount: "7500",  currency: "NGN", hint: "Pay via Eversend link below" },
+  UG: { label: "Uganda",      amount: "12000", currency: "UGX", hint: "Pay via MTN or Airtel Uganda" },
+  ZM: { label: "Zambia",      amount: "115",   currency: "ZK",  hint: "Pay via MTN or Airtel Zambia" },
   TZ: { label: "Tanzania",    amount: "7500",  currency: "TZS", hint: "Pay via Vodacom Tanzania" },
   CG: { label: "Congo",       amount: "15000", currency: "CDF", hint: "Pay via M-Pesa Congo (*1122#)" },
   MW: { label: "Malawi",      amount: "12000", currency: "MWK", hint: "Pay via Airtel Malawi (*211#)" },
   BW: { label: "Botswana",    amount: "75",    currency: "BWP", hint: "Pay via Orange Money (*145#)" },
   SS: { label: "South Sudan", amount: "20000", currency: "SSP", hint: "Pay via MTN South Sudan MoMo" },
   RW: { label: "Rwanda",      amount: "5500",  currency: "RWF", hint: "Pay via MTN Rwanda MoMo (*182*1*3#)" },
+  BI: { label: "Burundi",     amount: "25000", currency: "BIF", hint: "Pay via Eversend link below" },
 };
 
 function randomUgxAmount(base = 10000): number {

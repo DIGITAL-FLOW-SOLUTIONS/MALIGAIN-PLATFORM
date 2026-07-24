@@ -17,12 +17,19 @@ import {
 import { cn } from "@/lib/utils";
 
 const COUNTRY_FEES: Record<string, { amount: string; currency: string }> = {
-  KE: { amount: "100", currency: "KES" },
-  CM: { amount: "2500", currency: "XAF" },
-  GH: { amount: "55", currency: "GHS" },
-  UG: { amount: "10000", currency: "UGX" },
-  ZM: { amount: "100", currency: "ZK" },
+  KE: { amount: "350",  currency: "KES" },
+  CM: { amount: "2510", currency: "XAF" },
+  GH: { amount: "60",   currency: "GHS" },
+  UG: { amount: "12000",currency: "UGX" },
+  ZM: { amount: "115",  currency: "ZK" },
   TZ: { amount: "7500", currency: "TZS" },
+  CG: { amount: "15000",currency: "CDF" },
+  NG: { amount: "7500", currency: "NGN" },
+  MW: { amount: "12000",currency: "MWK" },
+  BW: { amount: "75",   currency: "BWP" },
+  SS: { amount: "20000",currency: "SSP" },
+  RW: { amount: "5500", currency: "RWF" },
+  BI: { amount: "25000",currency: "BIF" },
 };
 
 const FALLBACK_EVERSEND_LINK = "https://eversend.me/kantolah";

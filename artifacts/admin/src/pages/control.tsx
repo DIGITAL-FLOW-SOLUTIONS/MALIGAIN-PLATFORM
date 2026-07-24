@@ -4,23 +4,30 @@ import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Sliders, DollarSign, GitBranch } from "lucide-react";
 
-const COUNTRIES = ["KE", "UG", "TZ", "GH", "ZM", "CM"] as const;
+const COUNTRIES = ["KE", "UG", "TZ", "GH", "ZM", "CM", "BW", "RW", "CG", "MW", "NG", "SS", "BI"] as const;
 type Country = (typeof COUNTRIES)[number];
 
 const COUNTRY_LABELS: Record<Country, { name: string; currency: string; flag: string }> = {
-  KE: { name: "Kenya",    currency: "KES", flag: "🇰🇪" },
-  UG: { name: "Uganda",   currency: "UGX", flag: "🇺🇬" },
-  TZ: { name: "Tanzania", currency: "TZS", flag: "🇹🇿" },
-  GH: { name: "Ghana",    currency: "GHS", flag: "🇬🇭" },
-  ZM: { name: "Zambia",   currency: "ZMW", flag: "🇿🇲" },
-  CM: { name: "Cameroon", currency: "XAF", flag: "🇨🇲" },
+  KE: { name: "Kenya",      currency: "KES", flag: "🇰🇪" },
+  UG: { name: "Uganda",     currency: "UGX", flag: "🇺🇬" },
+  TZ: { name: "Tanzania",   currency: "TZS", flag: "🇹🇿" },
+  GH: { name: "Ghana",      currency: "GHS", flag: "🇬🇭" },
+  ZM: { name: "Zambia",     currency: "ZMW", flag: "🇿🇲" },
+  CM: { name: "Cameroon",   currency: "XAF", flag: "🇨🇲" },
+  BW: { name: "Botswana",   currency: "BWP", flag: "🇧🇼" },
+  RW: { name: "Rwanda",     currency: "RWF", flag: "🇷🇼" },
+  CG: { name: "Congo",      currency: "CDF", flag: "🇨🇩" },
+  MW: { name: "Malawi",     currency: "MWK", flag: "🇲🇼" },
+  NG: { name: "Nigeria",    currency: "NGN", flag: "🇳🇬" },
+  SS: { name: "South Sudan",currency: "SSP", flag: "🇸🇸" },
+  BI: { name: "Burundi",    currency: "BIF", flag: "🇧🇮" },
 };
 
 type BonusTable   = Record<Country, Record<Country, [number, number, number]>>;
 type ActivationFees = Record<Country, number>;
 
 function emptyFees(): ActivationFees {
-  return { KE: 100, UG: 10000, TZ: 7500, GH: 55, ZM: 100, CM: 2510 };
+  return { KE: 350, UG: 12000, TZ: 7500, GH: 60, ZM: 115, CM: 2510, BW: 75, RW: 5500, CG: 15000, MW: 12000, NG: 7500, SS: 20000, BI: 25000 };
 }
 
 function emptyBonusTable(): BonusTable {
