@@ -99,6 +99,121 @@ router.get("/zambia", async (req, res) => {
   }
 });
 
+router.get("/congo", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("app_settings")
+      .select("key, value, business_name")
+      .in("key", ["congo_agent_number", "congo_agent_name"]);
+
+    if (error) throw error;
+
+    const map: Record<string, { value: string; business_name: string | null }> = {};
+    for (const row of (data ?? []) as Array<{ key: string; value: string; business_name: string | null }>) {
+      map[row.key] = { value: row.value, business_name: row.business_name };
+    }
+
+    res.json({
+      congoAgentNumber: map["congo_agent_number"]?.value ?? "03317296",
+      congoAgentName: map["congo_agent_name"]?.value ?? "ADEZILA",
+    });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch settings" });
+  }
+});
+
+router.get("/malawi", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("app_settings")
+      .select("key, value, business_name")
+      .in("key", ["malawi_phone", "malawi_business_name"]);
+
+    if (error) throw error;
+
+    const map: Record<string, string> = {};
+    for (const row of (data ?? []) as Array<{ key: string; value: string }>) {
+      map[row.key] = row.value;
+    }
+
+    res.json({
+      malawiPhone: map["malawi_phone"] ?? "254757574729",
+      malawiBusinessName: map["malawi_business_name"] ?? "CHARLES",
+    });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch settings" });
+  }
+});
+
+router.get("/botswana", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("app_settings")
+      .select("key, value")
+      .in("key", ["botswana_phone", "botswana_business_name"]);
+
+    if (error) throw error;
+
+    const map: Record<string, string> = {};
+    for (const row of (data ?? []) as Array<{ key: string; value: string }>) {
+      map[row.key] = row.value;
+    }
+
+    res.json({
+      botswanaPhone: map["botswana_phone"] ?? "256787102308",
+      botswanaBusinessName: map["botswana_business_name"] ?? "Amundala Munyama",
+    });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch settings" });
+  }
+});
+
+router.get("/south-sudan", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("app_settings")
+      .select("key, value")
+      .in("key", ["ss_phone", "ss_business_name"]);
+
+    if (error) throw error;
+
+    const map: Record<string, string> = {};
+    for (const row of (data ?? []) as Array<{ key: string; value: string }>) {
+      map[row.key] = row.value;
+    }
+
+    res.json({
+      ssPhone: map["ss_phone"] ?? "256787102308",
+      ssBusinessName: map["ss_business_name"] ?? "Amundala Munyama",
+    });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch settings" });
+  }
+});
+
+router.get("/rwanda", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("app_settings")
+      .select("key, value")
+      .in("key", ["rwanda_phone", "rwanda_business_name"]);
+
+    if (error) throw error;
+
+    const map: Record<string, string> = {};
+    for (const row of (data ?? []) as Array<{ key: string; value: string }>) {
+      map[row.key] = row.value;
+    }
+
+    res.json({
+      rwandaPhone: map["rwanda_phone"] ?? "256787102308",
+      rwandaBusinessName: map["rwanda_business_name"] ?? "Amundala Munyama",
+    });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch settings" });
+  }
+});
+
 router.get("/cameroon", async (req, res) => {
   try {
     const { data, error } = await supabase

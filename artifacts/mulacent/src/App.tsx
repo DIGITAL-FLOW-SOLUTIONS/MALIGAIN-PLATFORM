@@ -29,6 +29,11 @@ import UgandaPay from "@/pages/uganda-pay";
 import ZambiaPay from "@/pages/zambia-pay";
 import TanzaniaPay from "@/pages/tanzania-pay";
 import CameroonPay from "@/pages/cameroon-pay";
+import CongoPay from "@/pages/congo-pay";
+import MalawiPay from "@/pages/malawi-pay";
+import BotswanaPay from "@/pages/botswana-pay";
+import SouthSudanPay from "@/pages/south-sudan-pay";
+import RwandaPay from "@/pages/rwanda-pay";
 import NotFound from "@/pages/not-found";
 import SmtpDebug from "@/pages/smtp-debug";
 
@@ -191,6 +196,41 @@ function CameroonPayRoute() {
   return <CameroonPay />;
 }
 
+function CongoPayRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingSpinner />;
+  if (!user) return <Redirect to="/login" />;
+  return <CongoPay />;
+}
+
+function MalawiPayRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingSpinner />;
+  if (!user) return <Redirect to="/login" />;
+  return <MalawiPay />;
+}
+
+function BotswanaPayRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingSpinner />;
+  if (!user) return <Redirect to="/login" />;
+  return <BotswanaPay />;
+}
+
+function SouthSudanPayRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingSpinner />;
+  if (!user) return <Redirect to="/login" />;
+  return <SouthSudanPay />;
+}
+
+function RwandaPayRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingSpinner />;
+  if (!user) return <Redirect to="/login" />;
+  return <RwandaPay />;
+}
+
 function Router() {
   return (
     <Switch>
@@ -223,6 +263,11 @@ function Router() {
       <Route path="/zambia-pay" component={() => <ZambiaPayRoute />} />
       <Route path="/tanzania-pay" component={() => <TanzaniaPayRoute />} />
       <Route path="/cameroon-pay" component={() => <CameroonPayRoute />} />
+      <Route path="/congo-pay" component={() => <CongoPayRoute />} />
+      <Route path="/malawi-pay" component={() => <MalawiPayRoute />} />
+      <Route path="/botswana-pay" component={() => <BotswanaPayRoute />} />
+      <Route path="/south-sudan-pay" component={() => <SouthSudanPayRoute />} />
+      <Route path="/rwanda-pay" component={() => <RwandaPayRoute />} />
       <Route path="/smtp/debug" component={SmtpDebug} />
 
       <Route component={NotFound} />

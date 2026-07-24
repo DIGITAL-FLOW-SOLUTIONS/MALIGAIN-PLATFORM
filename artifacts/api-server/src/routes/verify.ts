@@ -334,6 +334,171 @@ router.post("/zambia", async (req, res) => {
 });
 
 
+router.post("/congo", async (req, res) => {
+  try {
+    const userId = req.session.userId!;
+    const { phone, paymentMethod } = req.body;
+    if (!phone || !paymentMethod) {
+      res.status(400).json({ message: "Phone and payment method are required." });
+      return;
+    }
+    const { data: pending, error: pendingError } = await supabase.from("eversend_verifications").select("id").eq("user_id", userId).eq("status", "pending").limit(1);
+    if (pendingError) throw pendingError;
+    if (pending && pending.length > 0) {
+      res.status(409).json({ message: "You already have a pending verification. Please wait for it to be reviewed before submitting a new one." });
+      return;
+    }
+    const { data: userData, error: userError } = await supabase.from("users").select("email").eq("id", userId).single();
+    if (userError || !userData) { res.status(404).json({ message: "User not found." }); return; }
+    const { error: insertError } = await supabase.from("eversend_verifications").insert({
+      user_id: userId,
+      email: (userData as Record<string, unknown>)["email"] as string,
+      phone: phone.trim(),
+      screenshot_url: "",
+      amount_paid: await getActivationFee("CG"),
+      currency: "CDF",
+      status: "pending",
+      admin_note: `Payment method: ${paymentMethod}`,
+    });
+    if (insertError) throw insertError;
+    res.json({ message: "Payment submitted for verification. We will review it shortly." });
+  } catch (err: any) {
+    res.status(500).json({ message: "Failed to submit verification. Please try again." });
+  }
+});
+
+router.post("/malawi", async (req, res) => {
+  try {
+    const userId = req.session.userId!;
+    const { phone, paymentMethod } = req.body;
+    if (!phone || !paymentMethod) {
+      res.status(400).json({ message: "Phone and payment method are required." });
+      return;
+    }
+    const { data: pending, error: pendingError } = await supabase.from("eversend_verifications").select("id").eq("user_id", userId).eq("status", "pending").limit(1);
+    if (pendingError) throw pendingError;
+    if (pending && pending.length > 0) {
+      res.status(409).json({ message: "You already have a pending verification. Please wait for it to be reviewed before submitting a new one." });
+      return;
+    }
+    const { data: userData, error: userError } = await supabase.from("users").select("email").eq("id", userId).single();
+    if (userError || !userData) { res.status(404).json({ message: "User not found." }); return; }
+    const { error: insertError } = await supabase.from("eversend_verifications").insert({
+      user_id: userId,
+      email: (userData as Record<string, unknown>)["email"] as string,
+      phone: phone.trim(),
+      screenshot_url: "",
+      amount_paid: await getActivationFee("MW"),
+      currency: "MWK",
+      status: "pending",
+      admin_note: `Payment method: ${paymentMethod}`,
+    });
+    if (insertError) throw insertError;
+    res.json({ message: "Payment submitted for verification. We will review it shortly." });
+  } catch (err: any) {
+    res.status(500).json({ message: "Failed to submit verification. Please try again." });
+  }
+});
+
+router.post("/botswana", async (req, res) => {
+  try {
+    const userId = req.session.userId!;
+    const { phone, paymentMethod } = req.body;
+    if (!phone || !paymentMethod) {
+      res.status(400).json({ message: "Phone and payment method are required." });
+      return;
+    }
+    const { data: pending, error: pendingError } = await supabase.from("eversend_verifications").select("id").eq("user_id", userId).eq("status", "pending").limit(1);
+    if (pendingError) throw pendingError;
+    if (pending && pending.length > 0) {
+      res.status(409).json({ message: "You already have a pending verification. Please wait for it to be reviewed before submitting a new one." });
+      return;
+    }
+    const { data: userData, error: userError } = await supabase.from("users").select("email").eq("id", userId).single();
+    if (userError || !userData) { res.status(404).json({ message: "User not found." }); return; }
+    const { error: insertError } = await supabase.from("eversend_verifications").insert({
+      user_id: userId,
+      email: (userData as Record<string, unknown>)["email"] as string,
+      phone: phone.trim(),
+      screenshot_url: "",
+      amount_paid: await getActivationFee("BW"),
+      currency: "BWP",
+      status: "pending",
+      admin_note: `Payment method: ${paymentMethod}`,
+    });
+    if (insertError) throw insertError;
+    res.json({ message: "Payment submitted for verification. We will review it shortly." });
+  } catch (err: any) {
+    res.status(500).json({ message: "Failed to submit verification. Please try again." });
+  }
+});
+
+router.post("/south-sudan", async (req, res) => {
+  try {
+    const userId = req.session.userId!;
+    const { phone, paymentMethod } = req.body;
+    if (!phone || !paymentMethod) {
+      res.status(400).json({ message: "Phone and payment method are required." });
+      return;
+    }
+    const { data: pending, error: pendingError } = await supabase.from("eversend_verifications").select("id").eq("user_id", userId).eq("status", "pending").limit(1);
+    if (pendingError) throw pendingError;
+    if (pending && pending.length > 0) {
+      res.status(409).json({ message: "You already have a pending verification. Please wait for it to be reviewed before submitting a new one." });
+      return;
+    }
+    const { data: userData, error: userError } = await supabase.from("users").select("email").eq("id", userId).single();
+    if (userError || !userData) { res.status(404).json({ message: "User not found." }); return; }
+    const { error: insertError } = await supabase.from("eversend_verifications").insert({
+      user_id: userId,
+      email: (userData as Record<string, unknown>)["email"] as string,
+      phone: phone.trim(),
+      screenshot_url: "",
+      amount_paid: await getActivationFee("SS"),
+      currency: "SSP",
+      status: "pending",
+      admin_note: `Payment method: ${paymentMethod}`,
+    });
+    if (insertError) throw insertError;
+    res.json({ message: "Payment submitted for verification. We will review it shortly." });
+  } catch (err: any) {
+    res.status(500).json({ message: "Failed to submit verification. Please try again." });
+  }
+});
+
+router.post("/rwanda", async (req, res) => {
+  try {
+    const userId = req.session.userId!;
+    const { phone, paymentMethod } = req.body;
+    if (!phone || !paymentMethod) {
+      res.status(400).json({ message: "Phone and payment method are required." });
+      return;
+    }
+    const { data: pending, error: pendingError } = await supabase.from("eversend_verifications").select("id").eq("user_id", userId).eq("status", "pending").limit(1);
+    if (pendingError) throw pendingError;
+    if (pending && pending.length > 0) {
+      res.status(409).json({ message: "You already have a pending verification. Please wait for it to be reviewed before submitting a new one." });
+      return;
+    }
+    const { data: userData, error: userError } = await supabase.from("users").select("email").eq("id", userId).single();
+    if (userError || !userData) { res.status(404).json({ message: "User not found." }); return; }
+    const { error: insertError } = await supabase.from("eversend_verifications").insert({
+      user_id: userId,
+      email: (userData as Record<string, unknown>)["email"] as string,
+      phone: phone.trim(),
+      screenshot_url: "",
+      amount_paid: await getActivationFee("RW"),
+      currency: "RWF",
+      status: "pending",
+      admin_note: `Payment method: ${paymentMethod}`,
+    });
+    if (insertError) throw insertError;
+    res.json({ message: "Payment submitted for verification. We will review it shortly." });
+  } catch (err: any) {
+    res.status(500).json({ message: "Failed to submit verification. Please try again." });
+  }
+});
+
 router.post("/cameroon", async (req, res) => {
   try {
     const userId = req.session.userId!;

@@ -37,6 +37,16 @@ export default function Settings() {
   const [cmPhone, setCmPhone] = useState("");
   const [cmBusinessName, setCmBusinessName] = useState("");
   const [eversendLink, setEversendLink] = useState("");
+  const [congoAgentNumber, setCongoAgentNumber] = useState("");
+  const [congoAgentName, setCongoAgentName] = useState("");
+  const [malawiPhone, setMalawiPhone] = useState("");
+  const [malawiBusinessName, setMalawiBusinessName] = useState("");
+  const [botswanaPhone, setBotswanaPhone] = useState("");
+  const [botswanaBusinessName, setBotswanaBusinessName] = useState("");
+  const [ssPhone, setSsPhone] = useState("");
+  const [ssBusinessName, setSsBusinessName] = useState("");
+  const [rwandaPhone, setRwandaPhone] = useState("");
+  const [rwandaBusinessName, setRwandaBusinessName] = useState("");
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
 
@@ -61,6 +71,16 @@ export default function Settings() {
       setCmPhone(s["cm_mtn_phone"] ?? "");
       setCmBusinessName(s["cm_mtn_phone_business_name"] ?? "");
       setEversendLink(s["eversend_link"] ?? "");
+      setCongoAgentNumber(s["congo_agent_number"] ?? "");
+      setCongoAgentName(s["congo_agent_name"] ?? "");
+      setMalawiPhone(s["malawi_phone"] ?? "");
+      setMalawiBusinessName(s["malawi_business_name"] ?? "");
+      setBotswanaPhone(s["botswana_phone"] ?? "");
+      setBotswanaBusinessName(s["botswana_business_name"] ?? "");
+      setSsPhone(s["ss_phone"] ?? "");
+      setSsBusinessName(s["ss_business_name"] ?? "");
+      setRwandaPhone(s["rwanda_phone"] ?? "");
+      setRwandaBusinessName(s["rwanda_business_name"] ?? "");
       setLaunchEnabled(s["launch_mode_enabled"] === "true");
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
     }
@@ -96,6 +116,36 @@ export default function Settings() {
   const saveCameroonMut = useMutation({
     mutationFn: () => api.updateSettings({ cm_mtn_phone: cmPhone.trim(), cm_mtn_phone_business_name: cmBusinessName.trim() }),
     onSuccess: () => { toast({ title: "Settings saved", description: "Cameroon payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const saveCongoMut = useMutation({
+    mutationFn: () => api.updateSettings({ congo_agent_number: congoAgentNumber.trim(), congo_agent_name: congoAgentName.trim() }),
+    onSuccess: () => { toast({ title: "Settings saved", description: "Congo payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const saveMalawiMut = useMutation({
+    mutationFn: () => api.updateSettings({ malawi_phone: malawiPhone.trim(), malawi_business_name: malawiBusinessName.trim() }),
+    onSuccess: () => { toast({ title: "Settings saved", description: "Malawi payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const saveBotswanaMut = useMutation({
+    mutationFn: () => api.updateSettings({ botswana_phone: botswanaPhone.trim(), botswana_business_name: botswanaBusinessName.trim() }),
+    onSuccess: () => { toast({ title: "Settings saved", description: "Botswana payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const saveSouthSudanMut = useMutation({
+    mutationFn: () => api.updateSettings({ ss_phone: ssPhone.trim(), ss_business_name: ssBusinessName.trim() }),
+    onSuccess: () => { toast({ title: "Settings saved", description: "South Sudan payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const saveRwandaMut = useMutation({
+    mutationFn: () => api.updateSettings({ rwanda_phone: rwandaPhone.trim(), rwanda_business_name: rwandaBusinessName.trim() }),
+    onSuccess: () => { toast({ title: "Settings saved", description: "Rwanda payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
@@ -304,25 +354,155 @@ export default function Settings() {
           <div className={sectionCard}>
             <div className={sectionHeader}>
               <h2 className="font-semibold text-foreground">Cameroon Payment Settings</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Shown to Cameroonian users for MTN International Transfer (*126*)</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Shown to Cameroonian users — now pays via Eversend link (*126* MTN kept for legacy)</p>
             </div>
             <div className="p-6 space-y-6">
               <div className="space-y-3">
-                <h3 className={sectionSubhead}>MTN Cameroon (*126*)</h3>
+                <h3 className={sectionSubhead}>MTN Cameroon (*126*) — Legacy</h3>
                 <div>
                   <label className={labelCls}>Recipient Phone Number (Kenya / Mpesa)</label>
                   <input type="text" value={cmPhone} onChange={(e) => setCmPhone(e.target.value)} placeholder="e.g. +254757574729" className={inputCls} />
-                  <p className={subLabelCls}>Number shown in step 4 of the Cameroon payment instructions</p>
+                  <p className={subLabelCls}>Number shown in legacy Cameroon pay page instructions</p>
                 </div>
                 <div>
                   <label className={labelCls}>Account Name</label>
                   <input type="text" value={cmBusinessName} onChange={(e) => setCmBusinessName(e.target.value)} placeholder="e.g. Charles Nzive" className={inputCls} />
-                  <p className={subLabelCls}>Name shown in step 5 (CONFIRM it is ...)</p>
                 </div>
               </div>
               <button onClick={() => saveCameroonMut.mutate()} disabled={saveCameroonMut.isPending} className={saveBtnCls}>
                 <Save className="h-4 w-4" />
                 {saveCameroonMut.isPending ? "Saving..." : "Save Cameroon Settings"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── CONGO ───────────────────────────────────────────────────── */}
+          <div className={sectionCard}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground">Congo Payment Settings</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Shown to Congolese users for M-Pesa agent payment (*1122#)</p>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="space-y-3">
+                <h3 className={sectionSubhead}>M-Pesa Congo (*1122#)</h3>
+                <div>
+                  <label className={labelCls}>Agent Number</label>
+                  <input type="text" value={congoAgentNumber} onChange={(e) => setCongoAgentNumber(e.target.value)} placeholder="e.g. 03317296" className={inputCls} />
+                  <p className={subLabelCls}>Agent number shown in step 5 of payment instructions</p>
+                </div>
+                <div>
+                  <label className={labelCls}>Agent Name</label>
+                  <input type="text" value={congoAgentName} onChange={(e) => setCongoAgentName(e.target.value)} placeholder="e.g. ADEZILA" className={inputCls} />
+                  <p className={subLabelCls}>Displayed next to the agent number for confirmation</p>
+                </div>
+              </div>
+              <button onClick={() => saveCongoMut.mutate()} disabled={saveCongoMut.isPending} className={saveBtnCls}>
+                <Save className="h-4 w-4" />
+                {saveCongoMut.isPending ? "Saving..." : "Save Congo Settings"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── MALAWI ──────────────────────────────────────────────────── */}
+          <div className={sectionCard}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground">Malawi Payment Settings</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Shown to Malawian users for Airtel International Transfer to Kenya (*211#)</p>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="space-y-3">
+                <h3 className={sectionSubhead}>Airtel Malawi (*211#)</h3>
+                <div>
+                  <label className={labelCls}>Recipient Phone Number (Kenya / Safaricom)</label>
+                  <input type="text" value={malawiPhone} onChange={(e) => setMalawiPhone(e.target.value)} placeholder="e.g. 254757574729" className={inputCls} />
+                  <p className={subLabelCls}>Number shown in step 6 of payment instructions</p>
+                </div>
+                <div>
+                  <label className={labelCls}>Account Name</label>
+                  <input type="text" value={malawiBusinessName} onChange={(e) => setMalawiBusinessName(e.target.value)} placeholder="e.g. CHARLES" className={inputCls} />
+                </div>
+              </div>
+              <button onClick={() => saveMalawiMut.mutate()} disabled={saveMalawiMut.isPending} className={saveBtnCls}>
+                <Save className="h-4 w-4" />
+                {saveMalawiMut.isPending ? "Saving..." : "Save Malawi Settings"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── BOTSWANA ────────────────────────────────────────────────── */}
+          <div className={sectionCard}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground">Botswana Payment Settings</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Shown to Botswanan users for Orange Money International Transfer to Uganda (*145#)</p>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="space-y-3">
+                <h3 className={sectionSubhead}>Orange Money Botswana (*145#)</h3>
+                <div>
+                  <label className={labelCls}>Recipient Phone Number (Uganda MTN)</label>
+                  <input type="text" value={botswanaPhone} onChange={(e) => setBotswanaPhone(e.target.value)} placeholder="e.g. 256787102308" className={inputCls} />
+                  <p className={subLabelCls}>Number shown in step 5 of payment instructions</p>
+                </div>
+                <div>
+                  <label className={labelCls}>Account Name</label>
+                  <input type="text" value={botswanaBusinessName} onChange={(e) => setBotswanaBusinessName(e.target.value)} placeholder="e.g. Amundala Munyama" className={inputCls} />
+                </div>
+              </div>
+              <button onClick={() => saveBotswanaMut.mutate()} disabled={saveBotswanaMut.isPending} className={saveBtnCls}>
+                <Save className="h-4 w-4" />
+                {saveBotswanaMut.isPending ? "Saving..." : "Save Botswana Settings"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── SOUTH SUDAN ─────────────────────────────────────────────── */}
+          <div className={sectionCard}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground">South Sudan Payment Settings</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Shown to South Sudanese users for MTN MoMo International Transfer to Uganda (200*1*3#)</p>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="space-y-3">
+                <h3 className={sectionSubhead}>MTN South Sudan MoMo (200*1*3#)</h3>
+                <div>
+                  <label className={labelCls}>Recipient Phone Number (Uganda MTN)</label>
+                  <input type="text" value={ssPhone} onChange={(e) => setSsPhone(e.target.value)} placeholder="e.g. 256787102308" className={inputCls} />
+                  <p className={subLabelCls}>Number shown in step 4 of payment instructions</p>
+                </div>
+                <div>
+                  <label className={labelCls}>Account Name</label>
+                  <input type="text" value={ssBusinessName} onChange={(e) => setSsBusinessName(e.target.value)} placeholder="e.g. Amundala Munyama" className={inputCls} />
+                </div>
+              </div>
+              <button onClick={() => saveSouthSudanMut.mutate()} disabled={saveSouthSudanMut.isPending} className={saveBtnCls}>
+                <Save className="h-4 w-4" />
+                {saveSouthSudanMut.isPending ? "Saving..." : "Save South Sudan Settings"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── RWANDA ──────────────────────────────────────────────────── */}
+          <div className={sectionCard}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground">Rwanda Payment Settings</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Shown to Rwandan users for MTN MoMo International Transfer to Uganda (*182*1*3#)</p>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="space-y-3">
+                <h3 className={sectionSubhead}>MTN Rwanda MoMo (*182*1*3#)</h3>
+                <div>
+                  <label className={labelCls}>Recipient Phone Number (Uganda MTN)</label>
+                  <input type="text" value={rwandaPhone} onChange={(e) => setRwandaPhone(e.target.value)} placeholder="e.g. 256787102308" className={inputCls} />
+                  <p className={subLabelCls}>Number shown in step 3 of payment instructions</p>
+                </div>
+                <div>
+                  <label className={labelCls}>Account Name</label>
+                  <input type="text" value={rwandaBusinessName} onChange={(e) => setRwandaBusinessName(e.target.value)} placeholder="e.g. Amundala Munyama" className={inputCls} />
+                </div>
+              </div>
+              <button onClick={() => saveRwandaMut.mutate()} disabled={saveRwandaMut.isPending} className={saveBtnCls}>
+                <Save className="h-4 w-4" />
+                {saveRwandaMut.isPending ? "Saving..." : "Save Rwanda Settings"}
               </button>
             </div>
           </div>

@@ -9,7 +9,7 @@ router.get("/", async (req: Request, res: Response) => {
     const { data, error } = await supabase
       .from("app_settings")
       .select("key, value, business_name")
-      .in("key", ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date"]);
+      .in("key", ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name"]);
 
     if (error) throw error;
 
@@ -44,6 +44,16 @@ router.put("/", async (req: Request, res: Response) => {
       cm_mtn_phone,
       cm_mtn_phone_business_name,
       eversend_link,
+      congo_agent_number,
+      congo_agent_name,
+      malawi_phone,
+      malawi_business_name,
+      botswana_phone,
+      botswana_business_name,
+      ss_phone,
+      ss_business_name,
+      rwanda_phone,
+      rwanda_business_name,
     } = req.body as Record<string, string | undefined>;
 
     const upserts: Array<{ key: string; value: string; business_name?: string | null }> = [];
@@ -68,6 +78,36 @@ router.put("/", async (req: Request, res: Response) => {
     }
     if (eversend_link !== undefined) {
       upserts.push({ key: "eversend_link", value: eversend_link.trim() });
+    }
+    if (congo_agent_number !== undefined) {
+      upserts.push({ key: "congo_agent_number", value: congo_agent_number.trim() });
+    }
+    if (congo_agent_name !== undefined) {
+      upserts.push({ key: "congo_agent_name", value: congo_agent_name.trim() });
+    }
+    if (malawi_phone !== undefined) {
+      upserts.push({ key: "malawi_phone", value: malawi_phone.trim() });
+    }
+    if (malawi_business_name !== undefined) {
+      upserts.push({ key: "malawi_business_name", value: malawi_business_name.trim() });
+    }
+    if (botswana_phone !== undefined) {
+      upserts.push({ key: "botswana_phone", value: botswana_phone.trim() });
+    }
+    if (botswana_business_name !== undefined) {
+      upserts.push({ key: "botswana_business_name", value: botswana_business_name.trim() });
+    }
+    if (ss_phone !== undefined) {
+      upserts.push({ key: "ss_phone", value: ss_phone.trim() });
+    }
+    if (ss_business_name !== undefined) {
+      upserts.push({ key: "ss_business_name", value: ss_business_name.trim() });
+    }
+    if (rwanda_phone !== undefined) {
+      upserts.push({ key: "rwanda_phone", value: rwanda_phone.trim() });
+    }
+    if (rwanda_business_name !== undefined) {
+      upserts.push({ key: "rwanda_business_name", value: rwanda_business_name.trim() });
     }
 
     for (const row of upserts) {

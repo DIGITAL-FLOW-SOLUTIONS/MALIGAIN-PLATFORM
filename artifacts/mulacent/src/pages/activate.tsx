@@ -8,12 +8,18 @@ const COUNTRY_FEES: Record<
   string,
   { label: string; amount: string; currency: string; hint: string }
 > = {
-  KE: { label: "Kenya",    amount: "100",   currency: "KES", hint: "Accepts: 07XX..., 254XX..., +254XX..." },
-  CM: { label: "Cameroon", amount: "2500",  currency: "XAF", hint: "Pay via Eversend link below" },
-  GH: { label: "Ghana",    amount: "55",    currency: "GHS", hint: "Pay via Eversend link below" },
-  UG: { label: "Uganda",   amount: "10000", currency: "UGX", hint: "Pay via Eversend link below" },
-  ZM: { label: "Zambia",   amount: "100",   currency: "ZK",  hint: "Pay via Eversend link below" },
-  TZ: { label: "Tanzania", amount: "7500",  currency: "TZS", hint: "Pay via Eversend link below" },
+  KE: { label: "Kenya",       amount: "100",   currency: "KES", hint: "Accepts: 07XX..., 254XX..., +254XX..." },
+  CM: { label: "Cameroon",    amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
+  GH: { label: "Ghana",       amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
+  NG: { label: "Nigeria",     amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
+  UG: { label: "Uganda",      amount: "10000", currency: "UGX", hint: "Pay via MTN or Airtel Uganda" },
+  ZM: { label: "Zambia",      amount: "100",   currency: "ZK",  hint: "Pay via MTN or Airtel Zambia" },
+  TZ: { label: "Tanzania",    amount: "7500",  currency: "TZS", hint: "Pay via Vodacom Tanzania" },
+  CG: { label: "Congo",       amount: "15000", currency: "CDF", hint: "Pay via M-Pesa Congo (*1122#)" },
+  MW: { label: "Malawi",      amount: "12000", currency: "MWK", hint: "Pay via Airtel Malawi (*211#)" },
+  BW: { label: "Botswana",    amount: "75",    currency: "BWP", hint: "Pay via Orange Money (*145#)" },
+  SS: { label: "South Sudan", amount: "20000", currency: "SSP", hint: "Pay via MTN South Sudan MoMo" },
+  RW: { label: "Rwanda",      amount: "5500",  currency: "RWF", hint: "Pay via MTN Rwanda MoMo (*182*1*3#)" },
 };
 
 function randomUgxAmount(base = 10000): number {
@@ -38,7 +44,13 @@ export default function Activate() {
   const isUganda = country === "UG";
   const isZambia = country === "ZM";
   const isTanzania = country === "TZ";
-  const isCameroon = country === "CM";
+  const isCongo = country === "CG";
+  const isMalawi = country === "MW";
+  const isBotswana = country === "BW";
+  const isSouthSudan = country === "SS";
+  const isRwanda = country === "RW";
+  // Cameroon, Ghana, Nigeria (and any unknown country) → Eversend link
+  const hasOwnPage = isKenya || isUganda || isZambia || isTanzania || isCongo || isMalawi || isBotswana || isSouthSudan || isRwanda;
   const fee = COUNTRY_FEES[country] ?? COUNTRY_FEES["KE"];
   const baseFee = dbFees[country] ?? parseFloat(fee.amount);
   const displayAmount = isUganda ? String(ugxAmount) : String(Math.round(baseFee));
@@ -56,13 +68,13 @@ export default function Activate() {
         }
       })
       .catch(() => {});
-    if (!isKenya && !isUganda && !isZambia && !isTanzania && !isCameroon) {
+    if (!hasOwnPage) {
       fetch(`${import.meta.env.BASE_URL}api/settings/eversend-link`, { credentials: "include" })
         .then((r) => r.json())
         .then((d) => { if (d.eversendLink) setEversendLink(d.eversendLink); })
         .catch(() => {});
     }
-  }, [isKenya, isUganda, isZambia, isTanzania, isCameroon]);
+  }, [hasOwnPage]);
 
   const handleActivate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,31 +198,126 @@ export default function Activate() {
                 </button>
               </div>
 
-            ) : isCameroon ? (
+            ) : isCongo ? (
               <div className="space-y-3">
                 <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
                   <p className="text-foreground text-sm mb-1">
                     Activate your account for{" "}
                     <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
                   </p>
-                  <p className="text-muted-foreground text-xs">Follow the Cameroon payment instructions</p>
+                  <p className="text-muted-foreground text-xs">Follow the M-Pesa Congo payment instructions</p>
                 </div>
-
                 <button
                   type="button"
-                  onClick={() => navigate(`/cameroon-pay?amount=${displayAmount}`)}
+                  onClick={() => navigate(`/congo-pay?amount=${displayAmount}`)}
                   className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm"
                 >
-                  <Phone className="w-4 h-4" /> Pay via MTN Cameroon
+                  <Phone className="w-4 h-4" /> Payer via M-Pesa Congo
                 </button>
-
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground mb-2">Already paid?</p>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/verify")}
-                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50"
-                  >
+                  <button type="button" onClick={() => navigate("/verify")}
+                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Payment
+                  </button>
+                </div>
+              </div>
+
+            ) : isMalawi ? (
+              <div className="space-y-3">
+                <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
+                  <p className="text-foreground text-sm mb-1">
+                    Activate your account for{" "}
+                    <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">Pay via Airtel Malawi (*211#)</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/malawi-pay?amount=${displayAmount}`)}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Phone className="w-4 h-4" /> Pay via Airtel Malawi
+                </button>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-2">Already paid?</p>
+                  <button type="button" onClick={() => navigate("/verify")}
+                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Payment
+                  </button>
+                </div>
+              </div>
+
+            ) : isBotswana ? (
+              <div className="space-y-3">
+                <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
+                  <p className="text-foreground text-sm mb-1">
+                    Activate your account for{" "}
+                    <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">Pay via Orange Money (*145#)</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/botswana-pay?amount=${displayAmount}`)}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Phone className="w-4 h-4" /> Pay via Orange Money Botswana
+                </button>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-2">Already paid?</p>
+                  <button type="button" onClick={() => navigate("/verify")}
+                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Payment
+                  </button>
+                </div>
+              </div>
+
+            ) : isSouthSudan ? (
+              <div className="space-y-3">
+                <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
+                  <p className="text-foreground text-sm mb-1">
+                    Activate your account for{" "}
+                    <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">Pay via MTN South Sudan MoMo</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/south-sudan-pay?amount=${displayAmount}`)}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Phone className="w-4 h-4" /> Pay via MTN South Sudan
+                </button>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-2">Already paid?</p>
+                  <button type="button" onClick={() => navigate("/verify")}
+                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Payment
+                  </button>
+                </div>
+              </div>
+
+            ) : isRwanda ? (
+              <div className="space-y-3">
+                <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
+                  <p className="text-foreground text-sm mb-1">
+                    Activate your account for{" "}
+                    <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">Pay via MTN Rwanda MoMo (*182*1*3#)</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/rwanda-pay?amount=${displayAmount}`)}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <Phone className="w-4 h-4" /> Pay via MTN Rwanda
+                </button>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-2">Already paid?</p>
+                  <button type="button" onClick={() => navigate("/verify")}
+                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50">
                     <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Payment
                   </button>
                 </div>
