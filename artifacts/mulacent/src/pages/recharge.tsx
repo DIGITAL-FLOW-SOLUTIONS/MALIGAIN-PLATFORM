@@ -13,7 +13,7 @@ import {
   ChevronRight,
   Send,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, amountFontClass } from "@/lib/utils";
 
 const PRESET_AMOUNTS = [50, 100, 200, 500, 1000, 2000];
 
@@ -103,7 +103,7 @@ export default function Recharge() {
                   Main Wallet Balance
                 </span>
               </div>
-              <p className="text-slate-800 text-3xl font-extrabold leading-none">
+              <p className={`text-slate-800 font-extrabold leading-none ${amountFontClass(fmt(mainBal), "lg")}`}>
                 {fmt(mainBal)}
               </p>
             </div>

@@ -14,7 +14,7 @@ import {
   Send,
   ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, amountFontClass } from "@/lib/utils";
 
 const COUNTRY_RULES: Record<string, { min: number; charge: number }> = {
   KE: { min: 300, charge: 45 },
@@ -135,27 +135,27 @@ export default function Withdraw() {
 
         {/* ── Breakdown Card ─────────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-500">Withdrawal Amount</span>
-            <span className="text-slate-800 font-semibold">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-500 text-sm">Withdrawal Amount</span>
+            <span className={`text-slate-800 font-semibold ${amountFontClass(fmt(amountNum), "sm")}`}>
               {fmt(amountNum)}
             </span>
           </div>
           <div className="h-px bg-slate-100" />
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-500">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-500 text-sm">
               Transaction Fee ({fmt(charge)})
             </span>
-            <span className="text-red-500 font-semibold">
+            <span className={`text-red-500 font-semibold ${amountFontClass(fmt(amountNum > 0 ? charge : 0), "sm")}`}>
               - {fmt(amountNum > 0 ? charge : 0)}
             </span>
           </div>
           <div className="h-px bg-slate-100" />
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-slate-700 font-semibold">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-700 font-semibold text-sm">
               You Will Receive
             </span>
-            <span className="text-emerald-500 font-bold">
+            <span className={`text-emerald-500 font-bold ${amountFontClass(fmt(netAmount), "sm")}`}>
               {fmt(netAmount)}
             </span>
           </div>

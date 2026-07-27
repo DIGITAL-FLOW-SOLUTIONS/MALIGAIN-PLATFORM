@@ -30,6 +30,41 @@ export function formatCurrency(amount: number, countryCode?: string | null): str
   return `${code} ${formatted}`;
 }
 
+/**
+ * Returns a Tailwind font-size class that shrinks as the formatted amount
+ * string grows longer, so large numbers never overflow their container.
+ *
+ * base "lg"  – hero / large balance displays   (3xl → base)
+ * base "md"  – stat cards / medium displays     (2xl → sm)
+ * base "sm"  – inline / compact displays        (xl  → xs)
+ */
+export function amountFontClass(
+  formattedAmount: string,
+  base: "lg" | "md" | "sm" = "md",
+): string {
+  const len = formattedAmount.length;
+  if (base === "lg") {
+    if (len <= 7)  return "text-3xl";
+    if (len <= 10) return "text-2xl";
+    if (len <= 13) return "text-xl";
+    if (len <= 15) return "text-lg";
+    return "text-base";
+  }
+  if (base === "md") {
+    if (len <= 7)  return "text-2xl";
+    if (len <= 10) return "text-xl";
+    if (len <= 13) return "text-lg";
+    if (len <= 15) return "text-base";
+    return "text-sm";
+  }
+  // sm
+  if (len <= 7)  return "text-xl";
+  if (len <= 10) return "text-lg";
+  if (len <= 13) return "text-base";
+  if (len <= 15) return "text-sm";
+  return "text-xs";
+}
+
 export function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString("en-US", {
     month: "short",

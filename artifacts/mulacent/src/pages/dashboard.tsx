@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGetWalletBalances, useGetReferralStats } from "@workspace/api-client-react";
-import { formatCurrency, getCurrencyInfo } from "@/lib/utils";
+import { formatCurrency, getCurrencyInfo, amountFontClass } from "@/lib/utils";
 import {
   Copy,
   Users,
@@ -179,7 +179,7 @@ export default function Dashboard() {
             {/* Left: Expense */}
             <div className="flex-1">
               <p className="text-amber-300 text-[11px] font-semibold mb-0.5">Expense</p>
-              <p className="text-white text-2xl font-black leading-none">{fmt(mainBal)}</p>
+              <p className={`text-white font-black leading-none ${amountFontClass(fmt(mainBal), "lg")}`}>{fmt(mainBal)}</p>
             </div>
 
             {/* Divider */}
@@ -191,7 +191,7 @@ export default function Dashboard() {
                 <TrendingUp className="w-3 h-3 text-emerald-300" />
                 <p className="text-emerald-300 text-[11px] font-semibold">Total Earnings</p>
               </div>
-              <p className="text-white text-2xl font-black leading-none">{fmt(totalEarned)}</p>
+              <p className={`text-white font-black leading-none ${amountFontClass(fmt(totalEarned), "lg")}`}>{fmt(totalEarned)}</p>
             </div>
           </div>
         </div>
@@ -214,7 +214,7 @@ export default function Dashboard() {
             </div>
 
             {/* value */}
-            <p className="text-foreground text-base font-black leading-none break-all">{value}</p>
+            <p className={`text-foreground font-black leading-none ${amountFontClass(value, "md")}`}>{value}</p>
 
             {/* bottom row: ALL TIME + icon */}
             <div className="flex items-end justify-between">
@@ -272,7 +272,7 @@ export default function Dashboard() {
                 { label: "Affiliate", value: fmt(affiliate) },
               ].map((s) => (
                 <div key={s.label} className="bg-muted border border-border rounded-xl p-2 text-center">
-                  <p className="text-foreground font-black text-sm leading-none truncate">{s.value}</p>
+                  <p className={`text-foreground font-black leading-none ${amountFontClass(s.value, "sm")}`}>{s.value}</p>
                   <p className="text-muted-foreground text-[9px] uppercase tracking-wide mt-1">{s.label}</p>
                 </div>
               ))}
