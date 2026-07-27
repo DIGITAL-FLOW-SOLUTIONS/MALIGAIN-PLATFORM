@@ -4,7 +4,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { useCurrency } from "@/hooks/use-currency";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { Wallet, Zap, Phone, ChevronLeft, ExternalLink, ShieldCheck } from "lucide-react";
+import {
+  Wallet,
+  Phone,
+  Zap,
+  ExternalLink,
+  ShieldCheck,
+  ChevronRight,
+  Send,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PRESET_AMOUNTS = [50, 100, 200, 500, 1000, 2000];
@@ -71,38 +79,51 @@ export default function Recharge() {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
+    <div className="min-h-full" style={{ background: "#f0f4ff" }}>
+      <div className="max-w-md mx-auto px-4 py-6 space-y-5">
+        {/* ── Title ─────────────────────────────────────────────────────── */}
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-800">
+            Recharge Wallet
+          </h1>
+          <p className="text-slate-500 text-sm mt-1 leading-relaxed">
+            Deposit funds into{" "}
+            <span className="text-secondary font-semibold">your wallet</span> to
+            start earning.
+          </p>
+        </div>
 
-        {/* Balance header */}
-        <div className="relative px-5 py-5 overflow-hidden bg-gradient-to-br from-primary to-secondary">
-          <div className="absolute inset-0 opacity-20"
-            style={{ background: "radial-gradient(ellipse at top right, rgba(255,255,255,0.4) 0%, transparent 60%)" }} />
-          <div className="relative z-10 flex items-start justify-between">
+        {/* ── Balance Card ──────────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100">
+          <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Wallet className="w-3.5 h-3.5 text-white/70" />
-                <span className="text-white/70 text-[10px] font-black uppercase tracking-widest">Main Wallet</span>
+              <div className="flex items-center gap-2 mb-2">
+                <Wallet className="w-3.5 h-3.5 text-secondary" />
+                <span className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">
+                  Main Wallet Balance
+                </span>
               </div>
-              <p className="text-4xl font-black leading-none text-white">
-                {Math.round(mainBal)}
+              <p className="text-slate-800 text-3xl font-extrabold leading-none">
+                {fmt(mainBal)}
               </p>
-              <p className="text-white/60 text-xs mt-1.5">Current balance</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-              <Wallet className="w-5 h-5 text-white" />
+            <div className="w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
+              <Wallet className="w-5.5 h-5.5 text-secondary" />
             </div>
           </div>
         </div>
 
+        {/* ── KENYA: M-Pesa Flow ────────────────────────────────────────── */}
         {isKenya ? (
-          <form onSubmit={handleRecharge} className="p-5 space-y-5">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Zap className="w-3.5 h-3.5 text-amber-500" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Deposit Amount</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2 mb-3">
+          <form onSubmit={handleRecharge} className="space-y-5">
+            {/* Amount card */}
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-4">
+              <p className="text-slate-700 text-sm font-medium">
+                Deposit Amount
+              </p>
+
+              {/* Preset buttons */}
+              <div className="grid grid-cols-3 gap-2">
                 {PRESET_AMOUNTS.map((preset) => {
                   const isActive = amount === preset;
                   return (
@@ -111,10 +132,10 @@ export default function Recharge() {
                       type="button"
                       onClick={() => setAmount(preset)}
                       className={cn(
-                        "py-2.5 rounded-xl border text-sm font-black transition-all",
+                        "py-2.5 rounded-xl border text-sm font-bold transition-all",
                         isActive
-                          ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                          : "bg-muted border-border text-foreground hover:border-primary/40"
+                          ? "bg-secondary text-white border-secondary shadow-sm"
+                          : "bg-slate-50 border-slate-200 text-slate-700 hover:border-secondary/40"
                       )}
                     >
                       {fmt(preset)}
@@ -122,67 +143,90 @@ export default function Recharge() {
                   );
                 })}
               </div>
-              <div className="flex items-center bg-background border border-input rounded-xl overflow-hidden focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-                <span className="text-muted-foreground text-sm font-black px-3 border-r border-border py-3 flex-shrink-0 bg-muted">
+
+              {/* Custom input */}
+              <div className="flex items-center border border-secondary/40 rounded-xl overflow-hidden ring-0 transition-all duration-200 focus-within:ring-2 focus-within:ring-secondary/25 focus-within:border-secondary">
+                <div className="bg-secondary text-white text-xs font-bold px-4 py-3.5 flex items-center justify-center flex-shrink-0 select-none">
                   {currencyInfo.symbol}
-                </span>
+                </div>
                 <input
                   type="number"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
+                  onChange={(e) =>
+                    setAmount(e.target.value === "" ? "" : Number(e.target.value))
+                  }
                   placeholder="Enter amount"
                   min={50}
-                  className="flex-1 bg-transparent py-3 px-3 text-foreground text-sm font-semibold placeholder:text-muted-foreground focus:outline-none"
+                  className="flex-1 bg-transparent px-4 py-3 text-slate-800 text-sm font-semibold placeholder:text-slate-300 focus:outline-none"
                 />
               </div>
-              <p className="text-muted-foreground text-[10px] mt-1.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground inline-block" />
-                Min {fmt(50)} · Max {fmt(50000)}
-              </p>
+
+              <div className="flex items-center gap-1.5 bg-violet-50 rounded-lg px-3 py-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary inline-block flex-shrink-0" />
+                <span className="text-secondary text-xs font-medium">
+                  Min {fmt(50)} · Max {fmt(50000)}
+                </span>
+              </div>
             </div>
 
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Phone className="w-3.5 h-3.5 text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">M-Pesa Number</span>
-              </div>
-              <div className="relative">
-                <div className="absolute left-3.5 top-1/2 -translate-y-1/2">
-                  <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+            {/* Phone number card */}
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-4">
+              <p className="text-slate-700 text-sm font-medium">
+                M-Pesa Number
+              </p>
+
+              <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-secondary/25 focus-within:border-secondary/40 transition-all">
+                <div className="flex items-center justify-center px-3.5 py-3 bg-slate-50 border-r border-slate-200">
+                  <Phone className="w-4 h-4 text-slate-400" />
                 </div>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="0712345678"
-                  className="w-full bg-background border border-input rounded-xl py-3 pl-9 pr-4 text-foreground text-sm font-semibold placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="flex-1 bg-transparent px-3.5 py-3 text-slate-800 text-sm font-semibold placeholder:text-slate-300 focus:outline-none"
                 />
               </div>
-              <div className="mt-2.5 flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2.5">
-                <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+
+              {/* M-Pesa info banner */}
+              <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-3">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-white text-[10px] font-black">M</span>
                 </div>
-                <p className="text-[11px] text-emerald-800 leading-relaxed">
-                  <span className="text-emerald-700 font-bold">M-Pesa STK Push</span> — you'll get a payment prompt on your phone. Enter your{" "}
-                  <span className="text-emerald-700 font-bold">M-Pesa PIN</span> to confirm.
+                <p className="text-xs text-emerald-800 leading-relaxed">
+                  <span className="font-bold text-emerald-700">
+                    M-Pesa STK Push
+                  </span>{" "}
+                  — you'll get a payment prompt on your phone. Enter your{" "}
+                  <span className="font-bold text-emerald-700">M-Pesa PIN</span>{" "}
+                  to confirm.
                 </p>
               </div>
             </div>
 
+            {/* Submit button */}
             <button
               type="submit"
               disabled={loading || !amount || !phone}
               className={cn(
-                "w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]",
+                "w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]",
                 loading || !amount || !phone
-                  ? "bg-muted text-muted-foreground cursor-not-allowed"
-                  : "bg-primary text-primary-foreground shadow-sm"
+                  ? "text-slate-400 bg-slate-100 cursor-not-allowed"
+                  : "text-white shadow-md hover:shadow-lg",
               )}
+              style={
+                !loading && amount && phone
+                  ? {
+                      background:
+                        "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+                    }
+                  : undefined
+              }
             >
               {loading ? (
-                <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Zap className="w-4 h-4" />
+                <Send className="w-4 h-4" />
               )}
               {loading
                 ? "Sending STK Push..."
@@ -190,91 +234,143 @@ export default function Recharge() {
                   ? `Deposit ${fmt(selectedAmount)} via M-Pesa`
                   : "Deposit to Main Wallet"}
             </button>
-
-            <button
-              type="button"
-              onClick={() => navigate("/dashboard")}
-              className="w-full flex items-center justify-center gap-1.5 text-muted-foreground text-xs hover:text-foreground transition-colors py-1"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" /> Back to Dashboard
-            </button>
           </form>
         ) : isUganda ? (
-          <div className="p-5 space-y-4">
-            <div className="rounded-xl p-4 border border-border bg-muted/50 text-center">
-              <p className="text-foreground text-sm mb-1">Choose your mobile money provider to deposit</p>
-              <p className="text-muted-foreground text-xs">Pay via MTN or Airtel Uganda</p>
+          /* ── UGANDA: MTN / Airtel ────────────────────────────────────── */
+          <div className="space-y-5">
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
+              <p className="text-slate-700 text-sm font-medium">
+                Choose Payment Method
+              </p>
+              <p className="text-slate-400 text-xs">
+                Select your mobile money provider to deposit
+              </p>
             </div>
-            <button type="button" onClick={() => navigate("/uganda-pay?method=mtn")}
-              className="w-full py-3.5 rounded-xl font-black text-sm text-primary-foreground bg-primary flex items-center justify-center gap-2 shadow-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/uganda-pay?method=mtn")}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+              }}
+            >
               <Phone className="w-4 h-4" /> Pay with MTN Uganda
             </button>
-            <button type="button" onClick={() => navigate("/uganda-pay?method=airtel")}
-              className="w-full py-3.5 rounded-xl font-black text-sm text-primary-foreground bg-secondary flex items-center justify-center gap-2 shadow-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/uganda-pay?method=airtel")}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+              }}
+            >
               <Phone className="w-4 h-4" /> Pay with Airtel Uganda
-            </button>
-            <button type="button" onClick={() => navigate("/dashboard")}
-              className="w-full flex items-center justify-center gap-1.5 text-muted-foreground text-xs hover:text-foreground transition-colors py-1">
-              <ChevronLeft className="w-3.5 h-3.5" /> Back to Dashboard
             </button>
           </div>
         ) : isCameroon ? (
-          <div className="p-5 space-y-4">
-            <div className="rounded-xl p-4 border border-border bg-muted/50 text-center">
-              <p className="text-foreground text-sm mb-1">Deposit via MTN International Transfer</p>
-              <p className="text-muted-foreground text-xs">Follow the payment steps on the next page</p>
+          /* ── CAMEROON: MTN International ─────────────────────────────── */
+          <div className="space-y-5">
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
+              <p className="text-slate-700 text-sm font-medium">
+                Deposit via MTN International Transfer
+              </p>
+              <p className="text-slate-400 text-xs">
+                Follow the payment steps on the next page
+              </p>
             </div>
-            <button type="button" onClick={() => navigate("/cameroon-pay?amount=2510")}
-              className="w-full py-3.5 rounded-xl font-black text-sm text-primary-foreground bg-primary flex items-center justify-center gap-2 shadow-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/cameroon-pay?amount=2510")}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+              }}
+            >
               <Phone className="w-4 h-4" /> Pay with MTN Cameroon
-            </button>
-            <button type="button" onClick={() => navigate("/dashboard")}
-              className="w-full flex items-center justify-center gap-1.5 text-muted-foreground text-xs hover:text-foreground transition-colors py-1">
-              <ChevronLeft className="w-3.5 h-3.5" /> Back to Dashboard
             </button>
           </div>
         ) : isZambia ? (
-          <div className="p-5 space-y-4">
-            <div className="rounded-xl p-4 border border-border bg-muted/50 text-center">
-              <p className="text-foreground text-sm mb-1">Choose your mobile money provider to deposit</p>
-              <p className="text-muted-foreground text-xs">Pay via MTN or Airtel Zambia</p>
+          /* ── ZAMBIA: MTN / Airtel ────────────────────────────────────── */
+          <div className="space-y-5">
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
+              <p className="text-slate-700 text-sm font-medium">
+                Choose Payment Method
+              </p>
+              <p className="text-slate-400 text-xs">
+                Select your mobile money provider to deposit
+              </p>
             </div>
-            <button type="button" onClick={() => navigate("/zambia-pay?method=mtn")}
-              className="w-full py-3.5 rounded-xl font-black text-sm text-primary-foreground bg-primary flex items-center justify-center gap-2 shadow-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/zambia-pay?method=mtn")}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+              }}
+            >
               <Phone className="w-4 h-4" /> Pay with MTN Zambia
             </button>
-            <button type="button" onClick={() => navigate("/zambia-pay?method=airtel")}
-              className="w-full py-3.5 rounded-xl font-black text-sm text-primary-foreground bg-secondary flex items-center justify-center gap-2 shadow-sm">
+            <button
+              type="button"
+              onClick={() => navigate("/zambia-pay?method=airtel")}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+              }}
+            >
               <Phone className="w-4 h-4" /> Pay with Airtel Zambia
-            </button>
-            <button type="button" onClick={() => navigate("/dashboard")}
-              className="w-full flex items-center justify-center gap-1.5 text-muted-foreground text-xs hover:text-foreground transition-colors py-1">
-              <ChevronLeft className="w-3.5 h-3.5" /> Back to Dashboard
             </button>
           </div>
         ) : (
-          <div className="p-5 space-y-4">
-            <div className="rounded-xl p-4 border border-border bg-muted/50 text-center">
-              <p className="text-foreground text-sm mb-1">To deposit funds, use the payment link below</p>
-              <p className="text-muted-foreground text-xs">Include your registered phone number as the reference</p>
+          /* ── OTHER COUNTRIES: Eversend link ──────────────────────────── */
+          <div className="space-y-5">
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
+              <p className="text-slate-700 text-sm font-medium">
+                Deposit via Eversend
+              </p>
+              <p className="text-slate-400 text-xs">
+                Use the payment link below. Include your registered phone number
+                as the reference.
+              </p>
             </div>
-            <a href={eversendLink} target="_blank" rel="noopener noreferrer"
-              className="w-full py-3.5 rounded-xl font-black text-sm text-primary-foreground bg-primary flex items-center justify-center gap-2 shadow-sm">
+
+            <a
+              href={eversendLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
+              }}
+            >
               <ExternalLink className="w-4 h-4" /> Pay via Eversend
             </a>
-            <div className="text-center">
-              <p className="text-xs text-muted-foreground mb-2">Already paid?</p>
-              <button type="button" onClick={() => navigate("/verify")}
-                className="w-full py-3.5 rounded-xl font-black text-sm text-foreground flex items-center justify-center gap-2 border border-border bg-muted hover:bg-muted/80 transition-all">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Payment
+
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100">
+              <p className="text-slate-500 text-xs text-center mb-3">
+                Already paid?
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/verify")}
+                className="w-full py-3 rounded-xl font-semibold text-sm text-slate-700 flex items-center justify-center gap-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify
+                Payment
               </button>
             </div>
-            <button type="button" onClick={() => navigate("/dashboard")}
-              className="w-full flex items-center justify-center gap-1.5 text-muted-foreground text-xs hover:text-foreground transition-colors py-1">
-              <ChevronLeft className="w-3.5 h-3.5" /> Back to Dashboard
-            </button>
           </div>
         )}
+
+        {/* ── Footer ──────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-center gap-1.5 text-slate-400 text-xs text-center pt-1">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>
+            Deposits are processed{" "}
+            <span className="text-secondary font-medium">securely</span> via
+            mobile money.
+          </span>
+        </div>
       </div>
     </div>
   );
