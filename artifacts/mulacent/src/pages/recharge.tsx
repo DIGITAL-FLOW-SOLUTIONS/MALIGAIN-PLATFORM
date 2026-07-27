@@ -122,28 +122,6 @@ export default function Recharge() {
                 Deposit Amount
               </p>
 
-              {/* Preset buttons */}
-              <div className="grid grid-cols-3 gap-2">
-                {PRESET_AMOUNTS.map((preset) => {
-                  const isActive = amount === preset;
-                  return (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setAmount(preset)}
-                      className={cn(
-                        "py-2.5 rounded-xl border text-sm font-bold transition-all",
-                        isActive
-                          ? "bg-secondary text-white border-secondary shadow-sm"
-                          : "bg-slate-50 border-slate-200 text-slate-700 hover:border-secondary/40"
-                      )}
-                    >
-                      {fmt(preset)}
-                    </button>
-                  );
-                })}
-              </div>
-
               {/* Custom input */}
               <div className="flex items-center border border-secondary/40 rounded-xl overflow-hidden ring-0 transition-all duration-200 focus-within:ring-2 focus-within:ring-secondary/25 focus-within:border-secondary">
                 <div className="bg-secondary text-white text-xs font-bold px-4 py-3.5 flex items-center justify-center flex-shrink-0 select-none">
