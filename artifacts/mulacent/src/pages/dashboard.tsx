@@ -129,39 +129,69 @@ export default function Dashboard() {
         className="relative rounded-2xl overflow-hidden"
         style={{ background: "linear-gradient(135deg, #3b5bdb 0%, #5b8dee 50%, #8b6ff5 100%)" }}
       >
-        {/* ambient glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute w-64 h-64 -top-16 -left-16 rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%)" }} />
-          <div className="absolute w-48 h-48 -bottom-10 -right-10 rounded-full opacity-15"
-            style={{ background: "radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%)" }} />
+        {/* Large faint background brand text */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+          <span
+            className="font-black uppercase tracking-widest text-white/[0.06] whitespace-nowrap"
+            style={{ fontSize: "clamp(3rem, 12vw, 7rem)", letterSpacing: "0.2em" }}
+          >
+            MALIGAIN
+          </span>
         </div>
 
-        <div className="relative z-10 px-5 py-5">
-          {/* greeting */}
-          <p className="text-white/60 text-xs mb-4">
-            👋 Welcome back,{" "}
-            <span className="text-white font-semibold">{user?.username || "User"}</span>
+        {/* Dot-grid pattern overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-20"
+          style={{
+            backgroundImage: "radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+          }}
+        />
+
+        {/* Ambient glow orbs */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute w-56 h-56 -top-16 -left-10 rounded-full opacity-25"
+            style={{ background: "radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%)" }} />
+        </div>
+
+        {/* Medal badge — top right */}
+        <img
+          src={`${import.meta.env.BASE_URL}images/medal.png`}
+          alt="Medal"
+          className="absolute top-2 right-3 w-16 h-16 object-contain drop-shadow-lg pointer-events-none select-none"
+        />
+
+        <div className="relative z-10 px-5 pt-4 pb-5">
+          {/* Welcome pill */}
+          <div className="inline-flex items-center gap-1.5 bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
+            <span>Welcome: {user?.username || "User"}</span>
+            <span>👋</span>
+          </div>
+
+          {/* Promo text */}
+          <p className="text-white/75 text-[11px] leading-relaxed mb-5 max-w-xs">
+            Boost your digital journey with MALIGAIN's smart tools! Ads, YouTube, trivia, and more — designed to help you{" "}
+            <span className="font-bold text-white">succeed online.</span>
           </p>
 
-          {/* two stats divided */}
+          {/* Two stats with divider */}
           <div className="flex items-center">
-            {/* Left: expense/spent */}
-            <div className="flex-1 text-center">
-              <p className="text-white/60 text-[11px] font-medium mb-1">Account Balance</p>
-              <p className="text-white text-2xl font-black">{fmt(mainBal)}</p>
+            {/* Left: Expense */}
+            <div className="flex-1">
+              <p className="text-amber-300 text-[11px] font-semibold mb-0.5">Expense</p>
+              <p className="text-white text-2xl font-black leading-none">{fmt(mainBal)}</p>
             </div>
 
             {/* Divider */}
-            <div className="w-px h-14 bg-white/25 mx-4 flex-shrink-0" />
+            <div className="w-px h-14 bg-white/30 mx-5 flex-shrink-0" />
 
-            {/* Right: total earnings */}
-            <div className="flex-1 text-center">
-              <div className="flex items-center justify-center gap-1 mb-1">
+            {/* Right: Total Earnings */}
+            <div className="flex-1">
+              <div className="flex items-center gap-1 mb-0.5">
                 <TrendingUp className="w-3 h-3 text-emerald-300" />
-                <p className="text-emerald-300 text-[11px] font-medium">Total Earnings</p>
+                <p className="text-emerald-300 text-[11px] font-semibold">Total Earnings</p>
               </div>
-              <p className="text-white text-2xl font-black">{fmt(totalEarned)}</p>
+              <p className="text-white text-2xl font-black leading-none">{fmt(totalEarned)}</p>
             </div>
           </div>
         </div>
