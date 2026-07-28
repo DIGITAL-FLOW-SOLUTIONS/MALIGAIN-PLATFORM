@@ -80,11 +80,11 @@ const PRODUCT_ITEMS: NavItem[] = [
 ];
 
 const EARN_ITEMS: NavItem[] = [
-  { icon: Music2,       label: "TikTok Earn",   color: "bg-rose-500"    },
-  { icon: Youtube,      label: "Youtube Earn",  color: "bg-red-600"     },
-  { icon: Film,         label: "Movies",        color: "bg-purple-500"  },
-  { icon: Clapperboard, label: "Reals",         color: "bg-pink-600"    },
-  { icon: Megaphone,    label: "Ads Earnings",  color: "bg-amber-600"   },
+  { icon: Music2,       label: "TikTok Earn",   href: "/tiktok-earn",  color: "bg-rose-500"   },
+  { icon: Youtube,      label: "Youtube Earn",  href: "/youtube-earn", color: "bg-red-600"    },
+  { icon: Film,         label: "Movies",        href: "/movies-earn",  color: "bg-purple-500" },
+  { icon: Clapperboard, label: "Reals",         href: "/reals-earn",   color: "bg-pink-600"   },
+  { icon: Megaphone,    label: "Ads Earnings",  href: "/ads-earn",     color: "bg-amber-600"  },
 ];
 
 const SETTINGS_ITEMS: NavItem[] = [

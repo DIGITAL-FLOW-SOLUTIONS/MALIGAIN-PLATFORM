@@ -12,11 +12,16 @@ function num(val: unknown): number {
 // Hardcoded task rewards per country (in local currency, rounded to nearest formal amount)
 // task type → country → reward amount
 const TASK_REWARDS: Record<string, Record<string, number>> = {
-  survey: { KE: 50, CM: 850, GH: 20, UG: 3350, ZM: 35, TZ: 2500 },
-  blogging: { KE: 30, CM: 500, GH: 15, UG: 2000, ZM: 20, TZ: 1500 },
-  video: { KE: 20, CM: 350, GH: 10, UG: 1350, ZM: 15, TZ: 1000 },
-  trivia: { KE: 40, CM: 650, GH: 15, UG: 2650, ZM: 30, TZ: 2000 },
-  chat: { KE: 500, CM: 8350, GH: 180, UG: 33350, ZM: 350, TZ: 25000 },
+  survey:   { KE: 50,  CM: 850,   GH: 20,  UG: 3350,  ZM: 35,  TZ: 2500  },
+  blogging: { KE: 30,  CM: 500,   GH: 15,  UG: 2000,  ZM: 20,  TZ: 1500  },
+  video:    { KE: 20,  CM: 350,   GH: 10,  UG: 1350,  ZM: 15,  TZ: 1000  },
+  trivia:   { KE: 40,  CM: 650,   GH: 15,  UG: 2650,  ZM: 30,  TZ: 2000  },
+  chat:     { KE: 500, CM: 8350,  GH: 180, UG: 33350, ZM: 350, TZ: 25000 },
+  tiktok:   { KE: 15,  CM: 250,   GH: 8,   UG: 1000,  ZM: 10,  TZ: 750   },
+  youtube:  { KE: 25,  CM: 420,   GH: 12,  UG: 1650,  ZM: 18,  TZ: 1250  },
+  movies:   { KE: 35,  CM: 600,   GH: 18,  UG: 2300,  ZM: 25,  TZ: 1750  },
+  reals:    { KE: 12,  CM: 200,   GH: 6,   UG: 800,   ZM: 8,   TZ: 600   },
+  ads:      { KE: 10,  CM: 160,   GH: 5,   UG: 650,   ZM: 7,   TZ: 500   },
 };
 
 function getTaskReward(taskType: string, country: string | null): number {
@@ -69,8 +74,52 @@ export const TASKS = [
     type: "chat" as const,
     rewardKES: 500,
     availableCount: 500,
-    description:
-      "Complete the task on the external platform and earn per session",
+    description: "Complete the task on the external platform and earn per session",
+    difficulty: "Easy",
+  },
+  {
+    id: 6,
+    name: "TikTok Earn",
+    type: "tiktok" as const,
+    rewardKES: 15,
+    availableCount: 50,
+    description: "Open TikTok, watch videos for 60 seconds and earn",
+    difficulty: "Easy",
+  },
+  {
+    id: 7,
+    name: "YouTube Earn",
+    type: "youtube" as const,
+    rewardKES: 25,
+    availableCount: 40,
+    description: "Watch a YouTube video for 2 minutes and earn",
+    difficulty: "Easy",
+  },
+  {
+    id: 8,
+    name: "Movies",
+    type: "movies" as const,
+    rewardKES: 35,
+    availableCount: 30,
+    description: "Watch a movie clip for 3 minutes and earn",
+    difficulty: "Easy",
+  },
+  {
+    id: 9,
+    name: "Reals",
+    type: "reals" as const,
+    rewardKES: 12,
+    availableCount: 60,
+    description: "Watch Instagram Reels or YouTube Shorts for 60 seconds and earn",
+    difficulty: "Easy",
+  },
+  {
+    id: 10,
+    name: "Ads Earnings",
+    type: "ads" as const,
+    rewardKES: 10,
+    availableCount: 100,
+    description: "Watch an ad for 30 seconds and earn",
     difficulty: "Easy",
   },
 ];
@@ -276,6 +325,26 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
         res.status(400).json({
           error: "ValidationError",
           message: "You must complete a full chat session (at least 5 minutes) before claiming your reward.",
+        });
+        return;
+      }
+    }
+
+    // Earn-with-fun tasks — timer-based validation
+    const FUN_EARN_MINIMUMS: Record<string, number> = {
+      tiktok:  60,   // 60 seconds on TikTok
+      youtube: 120,  // 2 minutes on YouTube
+      movies:  180,  // 3 minutes watching a movie
+      reals:   60,   // 60 seconds watching Reals
+      ads:     30,   // 30 seconds watching an ad
+    };
+    if (task.type in FUN_EARN_MINIMUMS) {
+      const minSeconds = FUN_EARN_MINIMUMS[task.type]!;
+      const { watchedSeconds } = req.body as { watchedSeconds?: number };
+      if (!watchedSeconds || Number(watchedSeconds) < minSeconds) {
+        res.status(400).json({
+          error: "ValidationError",
+          message: `You must watch for at least ${minSeconds} seconds before claiming your reward.`,
         });
         return;
       }

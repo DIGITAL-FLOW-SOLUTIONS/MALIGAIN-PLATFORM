@@ -30,6 +30,7 @@ import Recharge from "@/pages/recharge";
 import History from "@/pages/history";
 import Bonus from "@/pages/bonus";
 import Tasks from "@/pages/tasks";
+import EarnFun from "@/pages/earn-fun";
 import PayClient from "@/pages/pay-client";
 import Verify from "@/pages/verify";
 import UgandaPay from "@/pages/uganda-pay";
@@ -273,6 +274,11 @@ function Router() {
       <Route path="/watch" component={() => <ProtectedRoute component={Tasks} />} />
       <Route path="/trivia" component={() => <ProtectedRoute component={Tasks} />} />
       <Route path="/chat-lonely" component={() => <ProtectedRoute component={Tasks} />} />
+      <Route path="/tiktok-earn"  component={() => <ProtectedRoute component={EarnFun} />} />
+      <Route path="/youtube-earn" component={() => <ProtectedRoute component={EarnFun} />} />
+      <Route path="/movies-earn"  component={() => <ProtectedRoute component={EarnFun} />} />
+      <Route path="/reals-earn"   component={() => <ProtectedRoute component={EarnFun} />} />
+      <Route path="/ads-earn"     component={() => <ProtectedRoute component={EarnFun} />} />
       <Route path="/pay-client" component={() => <ProtectedRoute component={PayClient} />} />
       <Route path="/verify" component={() => <VerifyRoute />} />
       <Route path="/uganda-pay" component={() => <UgandaPayRoute />} />

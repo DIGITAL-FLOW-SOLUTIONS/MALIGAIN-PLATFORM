@@ -15,11 +15,16 @@ const TASK_META: Record<string, {
   color: string; bg: string; border: string;
   badge: string; icon: typeof BarChart3; label: string;
 }> = {
-  survey:   { color: "text-primary",   bg: "bg-primary/10",   border: "border-primary/20",   badge: "bg-primary/10 text-primary border-primary/20",   icon: BarChart3,     label: "SURVEY"  },
-  blogging: { color: "text-emerald-600", bg: "bg-emerald-50",  border: "border-emerald-200",  badge: "bg-emerald-50 text-emerald-600 border-emerald-200", icon: PenSquare,   label: "BLOG"    },
-  video:    { color: "text-orange-600", bg: "bg-orange-50",    border: "border-orange-200",   badge: "bg-orange-50 text-orange-600 border-orange-200",   icon: Play,         label: "VIDEO"   },
-  trivia:   { color: "text-secondary",  bg: "bg-secondary/10", border: "border-secondary/20", badge: "bg-secondary/10 text-secondary border-secondary/20", icon: Brain,       label: "TRIVIA"  },
-  chat:     { color: "text-rose-600",   bg: "bg-rose-50",      border: "border-rose-200",     badge: "bg-rose-50 text-rose-600 border-rose-200",          icon: MessageCircle, label: "CHAT" },
+  survey:   { color: "text-primary",     bg: "bg-primary/10",   border: "border-primary/20",   badge: "bg-primary/10 text-primary border-primary/20",       icon: BarChart3,     label: "SURVEY"   },
+  blogging: { color: "text-emerald-600", bg: "bg-emerald-50",   border: "border-emerald-200",  badge: "bg-emerald-50 text-emerald-600 border-emerald-200",  icon: PenSquare,     label: "BLOG"     },
+  video:    { color: "text-orange-600",  bg: "bg-orange-50",    border: "border-orange-200",   badge: "bg-orange-50 text-orange-600 border-orange-200",     icon: Play,          label: "VIDEO"    },
+  trivia:   { color: "text-secondary",   bg: "bg-secondary/10", border: "border-secondary/20", badge: "bg-secondary/10 text-secondary border-secondary/20", icon: Brain,         label: "TRIVIA"   },
+  chat:     { color: "text-rose-600",    bg: "bg-rose-50",      border: "border-rose-200",     badge: "bg-rose-50 text-rose-600 border-rose-200",           icon: MessageCircle, label: "CHAT"     },
+  tiktok:   { color: "text-rose-500",    bg: "bg-rose-50",      border: "border-rose-200",     badge: "bg-rose-50 text-rose-500 border-rose-200",           icon: Play,          label: "TIKTOK"   },
+  youtube:  { color: "text-red-600",     bg: "bg-red-50",       border: "border-red-200",      badge: "bg-red-50 text-red-600 border-red-200",              icon: Play,          label: "YOUTUBE"  },
+  movies:   { color: "text-purple-600",  bg: "bg-purple-50",    border: "border-purple-200",   badge: "bg-purple-50 text-purple-600 border-purple-200",     icon: Play,          label: "MOVIES"   },
+  reals:    { color: "text-pink-600",    bg: "bg-pink-50",      border: "border-pink-200",     badge: "bg-pink-50 text-pink-600 border-pink-200",           icon: Play,          label: "REALS"    },
+  ads:      { color: "text-amber-600",   bg: "bg-amber-50",     border: "border-amber-200",    badge: "bg-amber-50 text-amber-700 border-amber-200",        icon: Play,          label: "ADS"      },
 };
 
 // ─── Survey questions ─────────────────────────────────────────────────────────
