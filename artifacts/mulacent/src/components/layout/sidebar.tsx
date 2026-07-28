@@ -50,7 +50,7 @@ const MAIN_ITEMS: NavItem[] = [
 const ACCOUNT_ITEMS: NavItem[] = [
   { icon: ArrowDownCircle,  label: "Deposit",       href: "/recharge",    color: "bg-emerald-500" },
   { icon: CreditCard,       label: "PayForClient",  href: "/pay-client",  color: "bg-sky-500"     },
-  { icon: Award,            label: "Ranks",                               color: "bg-amber-500"   },
+  { icon: Award,            label: "Ranks",       href: "/tournament",      color: "bg-amber-500"   },
   { icon: Wallet,           label: "Withdraw",      href: "/withdraw",    color: "bg-rose-500"    },
   { icon: History,          label: "History",       href: "/history",     color: "bg-indigo-500"  },
 ];
