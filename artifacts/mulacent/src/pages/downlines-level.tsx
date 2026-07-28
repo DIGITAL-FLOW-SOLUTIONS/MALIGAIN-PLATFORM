@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useGetDownlines, useGetReferralStats } from "@workspace/api-client-react";
 import { useAuth } from "@/hooks/use-auth";
-import { formatDate } from "@/lib/utils";
+import { formatDate, amountFontClass } from "@/lib/utils";
 import {
   Search, Copy, Phone, MapPin, Calendar, Users,
   UserCheck, UserX, TrendingUp, Award, Share2,
@@ -131,17 +131,23 @@ export default function DownlinesLevelPage({ level, status }: Props) {
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-black/20 border border-white/20 rounded-xl px-3 py-3 text-center">
-              <p className="text-white font-black text-xl leading-none">{isLoading ? "—" : (isActive ? totalActive : totalInactive)}</p>
+              <p className={cn("text-white font-black leading-none", amountFontClass(String(isLoading ? "—" : (isActive ? totalActive : totalInactive)), "md"))}>
+                {isLoading ? "—" : (isActive ? totalActive : totalInactive)}
+              </p>
               <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">
                 {isActive ? "Active" : "Inactive"}
               </p>
             </div>
             <div className="bg-black/20 border border-white/20 rounded-xl px-3 py-3 text-center">
-              <p className="text-white font-black text-xl leading-none">{isLoading ? "—" : totalCount}</p>
+              <p className={cn("text-white font-black leading-none", amountFontClass(String(isLoading ? "—" : totalCount), "md"))}>
+                {isLoading ? "—" : totalCount}
+              </p>
               <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Total L{level}</p>
             </div>
             <div className="bg-black/20 border border-white/20 rounded-xl px-3 py-3 text-center">
-              <p className="text-white font-black text-xl leading-none">{isLoading ? "—" : `${activeRate}%`}</p>
+              <p className={cn("text-white font-black leading-none", amountFontClass(isLoading ? "—" : `${activeRate}%`, "md"))}>
+                {isLoading ? "—" : `${activeRate}%`}
+              </p>
               <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Active Rate</p>
             </div>
           </div>
@@ -167,8 +173,9 @@ export default function DownlinesLevelPage({ level, status }: Props) {
             </div>
           </div>
           <p className={cn(
-            "font-black text-2xl leading-none",
-            isActive ? "text-emerald-600" : "text-rose-500"
+            "font-black leading-none",
+            isActive ? "text-emerald-600" : "text-rose-500",
+            amountFontClass(String(isLoading ? "—" : (isActive ? totalActive : totalInactive)), "md")
           )}>
             {isLoading ? "—" : (isActive ? totalActive : totalInactive)}
           </p>
@@ -183,7 +190,9 @@ export default function DownlinesLevelPage({ level, status }: Props) {
               <Users className="w-3.5 h-3.5 text-primary" />
             </div>
           </div>
-          <p className="text-foreground font-black text-2xl leading-none">{isLoading ? "—" : totalCount}</p>
+          <p className={cn("text-foreground font-black leading-none", amountFontClass(String(isLoading ? "—" : totalCount), "md"))}>
+            {isLoading ? "—" : totalCount}
+          </p>
           <p className="text-muted-foreground text-[10px] mt-1.5">in this level</p>
         </div>
 
@@ -195,7 +204,9 @@ export default function DownlinesLevelPage({ level, status }: Props) {
               <TrendingUp className="w-3.5 h-3.5 text-amber-600" />
             </div>
           </div>
-          <p className="text-amber-600 font-black text-2xl leading-none">{isLoading ? "—" : `${activeRate}%`}</p>
+          <p className={cn("text-amber-600 font-black leading-none", amountFontClass(isLoading ? "—" : `${activeRate}%`, "md"))}>
+            {isLoading ? "—" : `${activeRate}%`}
+          </p>
           <p className="text-muted-foreground text-[10px] mt-1.5">activation</p>
         </div>
 
@@ -207,7 +218,9 @@ export default function DownlinesLevelPage({ level, status }: Props) {
               <Award className="w-3.5 h-3.5 text-violet-600" />
             </div>
           </div>
-          <p className="text-violet-600 font-black text-2xl leading-none">{isLoading ? "—" : totalRefs}</p>
+          <p className={cn("text-violet-600 font-black leading-none", amountFontClass(String(isLoading ? "—" : totalRefs), "md"))}>
+            {isLoading ? "—" : totalRefs}
+          </p>
           <p className="text-muted-foreground text-[10px] mt-1.5">by this group</p>
         </div>
       </div>
@@ -243,7 +256,10 @@ export default function DownlinesLevelPage({ level, status }: Props) {
               View {isActive ? "Inactive" : "Active"} Members
             </p>
             <p className="text-muted-foreground text-xs mt-0.5">
-              {isActive ? totalInactive : totalActive} {isActive ? "inactive" : "active"} in Level {level}
+              <span className={cn("font-bold", amountFontClass(String(isActive ? totalInactive : totalActive), "sm"))}>
+                {isActive ? totalInactive : totalActive}
+              </span>{" "}
+              {isActive ? "inactive" : "active"} in Level {level}
             </p>
           </div>
           <span className={cn(

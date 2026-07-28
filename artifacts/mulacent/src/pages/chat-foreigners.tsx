@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useGetTasks, useStartTask, useGetWalletBalances } from "@workspace/api-client-react";
 import { MessageCircle, Search, Clock, Gift, RefreshCw, ArrowLeft, Users, Lightbulb, X } from "lucide-react";
 import { useCurrency } from "@/hooks/use-currency";
-import { cn } from "@/lib/utils";
+import { cn, amountFontClass } from "@/lib/utils";
 
 const STEPS = [
   { icon: MessageCircle, label: "Tap a task slot" },
@@ -134,15 +134,15 @@ export default function ChatForeigners() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-2">
               <div className="bg-black/20 border border-white/20 rounded-xl px-2 py-3 text-center">
-                <p className="text-white font-black text-xl leading-none">{chatTasks.length}</p>
+                <p className={cn("text-white font-black leading-none", amountFontClass(String(chatTasks.length), "md"))}>{chatTasks.length}</p>
                 <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Tasks</p>
               </div>
               <div className="bg-black/20 border border-white/20 rounded-xl px-2 py-3 text-center">
-                <p className="text-white font-black text-xl leading-none">0</p>
+                <p className={cn("text-white font-black leading-none", amountFontClass("0", "md"))}>0</p>
                 <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Done</p>
               </div>
               <div className="bg-black/20 border border-white/20 rounded-xl px-2 py-3 text-center overflow-hidden">
-                <p className="text-yellow-300 font-black text-sm sm:text-lg leading-none truncate">{fmt(totalEarned)}</p>
+                <p className={cn("text-yellow-300 font-black leading-none", amountFontClass(fmt(totalEarned), "md"))}>{fmt(totalEarned)}</p>
                 <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Earned</p>
               </div>
             </div>
@@ -215,7 +215,7 @@ export default function ChatForeigners() {
                   <div className="flex flex-col items-end gap-2 flex-shrink-0">
                     <div className="text-right">
                       <p className="text-[9px] text-muted-foreground uppercase tracking-widest">Client Pays</p>
-                      <p className="text-amber-500 font-black text-base leading-none">{fmt(task.reward)}</p>
+                      <p className={cn("text-amber-500 font-black leading-none", amountFontClass(fmt(task.reward), "sm"))}>{fmt(task.reward)}</p>
                       <p className="text-muted-foreground text-[9px] uppercase tracking-widest">Per session</p>
                     </div>
                     <button

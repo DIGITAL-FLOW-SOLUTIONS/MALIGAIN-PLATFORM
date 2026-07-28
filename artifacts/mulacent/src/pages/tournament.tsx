@@ -1,7 +1,7 @@
 import { useGetCurrentTournament } from "@workspace/api-client-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Crown, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, amountFontClass } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 const AVATAR_COLORS = [
@@ -200,7 +200,9 @@ export default function Tournament() {
             </p>
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="text-primary font-black text-xl leading-none">{tournament.userPosition.referrals}</p>
+            <p className={cn("text-primary font-black leading-none", amountFontClass(String(tournament.userPosition.referrals), "md"))}>
+              {tournament.userPosition.referrals}
+            </p>
             <p className="text-muted-foreground text-[10px] uppercase tracking-wide mt-0.5">Referrals</p>
           </div>
         </div>
@@ -293,7 +295,8 @@ export default function Tournament() {
                   </div>
 
                   <span className={cn(
-                    "font-black text-base flex-shrink-0 min-w-[36px] text-right",
+                    "font-black flex-shrink-0 min-w-[36px] text-right",
+                    amountFontClass(String(entry.referrals), "sm"),
                     entry.rank === 1 ? "text-yellow-500" :
                     entry.rank === 2 ? "text-slate-400" :
                     entry.rank === 3 ? "text-amber-500" :
@@ -336,7 +339,8 @@ export default function Tournament() {
                 <div>
                   <p className="text-muted-foreground text-[10px] uppercase tracking-widest">Rank {prize.rank}</p>
                   <p className={cn(
-                    "font-black text-base",
+                    "font-black",
+                    amountFontClass(String(prize.prize), "md"),
                     prize.rank === 1 ? "text-yellow-500" :
                     prize.rank === 2 ? "text-foreground" :
                     prize.rank === 3 ? "text-amber-500" :
@@ -385,7 +389,7 @@ export default function Tournament() {
                     <p className={cn("font-bold text-sm", nameColor)}>{w.username}</p>
                     <p className="text-muted-foreground text-[10px] uppercase tracking-wide mt-0.5">Rank #{w.rank}</p>
                   </div>
-                  <p className={cn("font-black text-base", prizeColor)}>{w.prize}</p>
+                  <p className={cn("font-black", amountFontClass(String(w.prize), "md"), prizeColor)}>{w.prize}</p>
                 </div>
               );
             })}
