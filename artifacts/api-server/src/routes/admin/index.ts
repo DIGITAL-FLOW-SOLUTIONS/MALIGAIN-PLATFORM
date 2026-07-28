@@ -12,6 +12,7 @@ import adminAdminsRouter from "./admins";
 import adminWithdrawalsRouter from "./withdrawals";
 import adminSettingsRouter from "./settings";
 import adminControlRouter from "./control";
+import adminInvestmentsRouter from "./investments";
 
 const router: IRouter = Router();
 
@@ -27,5 +28,6 @@ router.use("/admins", requireAdmin, adminAdminsRouter);
 router.use("/withdrawals", requireAdmin, adminWithdrawalsRouter);
 router.use("/settings", requireAdmin, adminSettingsRouter);
 router.use("/control", requireAdmin, adminControlRouter);
+router.use("/investments", requireAdmin, adminInvestmentsRouter);
 
 export default router;

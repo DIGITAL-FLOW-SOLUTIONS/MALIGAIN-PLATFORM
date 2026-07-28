@@ -17,6 +17,8 @@ import ReferralBonuses from "@/pages/referral-bonuses";
 import Settings from "@/pages/settings";
 import Control from "@/pages/control";
 import NotFound from "@/pages/not-found";
+import InvestmentPlans from "@/pages/investment-plans";
+import InvestmentAccounts from "@/pages/investment-accounts";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -53,6 +55,8 @@ function Router() {
         <Route path="/admins" component={Admins} />
         <Route path="/settings" component={Settings} />
         <Route path="/control" component={Control} />
+        <Route path="/investment-plans" component={InvestmentPlans} />
+        <Route path="/investment-accounts" component={InvestmentAccounts} />
         <Route component={NotFound} />
       </Switch>
     </AuthGuard>

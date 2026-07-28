@@ -12,6 +12,7 @@ import mpesaRouter from "./mpesa";
 import verifyRouter from "./verify";
 import settingsRouter from "./settings";
 import smtpRouter from "./smtp";
+import investmentsRouter from "./investments";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use("/mpesa", mpesaRouter);
 router.use("/verify", verifyRouter);
 router.use("/settings", settingsRouter);
 router.use("/smtp", smtpRouter);
+router.use("/investments", investmentsRouter);
 
 export default router;

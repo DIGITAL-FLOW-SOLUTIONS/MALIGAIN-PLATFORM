@@ -28,6 +28,8 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
+  TrendingUp,
+  BarChart2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
@@ -65,8 +67,12 @@ const TEAM_BOTTOM: NavItem[] = [
   { icon: Gift, label: "Bonuses", href: "/bonus", color: "bg-amber-500" },
 ];
 
+const INVEST_SUB_ITEMS: NavItem[] = [
+  { icon: TrendingUp, label: "Investment Plans",    href: "/investments",         color: "bg-orange-500" },
+  { icon: BarChart2,  label: "Current Investments", href: "/investments/current", color: "bg-emerald-500" },
+];
+
 const PRODUCT_ITEMS: NavItem[] = [
-  { icon: ShoppingBag,   label: "Investment PRO",        color: "bg-orange-500"                        },
   { icon: Dices,         label: "Spin & Win",           color: "bg-pink-500"                          },
   { icon: ClipboardList, label: "Survey",               href: "/surveys",        color: "bg-teal-500" },
   { icon: MessageCircle, label: "Chat with Foreigners", href: "/chat-foreigners",color: "bg-violet-500"},
@@ -134,6 +140,47 @@ function NavSection({ title, items }: { title: string; items: NavItem[] }) {
       <div className="space-y-0.5">
         {items.map((item) => <NavRow key={item.label} item={item} />)}
       </div>
+    </div>
+  );
+}
+
+/* ─── investment expandable section ──────────────────────────── */
+function InvestmentSection() {
+  const [open, setOpen] = useState(false);
+  const [location] = useLocation();
+  const isActive = location.startsWith("/investments");
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className={cn(
+          "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-sm",
+          isActive ? "bg-primary/10 border border-primary/20" : "hover:bg-muted"
+        )}
+      >
+        <div className={cn(
+          "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500 transition-all",
+          isActive ? "opacity-100 shadow-sm" : "opacity-75 group-hover:opacity-90"
+        )}>
+          <ShoppingBag className="w-3.5 h-3.5 text-white" />
+        </div>
+        <span className={cn(
+          "flex-1 text-left transition-colors",
+          isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground"
+        )}>
+          Investment PRO
+        </span>
+        {open
+          ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/50 flex-shrink-0" />
+          : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 flex-shrink-0" />
+        }
+      </button>
+      {open && (
+        <div className="space-y-0.5 mt-0.5">
+          {INVEST_SUB_ITEMS.map(item => <NavRow key={item.label} item={item} indent />)}
+        </div>
+      )}
     </div>
   );
 }
@@ -230,7 +277,14 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; se
           <NavSection title="Main"         items={MAIN_ITEMS}     />
           <NavSection title="Accounts"     items={ACCOUNT_ITEMS}  />
           <TeamSection />
-          <NavSection title="Products"     items={PRODUCT_ITEMS}  />
+          {/* Products section with expandable Investment PRO */}
+          <div>
+            <p className="px-3 text-[10px] font-bold tracking-widest text-muted-foreground/60 uppercase mb-2">Products</p>
+            <div className="space-y-0.5">
+              <InvestmentSection />
+              {PRODUCT_ITEMS.map((item) => <NavRow key={item.label} item={item} />)}
+            </div>
+          </div>
           <NavSection title="Earn with Fun" items={EARN_ITEMS}    />
 
           {/* Settings */}

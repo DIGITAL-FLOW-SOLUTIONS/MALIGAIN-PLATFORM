@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { startInvestmentWorker } from "./lib/investmentWorker";
 
 const rawPort = process.env["PORT"];
 
@@ -22,6 +23,8 @@ process.on("unhandledRejection", (reason) => {
 process.on("uncaughtException", (err) => {
   logger.error({ err }, "Uncaught exception — server continuing");
 });
+
+startInvestmentWorker();
 
 app.listen(port, (err) => {
   if (err) {

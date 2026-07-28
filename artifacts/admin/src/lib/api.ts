@@ -130,6 +130,45 @@ export const api = {
     const q = page ? `?page=${page}` : "";
     return request<{ entries: AuditEntry[]; total: number; page: number; totalPages: number }>("GET", `/audit-log${q}`);
   },
+
+  // Investment Plans
+  investmentListPlans: () =>
+    request<{ plans: Record<string, unknown>[] }>("GET", "/investments/plans"),
+  investmentCreatePlan: (data: {
+    brandName: string; name: string; category: string;
+    depositAmount: number; dailyProfit: number; totalDays: number; totalProfit: number;
+    imageUrl: string | null; country: string; sortOrder: number;
+  }) => request<{ message: string; plan: Record<string, unknown> }>("POST", "/investments/plans", data),
+  investmentUpdatePlan: (id: number, data: {
+    brandName?: string; name?: string; category?: string;
+    depositAmount?: number; dailyProfit?: number; totalDays?: number; totalProfit?: number;
+    imageUrl?: string | null; country?: string; sortOrder?: number; isActive?: boolean;
+  }) => request<{ message: string }>("PUT", `/investments/plans/${id}`, data),
+  investmentDeletePlan: (id: number) =>
+    request<{ message: string }>("DELETE", `/investments/plans/${id}`),
+
+  // Investment Payments
+  investmentListPayments: (params: { page?: number; status?: string }) => {
+    const q = new URLSearchParams();
+    if (params.page) q.set("page", String(params.page));
+    if (params.status) q.set("status", params.status);
+    return request<{ payments: Record<string, unknown>[]; total: number; page: number; totalPages: number }>("GET", `/investments/payments?${q}`);
+  },
+  investmentApprovePayment: (id: number, note?: string) =>
+    request<{ message: string }>("POST", `/investments/payments/${id}/approve`, { note }),
+  investmentRejectPayment: (id: number, note?: string) =>
+    request<{ message: string }>("POST", `/investments/payments/${id}/reject`, { note }),
+
+  // Investment Accounts
+  investmentListAccounts: (params: { page?: number; status?: string; search?: string }) => {
+    const q = new URLSearchParams();
+    if (params.page) q.set("page", String(params.page));
+    if (params.status) q.set("status", params.status);
+    if (params.search) q.set("search", params.search);
+    return request<{ accounts: Record<string, unknown>[]; total: number; page: number; totalPages: number }>("GET", `/investments/accounts?${q}`);
+  },
+  investmentUpdateAccount: (id: number, data: { action: string; amount?: number; reason?: string; status?: string }) =>
+    request<{ message: string }>("PATCH", `/investments/accounts/${id}`, data),
 };
 
 export interface UserItem {

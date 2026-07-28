@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetWalletBalances, useGetReferralStats } from "@workspace/api-client-react";
 import { formatCurrency, getCurrencyInfo, amountFontClass } from "@/lib/utils";
 import {
@@ -44,6 +44,15 @@ export default function Dashboard() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
+  const [investBalance, setInvestBalance] = useState(0);
+
+  // Fetch investment balance
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}api/investments/my`, { credentials: "include" })
+      .then(r => r.json())
+      .then(d => setInvestBalance(d.totalEarned ?? 0))
+      .catch(() => {});
+  }, []);
 
   const country = user?.country ?? null;
   const currencyInfo = getCurrencyInfo(country);
@@ -92,11 +101,11 @@ export default function Dashboard() {
       href: "/downlines",
     },
     {
-      label: "Agent Bonus",
-      value: fmt(todayEarn),
-      badge: "+32.5%",
-      icon: Gift,
-      href: "/bonus",
+      label: "My Investments",
+      value: fmt(investBalance),
+      badge: "daily",
+      icon: TrendingUp,
+      href: "/investments/current",
     },
   ];
 

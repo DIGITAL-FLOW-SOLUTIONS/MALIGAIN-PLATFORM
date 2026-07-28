@@ -4,6 +4,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import {
   LayoutDashboard, Users, CreditCard, CheckSquare, ClipboardList,
   ListOrdered, LogOut, Shield, Menu, X, UserCog, ArrowDownToLine, Gift, Settings, Sliders,
+  TrendingUp, BarChart2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -19,6 +20,8 @@ const NAV = [
   { href: "/admins", label: "Admins", icon: UserCog },
   { href: "/settings", label: "Settings", icon: Settings },
   { href: "/control", label: "Control Panel", icon: Sliders },
+  { href: "/investment-plans", label: "Investment Plans", icon: TrendingUp },
+  { href: "/investment-accounts", label: "Investments", icon: BarChart2 },
 ];
 
 function NavItem({ href, label, icon: Icon }: { href: string; label: string; icon: React.FC<{ className?: string }> }) {

@@ -1,0 +1,24 @@
+So user selects an item that will make him earn daily profits, so the investment on the item has number of days, daily profit, total profit, and deposit price needed to invest in that item - check the uploaded image it has the layout design of the investment page and what you will create. Copy the design exactly as shown in the image, pixel by pixel.
+This means we will need to add an investment page in the admin panel where admin will be able to set this investment plans and items, upload item images, set Deposit prices, daily profits etc for each country our app has - thats around 13 countries. And we have Basic plans and Premium Plans.
+In the /dashboard we will need to display the investment balance, so we will use the 'Agent Balance' card and turn it to 'My Investments'
+Under the  'Investment PRO' link, you will add a 'Current Investments' link and create a beatiful page, that shows the image and plan which user has purchased, total money it has earned him so far, daily profit, initial investment, analytics graphs, and basic investment features added.
+
+Of cause we will need to add new columns in the 'wallet' table in our supabase database to store each data that will be needed for this feature. You can write the sql when done i will run it in supabase to add everything.
+
+THE PROCESS:
+So when user clicks 'Start Now' he should be redirect to pay for the investment plan(when you check the activation page you will see each country has its own payment method so copy the same flow)- for the manual verification send, admin must recognize it as Investment to avoid confusion of activation, recharge, and investment.
+Once user has successfully paid for the plan, its investment is activated, and after 24 hours he will earn his first daily profit on his investment account. He can monitor his earnings in the Current Investment page, which has options to invest more or Most profitable investments etc listed.
+
+Of cause we will have a background worker running every 10mins, making sure daily profits for active investments plans of users are creadited daily basd on the time they invested, and they stop once the total profit is reached, and the page turns to an achievement branded style making the user feel he has acheieved alot. Also weekly achievement branded style to make the user feel special for the investment profits he has made in just a week and to invest even more. 
+
+The admin panel also, admins will have an investment pages, one to set the plans and all the details for each plan either basic or premium for each country and they can edit them anytime. And a second page to see all active plans details, be able to add or remove funds, deactivate, edit etc in these investments accounts, giving them full control. 
+
+END GOAL:
+* Admin to be able to add investment plans with images and details
+* Investment Plans details stored in the database and admin can edit anytime
+* User see all available Investment plans in their own country currency
+* They can purchase a plan, pay it automatically or manually based on the country available payment method the app currently has
+* Successful investment plans can be viewed in the Current Investment page 
+* Background worker credits daily profits per plan to each active plan based on the time they invested
+* Weekly styled congratulations on investment plan made to encourage the user.
+* A clean, simple, mobile and desktop friends, also professional feature ready for production. 

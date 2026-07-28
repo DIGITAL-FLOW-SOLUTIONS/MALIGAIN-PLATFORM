@@ -12,13 +12,15 @@ function num(val: unknown): number {
 // Parse ExternalReference → { txnType, userId }
 // Format: MUL-activate-{userId}-{ts}  |  MUL-recharge-{userId}-{ts}  |  MUL-payclient-{userId}-{ts}
 // ---------------------------------------------------------------------------
-function parseExternalRef(ref: string): { txnType: string; userId: number } | null {
+function parseExternalRef(ref: string): { txnType: string; userId: number; txnExtra: string } | null {
   const parts = ref.split("-");
   if (parts[0] !== "MUL" || parts.length < 4) return null;
   const userId = Number(parts[2]);
   if (!userId) return null;
-  const txnType = parts[1] ?? ""; // "activate" | "recharge" | "payclient"
-  return { txnType, userId };
+  const txnType = parts[1] ?? ""; // "activate" | "recharge" | "payclient" | "invest"
+  // For invest: MUL-invest-{userId}-{investmentId}-{ts} → txnExtra = investmentId
+  const txnExtra = parts[3] ?? "";
+  return { txnType, userId, txnExtra };
 }
 
 // ---------------------------------------------------------------------------
@@ -146,6 +148,41 @@ async function creditUser(opts: {
       log.info({ step: "credit_payclient_referral_done" }, "CALLBACK_DEBUG: done");
     } else {
       log.error({ step: "credit_payclient_no_downline", txnExtra }, "CALLBACK_DEBUG: Missing downline ID");
+    }
+
+  } else if (txnType === "invest") {
+    // txnExtra = investmentId
+    const investmentId = Number(txnExtra);
+    log.info({ step: "credit_invest", userId, investmentId }, "CALLBACK_DEBUG: Activating investment");
+
+    if (investmentId) {
+      const now = new Date();
+      const nextCredit = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+      const { error: invErr } = await supabase
+        .from("user_investments")
+        .update({
+          status: "active",
+          start_date: now.toISOString(),
+          next_credit_at: nextCredit,
+          updated_at: now.toISOString(),
+        })
+        .eq("id", investmentId)
+        .eq("status", "pending");
+      log.info({ step: "credit_invest_result", supabaseError: invErr }, "CALLBACK_DEBUG: investment activated");
+
+      if (txnId) {
+        await supabase.from("transactions").update({ status: "completed" }).eq("id", txnId);
+      } else {
+        await supabase.from("transactions").insert({
+          user_id: userId,
+          type: "investment",
+          amount: creditAmount,
+          status: "completed",
+          description: `PAYHERO:${checkoutRequestId}:invest:${investmentId} (recovered from ${externalReference})`,
+        });
+      }
+    } else {
+      log.error({ step: "credit_invest_no_id", txnExtra }, "CALLBACK_DEBUG: Missing investment ID");
     }
 
   } else {

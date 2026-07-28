@@ -43,6 +43,8 @@ import SouthSudanPay from "@/pages/south-sudan-pay";
 import RwandaPay from "@/pages/rwanda-pay";
 import NotFound from "@/pages/not-found";
 import SmtpDebug from "@/pages/smtp-debug";
+import Investments from "@/pages/investments";
+import InvestmentsCurrent from "@/pages/investments-current";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -282,6 +284,8 @@ function Router() {
       <Route path="/botswana-pay" component={() => <BotswanaPayRoute />} />
       <Route path="/south-sudan-pay" component={() => <SouthSudanPayRoute />} />
       <Route path="/rwanda-pay" component={() => <RwandaPayRoute />} />
+      <Route path="/investments" component={() => <ProtectedRoute component={Investments} />} />
+      <Route path="/investments/current" component={() => <ProtectedRoute component={InvestmentsCurrent} />} />
       <Route path="/smtp/debug" component={SmtpDebug} />
 
       <Route component={NotFound} />
