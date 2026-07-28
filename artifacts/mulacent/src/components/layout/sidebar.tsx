@@ -66,7 +66,7 @@ const TEAM_BOTTOM: NavItem[] = [
 ];
 
 const PRODUCT_ITEMS: NavItem[] = [
-  { icon: ShoppingBag,   label: "Easy Shop",            color: "bg-orange-500"                        },
+  { icon: ShoppingBag,   label: "Investment PRO",        color: "bg-orange-500"                        },
   { icon: Dices,         label: "Spin & Win",           color: "bg-pink-500"                          },
   { icon: ClipboardList, label: "Survey",               href: "/surveys",        color: "bg-teal-500" },
   { icon: MessageCircle, label: "Chat with Foreigners", href: "/chat-foreigners",color: "bg-violet-500"},
