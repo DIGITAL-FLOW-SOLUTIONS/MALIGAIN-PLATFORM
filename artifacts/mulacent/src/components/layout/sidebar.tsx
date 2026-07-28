@@ -220,10 +220,6 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; se
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-foreground font-semibold text-sm truncate group-hover:text-primary transition-colors">{user?.username || "User"}</p>
-                <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground font-medium group-hover:text-primary/70 transition-colors">
-                  <UserCircle className="w-3 h-3" />
-                  Profile
-                </span>
               </div>
             </div>
           </div>
