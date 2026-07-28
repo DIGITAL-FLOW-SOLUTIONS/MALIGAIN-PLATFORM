@@ -15,7 +15,12 @@ import Activate from "@/pages/activate";
 import PaymentStatus from "@/pages/payment-status";
 import Dashboard from "@/pages/dashboard";
 import Profile from "@/pages/profile";
-import Downlines from "@/pages/downlines";
+import DownlinesL1Active   from "@/pages/downlines-l1-active";
+import DownlinesL1Inactive from "@/pages/downlines-l1-inactive";
+import DownlinesL2Active   from "@/pages/downlines-l2-active";
+import DownlinesL2Inactive from "@/pages/downlines-l2-inactive";
+import DownlinesL3Active   from "@/pages/downlines-l3-active";
+import DownlinesL3Inactive from "@/pages/downlines-l3-inactive";
 import Tournament from "@/pages/tournament";
 import ChatForeigners from "@/pages/chat-foreigners";
 import Products from "@/pages/products";
@@ -247,7 +252,12 @@ function Router() {
 
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/profile" component={() => <ProtectedRoute component={Profile} />} />
-      <Route path="/downlines" component={() => <ProtectedRoute component={Downlines} />} />
+      <Route path="/team/level-1/active"   component={() => <ProtectedRoute component={DownlinesL1Active}   />} />
+      <Route path="/team/level-1/inactive" component={() => <ProtectedRoute component={DownlinesL1Inactive} />} />
+      <Route path="/team/level-2/active"   component={() => <ProtectedRoute component={DownlinesL2Active}   />} />
+      <Route path="/team/level-2/inactive" component={() => <ProtectedRoute component={DownlinesL2Inactive} />} />
+      <Route path="/team/level-3/active"   component={() => <ProtectedRoute component={DownlinesL3Active}   />} />
+      <Route path="/team/level-3/inactive" component={() => <ProtectedRoute component={DownlinesL3Inactive} />} />
       <Route path="/tournament" component={() => <ProtectedRoute component={Tournament} />} />
       <Route path="/chat-foreigners" component={() => <ProtectedRoute component={ChatForeigners} />} />
       <Route path="/products" component={() => <ProtectedRoute component={Products} />} />

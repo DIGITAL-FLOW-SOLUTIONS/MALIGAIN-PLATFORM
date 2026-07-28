@@ -56,9 +56,9 @@ const ACCOUNT_ITEMS: NavItem[] = [
 ];
 
 const TEAM_LEVELS: TeamLevel[] = [
-  { level: 1 },
-  { level: 2 },
-  { level: 3 },
+  { level: 1, activeHref: "/team/level-1/active", inactiveHref: "/team/level-1/inactive" },
+  { level: 2, activeHref: "/team/level-2/active", inactiveHref: "/team/level-2/inactive" },
+  { level: 3, activeHref: "/team/level-3/active", inactiveHref: "/team/level-3/inactive" },
 ];
 
 const TEAM_BOTTOM: NavItem[] = [
