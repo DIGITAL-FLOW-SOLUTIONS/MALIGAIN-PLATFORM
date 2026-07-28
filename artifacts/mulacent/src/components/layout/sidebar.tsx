@@ -12,7 +12,6 @@ import {
   UserCheck,
   UserX,
   Gift,
-  ShoppingBag,
   Dices,
   ClipboardList,
   MessageCircle,
@@ -160,20 +159,27 @@ function InvestmentSection() {
         )}
       >
         <div className={cn(
-          "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 bg-orange-500 transition-all",
-          isActive ? "opacity-100 shadow-sm" : "opacity-75 group-hover:opacity-90"
+          "w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all flex-shrink-0",
+          "bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500",
+          "shadow-[0_0_10px_2px_rgba(245,158,11,0.45)]",
+          isActive ? "opacity-100" : "opacity-85 group-hover:opacity-100 group-hover:shadow-[0_0_14px_4px_rgba(245,158,11,0.55)]"
         )}>
-          <ShoppingBag className="w-3.5 h-3.5 text-white" />
+          <TrendingUp className="w-3.5 h-3.5 text-white drop-shadow" />
         </div>
         <span className={cn(
-          "flex-1 text-left transition-colors",
-          isActive ? "text-primary font-semibold" : "text-muted-foreground group-hover:text-foreground"
+          "flex-1 text-left font-semibold transition-colors",
+          isActive
+            ? "bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 bg-clip-text text-transparent"
+            : "text-foreground group-hover:bg-gradient-to-r group-hover:from-yellow-500 group-hover:via-amber-500 group-hover:to-orange-500 group-hover:bg-clip-text group-hover:text-transparent"
         )}>
           Investment PRO
         </span>
+        <span className="text-[9px] font-bold tracking-wide px-1.5 py-0.5 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-white shadow-sm flex-shrink-0">
+          PRO
+        </span>
         {open
-          ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground/50 flex-shrink-0" />
-          : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 flex-shrink-0" />
+          ? <ChevronDown className="w-3.5 h-3.5 text-amber-400/70 flex-shrink-0" />
+          : <ChevronRight className="w-3.5 h-3.5 text-amber-400/70 flex-shrink-0" />
         }
       </button>
       {open && (
