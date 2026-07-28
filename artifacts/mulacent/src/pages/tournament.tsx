@@ -167,10 +167,10 @@ export default function Tournament() {
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 rounded-full px-4 py-1.5 mb-4">
             <Crown className="w-3.5 h-3.5 text-yellow-300" />
-            <span className="text-white text-xs font-bold uppercase tracking-widest">Live Tournament</span>
+            <span className="text-white text-xs font-bold uppercase tracking-widest">Live Ranks</span>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-display font-black text-white mb-1">{tournament.name}</h1>
+          <h1 className="text-2xl md:text-3xl font-display font-black text-white mb-1">Weekly Referral Ranks</h1>
           <p className="text-white/60 text-sm mb-6">
             Invite the most active members — top referrers win cash prizes!
           </p>
