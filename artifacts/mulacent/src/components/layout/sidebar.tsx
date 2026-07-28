@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import {
   LayoutDashboard,
   ArrowDownCircle,
@@ -210,9 +211,11 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; se
           <div className="p-4 border-b border-sidebar-border hover:bg-muted/50 transition-colors cursor-pointer group">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm shadow-md">
-                  {user?.avatarInitials || "U"}
-                </div>
+                <UserAvatar
+                  initials={user?.avatarInitials}
+                  size="md"
+                  className="shadow-md"
+                />
                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-sidebar shadow-sm" />
               </div>
               <div className="flex-1 min-w-0">

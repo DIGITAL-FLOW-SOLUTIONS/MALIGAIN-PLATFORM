@@ -2,6 +2,7 @@ import { Menu, ShoppingCart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { getCurrencyInfo } from "@/lib/utils";
 import { Link } from "wouter";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useAuth();
@@ -30,9 +31,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
 
         {/* User */}
         <Link href="/profile" className="flex items-center gap-2 ml-1 pl-3 border-l border-border cursor-pointer hover:opacity-80 transition-opacity">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-xs shadow-md">
-            {user?.avatarInitials || "U"}
-          </div>
+          <UserAvatar initials={user?.avatarInitials} size="sm" className="shadow-md" />
           <span className="hidden md:block text-sm font-semibold text-foreground">{user?.username || "User"}</span>
         </Link>
       </div>

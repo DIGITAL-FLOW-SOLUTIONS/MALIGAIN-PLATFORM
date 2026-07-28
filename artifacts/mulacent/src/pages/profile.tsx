@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Eye, EyeOff, Phone, Globe, Lock, Save, Users, ArrowDownCircle, Activity, Hash, Mail, Calendar, CheckCircle } from "lucide-react";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { formatDate } from "@/lib/utils";
 
 const COUNTRIES = [
@@ -167,12 +168,11 @@ export default function Profile() {
         <div className="absolute inset-0 opacity-20 pointer-events-none"
           style={{ background: "radial-gradient(ellipse at 60% 0%, rgba(255,255,255,0.4) 0%, transparent 60%)" }} />
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div
-            className="min-w-[4.5rem] min-h-[4.5rem] rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-white text-xl font-black shadow-xl"
-            style={{ width: "4.5rem", height: "4.5rem" }}
-          >
-            {user?.avatarInitials || "U"}
-          </div>
+          <UserAvatar
+            initials={user?.avatarInitials}
+            size="xl"
+            ringClass="border-2 border-white/40 shadow-xl"
+          />
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold text-white break-words">{user?.username}</h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
