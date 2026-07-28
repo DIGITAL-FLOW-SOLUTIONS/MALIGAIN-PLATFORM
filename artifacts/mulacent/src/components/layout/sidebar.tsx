@@ -48,11 +48,11 @@ const MAIN_ITEMS: NavItem[] = [
 ];
 
 const ACCOUNT_ITEMS: NavItem[] = [
-  { icon: ArrowDownCircle,  label: "Deposit",       href: "/recharge",  color: "bg-emerald-500" },
-  { icon: CreditCard,       label: "PayForClient",                      color: "bg-sky-500"     },
-  { icon: Award,            label: "Ranks",                             color: "bg-amber-500"   },
-  { icon: Wallet,           label: "Withdraw",      href: "/withdraw",  color: "bg-rose-500"    },
-  { icon: History,          label: "History",       href: "/history",   color: "bg-indigo-500"  },
+  { icon: ArrowDownCircle,  label: "Deposit",       href: "/recharge",    color: "bg-emerald-500" },
+  { icon: CreditCard,       label: "PayForClient",  href: "/pay-client",  color: "bg-sky-500"     },
+  { icon: Award,            label: "Ranks",                               color: "bg-amber-500"   },
+  { icon: Wallet,           label: "Withdraw",      href: "/withdraw",    color: "bg-rose-500"    },
+  { icon: History,          label: "History",       href: "/history",     color: "bg-indigo-500"  },
 ];
 
 const TEAM_LEVELS: TeamLevel[] = [
@@ -66,12 +66,12 @@ const TEAM_BOTTOM: NavItem[] = [
 ];
 
 const PRODUCT_ITEMS: NavItem[] = [
-  { icon: ShoppingBag,   label: "Easy Shop",           color: "bg-orange-500"  },
-  { icon: Dices,         label: "Spin & Win",          color: "bg-pink-500"    },
-  { icon: ClipboardList, label: "Survey",              color: "bg-teal-500"    },
-  { icon: MessageCircle, label: "Chat with Foreigners", href: "/chat-foreigners", color: "bg-violet-500" },
-  { icon: HelpCircle,    label: "Trivia",              href: "/trivia",  color: "bg-secondary" },
-  { icon: BookOpen,      label: "Blogs",               color: "bg-primary"     },
+  { icon: ShoppingBag,   label: "Easy Shop",            color: "bg-orange-500"                        },
+  { icon: Dices,         label: "Spin & Win",           color: "bg-pink-500"                          },
+  { icon: ClipboardList, label: "Survey",               href: "/surveys",        color: "bg-teal-500" },
+  { icon: MessageCircle, label: "Chat with Foreigners", href: "/chat-foreigners",color: "bg-violet-500"},
+  { icon: HelpCircle,    label: "Trivia",               href: "/trivia",         color: "bg-secondary"},
+  { icon: BookOpen,      label: "Blogs",                href: "/blogging",       color: "bg-primary"  },
 ];
 
 const EARN_ITEMS: NavItem[] = [
