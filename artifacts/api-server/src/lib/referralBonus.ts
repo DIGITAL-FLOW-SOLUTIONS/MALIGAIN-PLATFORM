@@ -122,14 +122,21 @@ export async function triggerReferralBonus(activatedUserId: number, log?: { erro
       });
 
       if (uplineEmail) {
-        const currency = COUNTRY_CURRENCY[uplineCountry] ?? uplineCountry;
+        // Email shows the downline's country currency & same-country rate so the
+        // upline feels the international flavour of their referral — actual wallet
+        // credit (bonusAmount in upline's currency) is never changed.
+        const emailCurrency = COUNTRY_CURRENCY[downlineCountry] ?? COUNTRY_CURRENCY[uplineCountry] ?? uplineCountry;
+        const downlineSameCountryRow = BONUS_TABLE[downlineCountry]?.[downlineCountry];
+        const emailAmount = (downlineSameCountryRow?.[level - 1] ?? 0) > 0
+          ? downlineSameCountryRow![level - 1]
+          : bonusAmount;
         try {
           await sendReferralBonusEmail({
             toEmail: uplineEmail,
             username: uplineUsername,
             level,
-            amount: bonusAmount,
-            currency,
+            amount: emailAmount,
+            currency: emailCurrency,
             downlineUsername: knownAs,
           });
           result.emailsSent++;
