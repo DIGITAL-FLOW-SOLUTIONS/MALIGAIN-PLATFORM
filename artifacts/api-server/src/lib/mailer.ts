@@ -197,6 +197,136 @@ export async function sendWithdrawalConfirmationEmail(opts: {
   console.log(`[mailer] ✅ Withdrawal email sent to ${toEmail} | id: ${data?.id}`);
 }
 
+// ---------------------------------------------------------------------------
+// Admin withdrawal request notification
+// ---------------------------------------------------------------------------
+
+function buildAdminWithdrawalNotificationEmail(opts: {
+  username: string;
+  phone: string;
+  amount: number;
+  currency: string;
+  country: string;
+  requestedAt: string;
+}): string {
+  const { username, phone, amount, currency, country, requestedAt } = opts;
+  const fmt = (n: number) => `${currency} ${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formattedDate = new Date(requestedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Withdrawal Request</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f2f5;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f2f5;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table width="520" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:#111111;padding:24px 36px;">
+              <p style="margin:0;font-size:11px;color:#888888;text-transform:uppercase;letter-spacing:3px;font-weight:700;">MALIGAIN AGENCIES</p>
+              <p style="margin:6px 0 0;font-size:20px;font-weight:900;color:#ffffff;letter-spacing:0.5px;">Withdrawal Request</p>
+            </td>
+          </tr>
+
+          <!-- Alert banner -->
+          <tr>
+            <td style="padding:0;">
+              <div style="background:#fff8e1;border-left:4px solid #f59e0b;padding:14px 36px;">
+                <p style="margin:0;font-size:13px;color:#92400e;font-weight:700;">⚠ Action Required — A user has requested a withdrawal</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Details table -->
+          <tr>
+            <td style="padding:28px 36px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
+                <tr>
+                  <td style="padding:10px 14px;background:#f8f9fa;border:1px solid #e0e0e0;font-weight:700;color:#111111;width:40%;">User</td>
+                  <td style="padding:10px 14px;background:#ffffff;border:1px solid #e0e0e0;color:#333333;">${username}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px;background:#f8f9fa;border:1px solid #e0e0e0;font-weight:700;color:#111111;">Phone</td>
+                  <td style="padding:10px 14px;background:#ffffff;border:1px solid #e0e0e0;color:#333333;">${phone}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px;background:#f8f9fa;border:1px solid #e0e0e0;font-weight:700;color:#111111;">Country</td>
+                  <td style="padding:10px 14px;background:#ffffff;border:1px solid #e0e0e0;color:#333333;">${country}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px;background:#f8f9fa;border:1px solid #e0e0e0;font-weight:700;color:#111111;">Amount Requested</td>
+                  <td style="padding:10px 14px;background:#ffffff;border:1px solid #e0e0e0;font-weight:700;color:#111111;font-size:15px;">${fmt(amount)}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 14px;background:#f8f9fa;border:1px solid #e0e0e0;font-weight:700;color:#111111;">Requested At</td>
+                  <td style="padding:10px 14px;background:#ffffff;border:1px solid #e0e0e0;color:#333333;">${formattedDate}</td>
+                </tr>
+              </table>
+
+              <p style="margin:24px 0 8px;font-size:14px;color:#333333;line-height:1.6;">
+                Please log in to the admin panel to approve or decline this request.
+              </p>
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td style="padding:0 36px 28px;">
+              <a href="${APP_URL}/admin/withdrawals"
+                 style="display:inline-block;padding:12px 28px;background:#111111;color:#ffffff;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;letter-spacing:0.5px;">
+                Go to Admin Panel →
+              </a>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 36px;border-top:1px solid #eeeeee;">
+              <p style="margin:0;font-size:11px;color:#999999;">This is an automated notification from MALIGAIN AGENCIES. Do not reply to this email.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+export async function sendWithdrawalRequestNotificationEmail(opts: {
+  toEmail: string;
+  username: string;
+  phone: string;
+  amount: number;
+  currency: string;
+  country: string;
+  requestedAt: string;
+}): Promise<void> {
+  const { toEmail, username, amount, currency } = opts;
+  console.log(`[mailer] Sending withdrawal request notification to admin ${toEmail} — ${currency} ${amount} from ${username}`);
+
+  const resend = getResendClient();
+  const { data, error } = await resend.emails.send({
+    from: FROM,
+    to: toEmail,
+    subject: `[Action Required] New Withdrawal Request — ${currency} ${amount.toLocaleString()} from ${username}`,
+    html: buildAdminWithdrawalNotificationEmail(opts),
+  });
+
+  if (error) {
+    console.error(`[mailer] ❌ Admin withdrawal notification failed for ${toEmail}: ${error.message}`);
+    throw new Error(error.message);
+  }
+  console.log(`[mailer] ✅ Admin withdrawal notification sent to ${toEmail} | id: ${data?.id}`);
+}
+
 export async function sendReferralBonusEmail(opts: {
   toEmail: string;
   username: string;

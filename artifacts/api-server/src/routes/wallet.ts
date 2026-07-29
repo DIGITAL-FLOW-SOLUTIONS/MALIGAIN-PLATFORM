@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import { supabase } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { initiateSTKPush, normalizePhone } from "../lib/payhero";
+import { sendWithdrawalRequestNotificationEmail } from "../lib/mailer";
 
 const router: IRouter = Router();
 router.use(requireAuth);
@@ -150,6 +151,49 @@ router.post("/withdraw", async (req: Request, res: Response) => {
     });
 
     res.json({ message: "Withdrawal request submitted successfully", success: true });
+
+    // Notify all admins that have a notification email set (fire-and-forget)
+    try {
+      const { data: userRows } = await supabase
+        .from("users")
+        .select("username, phone, country")
+        .eq("id", userId)
+        .limit(1);
+      const user = (userRows ?? [])[0] as Record<string, unknown> | undefined;
+
+      const { data: adminRows } = await supabase
+        .from("admin_users")
+        .select("admin_notification_email")
+        .not("admin_notification_email", "is", null);
+
+      const recipients = ((adminRows ?? []) as Array<Record<string, unknown>>)
+        .map((a) => String(a["admin_notification_email"] ?? "").trim())
+        .filter(Boolean);
+
+      if (recipients.length > 0 && user) {
+        const country = String(user["country"] ?? "KE").toUpperCase();
+        const COUNTRY_CURRENCY: Record<string, string> = {
+          KE: "KES", TZ: "TZS", UG: "UGX", GH: "GHS", ZM: "ZMW", CM: "XAF",
+        };
+        const currency = COUNTRY_CURRENCY[country] ?? "KES";
+
+        await Promise.allSettled(
+          recipients.map((toEmail) =>
+            sendWithdrawalRequestNotificationEmail({
+              toEmail,
+              username: String(user["username"] ?? "Unknown"),
+              phone: String(phoneNumber ?? user["phone"] ?? "—"),
+              amount: requestedAmount,
+              currency,
+              country,
+              requestedAt: new Date().toISOString(),
+            })
+          )
+        );
+      }
+    } catch (notifyErr) {
+      req.log.error({ notifyErr }, "Admin withdrawal notification failed (non-fatal)");
+    }
   } catch (err) {
     req.log.error({ err }, "Withdraw error");
     res.status(500).json({ error: "ServerError", message: "Withdrawal failed" });

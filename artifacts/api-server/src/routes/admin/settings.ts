@@ -133,6 +133,56 @@ router.put("/", async (req: Request, res: Response) => {
 });
 
 // ---------------------------------------------------------------------------
+// Admin notification email — per-admin read/write
+// ---------------------------------------------------------------------------
+router.get("/notification-email", async (req: Request, res: Response) => {
+  try {
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("admin_notification_email")
+      .eq("username", req.session.adminUsername!)
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+
+    res.json({ notificationEmail: (data as Record<string, unknown>)["admin_notification_email"] ?? null });
+  } catch (err) {
+    req.log.error({ err }, "Admin get notification email error");
+    res.status(500).json({ error: "ServerError", message: "Failed to fetch notification email" });
+  }
+});
+
+router.put("/notification-email", async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body as { email?: string };
+    const trimmed = (email ?? "").trim();
+
+    // Allow clearing the email by sending an empty string
+    if (trimmed && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      res.status(400).json({ error: "ValidationError", message: "Invalid email address" });
+      return;
+    }
+
+    const { error } = await supabase
+      .from("admin_users")
+      .update({ admin_notification_email: trimmed || null })
+      .eq("username", req.session.adminUsername!);
+
+    if (error) throw error;
+
+    await logAdminAction(req.session.adminUsername!, "update_notification_email", "admin_users", undefined, {
+      email: trimmed || null,
+    });
+
+    res.json({ message: trimmed ? "Notification email saved" : "Notification email cleared" });
+  } catch (err) {
+    req.log.error({ err }, "Admin update notification email error");
+    res.status(500).json({ error: "ServerError", message: "Failed to update notification email" });
+  }
+});
+
+// ---------------------------------------------------------------------------
 // Launch mode — admin read/write
 // ---------------------------------------------------------------------------
 router.put("/launch", async (req: Request, res: Response) => {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Settings as SettingsIcon, Rocket } from "lucide-react";
+import { Save, Settings as SettingsIcon, Rocket, Bell } from "lucide-react";
 
 function toDatetimeLocal(isoString: string): string {
   if (!isoString) return "";
@@ -49,11 +49,23 @@ export default function Settings() {
   const [rwandaBusinessName, setRwandaBusinessName] = useState("");
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
+  const [notificationEmail, setNotificationEmail] = useState("");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-settings"],
     queryFn: () => api.getSettings(),
   });
+
+  const { data: notifData } = useQuery({
+    queryKey: ["admin-notification-email"],
+    queryFn: () => api.getNotificationEmail(),
+  });
+
+  useEffect(() => {
+    if (notifData !== undefined) {
+      setNotificationEmail(notifData?.notificationEmail ?? "");
+    }
+  }, [notifData]);
 
   useEffect(() => {
     if (data?.settings) {
@@ -85,6 +97,15 @@ export default function Settings() {
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
     }
   }, [data]);
+
+  const saveNotifEmailMut = useMutation({
+    mutationFn: () => api.updateNotificationEmail(notificationEmail.trim()),
+    onSuccess: (res) => {
+      toast({ title: "Saved", description: res.message });
+      qc.invalidateQueries({ queryKey: ["admin-notification-email"] });
+    },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
 
   const saveLaunchMut = useMutation({
     mutationFn: () => api.updateLaunchSettings({ enabled: launchEnabled, launchDate: fromDatetimeLocal(launchDateLocal) }),
@@ -172,6 +193,42 @@ export default function Settings() {
         </div>
       ) : (
         <div className="space-y-6">
+
+          {/* ── WITHDRAWAL NOTIFICATION EMAIL ────────────────────────────── */}
+          <div className={sectionCard}>
+            <div className="px-6 py-4 border-b border-border bg-muted/20">
+              <h2 className="font-semibold text-foreground flex items-center gap-2">
+                <Bell className="h-4 w-4 text-primary" />
+                Withdrawal Notification Email
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Receive an email alert every time a user submits a withdrawal request.
+              </p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className={labelCls}>Notification Email</label>
+                <input
+                  type="email"
+                  value={notificationEmail}
+                  onChange={(e) => setNotificationEmail(e.target.value)}
+                  placeholder="e.g. admin@maligain.com"
+                  className={inputCls}
+                />
+                <p className={subLabelCls}>
+                  An email will be sent to this address each time a user places a withdrawal request. Leave blank to disable.
+                </p>
+              </div>
+              <button
+                onClick={() => saveNotifEmailMut.mutate()}
+                disabled={saveNotifEmailMut.isPending}
+                className={saveBtnCls}
+              >
+                <Save className="h-4 w-4" />
+                {saveNotifEmailMut.isPending ? "Saving..." : "Save Notification Email"}
+              </button>
+            </div>
+          </div>
 
           {/* ── LAUNCH MODE ─────────────────────────────────────────────── */}
           <div className={sectionCard}>

@@ -119,6 +119,8 @@ export const api = {
   updateSettings: (data: Record<string, string>) => request<{ message: string }>("PUT", "/settings", data),
   updateLaunchSettings: (data: { enabled: boolean; launchDate: string }) =>
     request<{ message: string }>("PUT", "/settings/launch", data),
+  getNotificationEmail: () => request<{ notificationEmail: string | null }>("GET", "/settings/notification-email"),
+  updateNotificationEmail: (email: string) => request<{ message: string }>("PUT", "/settings/notification-email", { email }),
 
   // Control Panel
   getControl: () => request<{ activationFees: Record<string, number>; bonusTable: Record<string, Record<string, [number, number, number]>> }>("GET", "/control"),
