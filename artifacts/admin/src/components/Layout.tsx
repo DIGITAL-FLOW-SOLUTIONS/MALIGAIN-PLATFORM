@@ -14,14 +14,14 @@ const NAV = [
   { href: "/verifications", label: "Verifications", icon: CheckSquare },
   { href: "/transactions", label: "Transactions", icon: CreditCard },
   { href: "/tasks", label: "Tasks", icon: ClipboardList },
-  { href: "/audit", label: "Audit Log", icon: ListOrdered },
   { href: "/withdrawals", label: "Withdrawals", icon: ArrowDownToLine },
   { href: "/investment-plans", label: "Investment Plans", icon: TrendingUp },
   { href: "/investment-accounts", label: "Investments", icon: BarChart2 },
   { href: "/referral-bonuses", label: "Referral Bonuses", icon: Gift },
   { href: "/admins", label: "Admins", icon: UserCog },
-  { href: "/settings", label: "Settings", icon: Settings },
   { href: "/control", label: "Control Panel", icon: Sliders },
+  { href: "/audit", label: "Audit Log", icon: ListOrdered },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 function NavItem({ href, label, icon: Icon }: { href: string; label: string; icon: React.FC<{ className?: string }> }) {
