@@ -291,10 +291,11 @@ router.post("/callback", async (req: Request, res: Response) => {
         res.json({ success: true });
         return;
       }
-      txnType      = parsed.txnType;   // "activate" | "recharge" | "payclient"
+      txnType      = parsed.txnType;   // "activate" | "recharge" | "payclient" | "invest"
+      txnExtra     = parsed.txnExtra;  // investmentId for "invest" type
       userId       = parsed.userId;
       creditAmount = amountPaid;       // use amount from PayHero callback
-      req.log.info({ step: "6_extref_credit", txnType, userId, creditAmount }, "CALLBACK_DEBUG: Processing from ExternalReference (no pending txn)");
+      req.log.info({ step: "6_extref_credit", txnType, txnExtra, userId, creditAmount }, "CALLBACK_DEBUG: Processing from ExternalReference (no pending txn)");
     }
 
     req.log.info({ step: "7_credit", txnType, userId, creditAmount }, "CALLBACK_DEBUG: Crediting user");

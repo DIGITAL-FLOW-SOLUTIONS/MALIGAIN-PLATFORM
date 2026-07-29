@@ -158,7 +158,7 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
       callbackUrl,
     });
 
-    // Log transaction
+    // Log transaction — description format MUST match callback parser: PAYHERO:{checkoutRequestId}:{txnType}:{txnExtra}
     const { data: txn } = await supabase
       .from("transactions")
       .insert({
@@ -166,7 +166,7 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
         type: "investment",
         amount,
         status: "pending",
-        description: `Investment plan: ${String(plan["name"])} | Ref: ${externalRef}`,
+        description: `PAYHERO:${stk.CheckoutRequestID}:invest:${String(investmentId)}`,
       })
       .select("id")
       .single();

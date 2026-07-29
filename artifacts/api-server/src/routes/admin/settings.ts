@@ -9,7 +9,7 @@ router.get("/", async (req: Request, res: Response) => {
     const { data, error } = await supabase
       .from("app_settings")
       .select("key, value, business_name")
-      .in("key", ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name"]);
+      .in("key", ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel"]);
 
     if (error) throw error;
 
@@ -54,6 +54,7 @@ router.put("/", async (req: Request, res: Response) => {
       ss_business_name,
       rwanda_phone,
       rwanda_business_name,
+      payhero_active_channel,
     } = req.body as Record<string, string | undefined>;
 
     const upserts: Array<{ key: string; value: string; business_name?: string | null }> = [];
@@ -108,6 +109,14 @@ router.put("/", async (req: Request, res: Response) => {
     }
     if (rwanda_business_name !== undefined) {
       upserts.push({ key: "rwanda_business_name", value: rwanda_business_name.trim() });
+    }
+    if (payhero_active_channel !== undefined) {
+      const allowed = ["10333", "8087", "8080"];
+      if (!allowed.includes(payhero_active_channel.trim())) {
+        res.status(400).json({ error: "ValidationError", message: "Invalid PayHero channel ID" });
+        return;
+      }
+      upserts.push({ key: "payhero_active_channel", value: payhero_active_channel.trim() });
     }
 
     for (const row of upserts) {

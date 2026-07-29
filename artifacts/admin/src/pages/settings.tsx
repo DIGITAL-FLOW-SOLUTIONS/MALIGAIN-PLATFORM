@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Settings as SettingsIcon, Rocket, Bell } from "lucide-react";
+import { Save, Settings as SettingsIcon, Rocket, Bell, Smartphone } from "lucide-react";
 
 function toDatetimeLocal(isoString: string): string {
   if (!isoString) return "";
@@ -47,6 +47,7 @@ export default function Settings() {
   const [ssBusinessName, setSsBusinessName] = useState("");
   const [rwandaPhone, setRwandaPhone] = useState("");
   const [rwandaBusinessName, setRwandaBusinessName] = useState("");
+  const [activeChannel, setActiveChannel] = useState("8080");
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
   const [notificationEmail, setNotificationEmail] = useState("");
@@ -93,6 +94,7 @@ export default function Settings() {
       setSsBusinessName(s["ss_business_name"] ?? "");
       setRwandaPhone(s["rwanda_phone"] ?? "");
       setRwandaBusinessName(s["rwanda_business_name"] ?? "");
+      if (s["payhero_active_channel"]) setActiveChannel(s["payhero_active_channel"]);
       setLaunchEnabled(s["launch_mode_enabled"] === "true");
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
     }
@@ -169,6 +171,18 @@ export default function Settings() {
     onSuccess: () => { toast({ title: "Settings saved", description: "Rwanda payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
+
+  const saveKenyaMut = useMutation({
+    mutationFn: () => api.updateSettings({ payhero_active_channel: activeChannel }),
+    onSuccess: () => { toast({ title: "Channel updated", description: "Kenya PayHero channel is now active." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const PAYHERO_CHANNELS = [
+    { id: "8080",  type: "Till",  detail: "5580730",            label: "M-Pesa Till" },
+    { id: "10333", type: "Bank",  detail: "I & M Bank Limited", label: "I & M Bank" },
+    { id: "8087",  type: "Bank",  detail: "Co-operative Bank",  label: "Co-operative Bank" },
+  ];
 
   const sectionCard = "bg-card rounded-xl shadow-sm border border-border overflow-hidden max-w-lg";
   const sectionHeader = "px-6 py-4 border-b border-border bg-muted/20";
@@ -292,6 +306,71 @@ export default function Settings() {
               >
                 <Save className="h-4 w-4" />
                 {saveLaunchMut.isPending ? "Saving..." : "Save Launch Settings"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── KENYA (PayHero channel selector) ────────────────────── */}
+          <div className={sectionCard}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground flex items-center gap-2">
+                <Smartphone className="h-4 w-4 text-primary" />
+                Kenya Payment Settings
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Choose which PayHero channel receives M-Pesa STK push payments from Kenyan users.
+                The change takes effect immediately.
+              </p>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-muted-foreground">Active channel — all PayHero STK pushes will be sent to this channel:</p>
+              <div className="space-y-2">
+                {PAYHERO_CHANNELS.map(ch => (
+                  <button
+                    key={ch.id}
+                    type="button"
+                    onClick={() => setActiveChannel(ch.id)}
+                    className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl border-2 transition-all text-left ${
+                      activeChannel === ch.id
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-muted/10 hover:border-border/70 hover:bg-muted/20"
+                    }`}
+                  >
+                    {/* Radio dot */}
+                    <span className={`flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      activeChannel === ch.id ? "border-primary" : "border-muted-foreground/40"
+                    }`}>
+                      {activeChannel === ch.id && (
+                        <span className="w-2 h-2 rounded-full bg-primary block" />
+                      )}
+                    </span>
+                    {/* Channel info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">{ch.label}</span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide ${
+                          ch.type === "Till"
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                            : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                        }`}>{ch.type}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{ch.detail}</p>
+                    </div>
+                    {/* Channel ID badge */}
+                    <span className="flex-shrink-0 text-xs font-mono font-semibold text-muted-foreground bg-muted/60 px-2 py-1 rounded-lg">
+                      #{ch.id}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => saveKenyaMut.mutate()}
+                disabled={saveKenyaMut.isPending}
+                className={saveBtnCls}
+              >
+                <Save className="h-4 w-4" />
+                {saveKenyaMut.isPending ? "Saving..." : "Save Kenya Channel"}
               </button>
             </div>
           </div>

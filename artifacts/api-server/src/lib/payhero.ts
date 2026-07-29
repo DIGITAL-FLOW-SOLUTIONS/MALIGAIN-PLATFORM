@@ -1,4 +1,4 @@
-const PAYHERO_CHANNEL_ID = parseInt(process.env["PAYHERO_Channel_ID"] ?? "0", 10);
+import { supabase } from "./supabase";
 
 function getPayHeroAuth(): string {
   // Prefer constructing from username+password (guaranteed format: base64(user:pass))
@@ -9,6 +9,25 @@ function getPayHeroAuth(): string {
   }
   // Fallback: use the pre-built token from the dashboard (assumed already base64)
   return process.env["PAYHERO_Basic_Auth_token"] ?? "";
+}
+
+/** Reads the active PayHero channel ID from app_settings.
+ *  Falls back to the PAYHERO_Channel_ID env var if no DB record exists. */
+async function getActiveChannelId(): Promise<number> {
+  try {
+    const { data } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "payhero_active_channel")
+      .single();
+    if (data && (data as { value: string }).value) {
+      const id = parseInt((data as { value: string }).value, 10);
+      if (!isNaN(id) && id > 0) return id;
+    }
+  } catch {
+    // fall through to env var
+  }
+  return parseInt(process.env["PAYHERO_Channel_ID"] ?? "0", 10);
 }
 
 export function normalizePhone(phone: string): string {
@@ -33,10 +52,12 @@ export async function initiateSTKPush(params: {
   externalReference: string;
   callbackUrl: string;
 }): Promise<PayHeroSTKResult> {
+  const channelId = await getActiveChannelId();
+
   const body = {
     amount: Math.floor(params.amount),
     phone_number: normalizePhone(params.phoneNumber),
-    channel_id: PAYHERO_CHANNEL_ID,
+    channel_id: channelId,
     provider: "m-pesa",
     external_reference: params.externalReference,
     callback_url: params.callbackUrl,
