@@ -172,7 +172,7 @@ function InvestmentSection() {
             ? "bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 bg-clip-text text-transparent"
             : "text-foreground group-hover:bg-gradient-to-r group-hover:from-yellow-500 group-hover:via-amber-500 group-hover:to-orange-500 group-hover:bg-clip-text group-hover:text-transparent"
         )}>
-          Investment PRO
+          Investment
         </span>
         <span className="text-[9px] font-bold tracking-wide px-1.5 py-0.5 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-white shadow-sm flex-shrink-0">
           PRO
