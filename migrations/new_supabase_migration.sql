@@ -72,16 +72,27 @@ CREATE TABLE IF NOT EXISTS public.users (
 
 -- ── wallet ───────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.wallet (
-  id                SERIAL PRIMARY KEY,
-  user_id           INTEGER NOT NULL REFERENCES public.users(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  team_earnings     NUMERIC(12,2) NOT NULL DEFAULT 0,
-  main_wallet       NUMERIC(12,2) NOT NULL DEFAULT 0,
-  total_withdrawn   NUMERIC(12,2) NOT NULL DEFAULT 0,
-  total_earned      NUMERIC(12,2) NOT NULL DEFAULT 0,
-  today_earnings    NUMERIC(12,2) NOT NULL DEFAULT 0,
-  affiliate_balance NUMERIC(12,2) NOT NULL DEFAULT 0,
-  commissions       NUMERIC(12,2) NOT NULL DEFAULT 0,
-  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  id                          SERIAL PRIMARY KEY,
+  user_id                     INTEGER NOT NULL REFERENCES public.users(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  team_earnings               NUMERIC(12,2) NOT NULL DEFAULT 0,
+  main_wallet                 NUMERIC(12,2) NOT NULL DEFAULT 0,
+  total_withdrawn             NUMERIC(12,2) NOT NULL DEFAULT 0,
+  total_earned                NUMERIC(12,2) NOT NULL DEFAULT 0,
+  today_earnings              NUMERIC(12,2) NOT NULL DEFAULT 0,
+  affiliate_balance           NUMERIC(12,2) NOT NULL DEFAULT 0,
+  commissions                 NUMERIC(12,2) NOT NULL DEFAULT 0,
+  updated_at                  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  -- Per-task earnings columns (task rewards credit here, NOT main_wallet)
+  tiktok_earnings             NUMERIC(12,2) NOT NULL DEFAULT 0,
+  youtube_earnings            NUMERIC(12,2) NOT NULL DEFAULT 0,
+  blogs_earnings              NUMERIC(12,2) NOT NULL DEFAULT 0,
+  reel_earnings               NUMERIC(12,2) NOT NULL DEFAULT 0,
+  ads_earnings                NUMERIC(12,2) NOT NULL DEFAULT 0,
+  movie_earnings              NUMERIC(12,2) NOT NULL DEFAULT 0,
+  survey_earnings             NUMERIC(12,2) NOT NULL DEFAULT 0,
+  chatwithforeigners_earnings NUMERIC(12,2) NOT NULL DEFAULT 0,
+  video_earnings              NUMERIC(12,2) NOT NULL DEFAULT 0,
+  trivia_earnings             NUMERIC(12,2) NOT NULL DEFAULT 0,
   CONSTRAINT wallet_user_id_unique UNIQUE (user_id)
 );
 

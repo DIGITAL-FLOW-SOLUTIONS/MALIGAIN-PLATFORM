@@ -413,6 +413,16 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
           commissions: 0,
           team_earnings: 0,
           total_withdrawn: 0,
+          tiktok_earnings: 0,
+          youtube_earnings: 0,
+          blogs_earnings: 0,
+          reel_earnings: 0,
+          ads_earnings: 0,
+          movie_earnings: 0,
+          survey_earnings: 0,
+          chatwithforeigners_earnings: 0,
+          video_earnings: 0,
+          trivia_earnings: 0,
         })
         .select()
         .single();
@@ -421,20 +431,54 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
 
     const wallet = (wallets?.[0] ?? {}) as Record<string, unknown>;
 
-    await supabase
+    // Map each task type to its dedicated earnings column.
+    // Task rewards must NOT credit main_wallet — only referral bonuses do that.
+    const TASK_WALLET_COLUMN: Record<string, string> = {
+      tiktok:   "tiktok_earnings",
+      youtube:  "youtube_earnings",
+      blogging: "blogs_earnings",
+      reals:    "reel_earnings",
+      ads:      "ads_earnings",
+      movies:   "movie_earnings",
+      survey:   "survey_earnings",
+      chat:     "chatwithforeigners_earnings",
+      video:    "video_earnings",
+      trivia:   "trivia_earnings",
+    };
+
+    const earningsColumn = TASK_WALLET_COLUMN[task.type] ?? "total_earned";
+
+    // Credit wallet — must succeed before we mark the transaction completed.
+    const { error: walletUpdateError } = await supabase
       .from("wallet")
       .update({
-        main_wallet: num(wallet["main_wallet"]) + reward,
+        [earningsColumn]: num(wallet[earningsColumn]) + reward,
         total_earned: num(wallet["total_earned"]) + reward,
         today_earnings: num(wallet["today_earnings"]) + reward,
       })
       .eq("user_id", userId);
 
-    // Mark the pre-inserted transaction as completed
-    await supabase
+    if (walletUpdateError) {
+      // Wallet credit failed — delete the pending transaction so the user can retry.
+      req.log.error({ err: walletUpdateError, userId, taskId }, "Wallet update failed; rolling back transaction");
+      await supabase.from("transactions").delete().eq("id", newTxnId);
+      res.status(500).json({
+        error: "ServerError",
+        message: "Failed to credit your wallet. Please try again.",
+      });
+      return;
+    }
+
+    // Wallet credited successfully — now mark the transaction as completed.
+    const { error: txnUpdateError } = await supabase
       .from("transactions")
       .update({ status: "completed" })
       .eq("id", newTxnId);
+
+    if (txnUpdateError) {
+      // Non-critical: wallet already credited, but log it so we can investigate.
+      req.log.error({ err: txnUpdateError, newTxnId }, "Failed to mark transaction completed after wallet credit");
+    }
 
     res.json({
       success: true,
