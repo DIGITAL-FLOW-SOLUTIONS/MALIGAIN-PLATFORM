@@ -49,6 +49,7 @@ import InvestmentsCurrent from "@/pages/investments-current";
 import SpinWin from "@/pages/spin-win";
 import SpinFree from "@/pages/spin-free";
 import SpinBet from "@/pages/spin-bet";
+import Contact from "@/pages/contact";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -298,6 +299,7 @@ function Router() {
       <Route path="/spin-win"  component={() => <ProtectedRoute component={SpinWin}  />} />
       <Route path="/spin/free" component={() => <ProtectedRoute component={SpinFree} />} />
       <Route path="/spin/bet"  component={() => <ProtectedRoute component={SpinBet}  />} />
+      <Route path="/contact"   component={() => <ProtectedRoute component={Contact}  />} />
       <Route path="/smtp/debug" component={SmtpDebug} />
 
       <Route component={NotFound} />

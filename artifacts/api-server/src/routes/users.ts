@@ -21,6 +21,38 @@ function formatUser(user: Record<string, unknown>) {
   };
 }
 
+router.get("/upline", async (req: Request, res: Response) => {
+  try {
+    const userId = req.session.userId!;
+    // Get the current user's referred_by
+    const { data: me, error: meErr } = await supabase
+      .from("users")
+      .select("referred_by")
+      .eq("id", userId)
+      .single();
+    if (meErr || !me || !me["referred_by"]) {
+      res.json({ phone: null, username: null });
+      return;
+    }
+    // Get upline's phone and username
+    const { data: upline, error: upErr } = await supabase
+      .from("users")
+      .select("username, phone")
+      .eq("id", me["referred_by"])
+      .single();
+    if (upErr || !upline) {
+      res.json({ phone: null, username: null });
+      return;
+    }
+    res.json({
+      phone: (upline["phone"] as string | null) ?? null,
+      username: (upline["username"] as string | null) ?? null,
+    });
+  } catch {
+    res.json({ phone: null, username: null });
+  }
+});
+
 router.put("/profile", async (req: Request, res: Response) => {
   try {
     const { username, country, phone } = req.body;
