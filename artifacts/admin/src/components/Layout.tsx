@@ -4,7 +4,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import {
   LayoutDashboard, Users, CreditCard, CheckSquare, ClipboardList,
   ListOrdered, LogOut, TerminalSquare, Menu, X, UserCog, ArrowDownToLine, Gift, Settings, Sliders,
-  TrendingUp, BarChart2, PanelLeftClose, PanelLeftOpen
+  TrendingUp, BarChart2, PanelLeftClose, PanelLeftOpen, PlaySquare,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -14,6 +14,7 @@ const NAV = [
   { href: "/verifications", label: "Verifications", icon: CheckSquare },
   { href: "/transactions", label: "Transactions", icon: CreditCard },
   { href: "/tasks", label: "Tasks", icon: ClipboardList },
+  { href: "/task-assets", label: "Task Assets", icon: PlaySquare },
   { href: "/withdrawals", label: "Withdrawals", icon: ArrowDownToLine },
   { href: "/investment-plans", label: "Investment Plans", icon: TrendingUp },
   { href: "/investment-accounts", label: "Investments", icon: BarChart2 },

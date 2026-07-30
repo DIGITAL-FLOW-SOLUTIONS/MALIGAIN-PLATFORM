@@ -171,6 +171,21 @@ export const api = {
   },
   investmentUpdateAccount: (id: number, data: { action: string; amount?: number; reason?: string; status?: string }) =>
     request<{ message: string }>("PATCH", `/investments/accounts/${id}`, data),
+
+  // Earn-Fun Assets
+  listEarnAssets: (category?: string) => {
+    const q = category ? `?category=${encodeURIComponent(category)}` : "";
+    return request<{ assets: EarnAsset[] }>("GET", `/earn-assets${q}`);
+  },
+  createEarnAsset: (data: {
+    category: string; title: string; url: string;
+    thumbnail_url?: string; asset_type?: string; sort_order?: number;
+  }) => request<{ message: string; asset: EarnAsset }>("POST", "/earn-assets", data),
+  updateEarnAsset: (id: number, data: {
+    title?: string; url?: string; thumbnail_url?: string;
+    asset_type?: string; sort_order?: number; is_active?: boolean; category?: string;
+  }) => request<{ message: string; asset: EarnAsset }>("PUT", `/earn-assets/${id}`, data),
+  deleteEarnAsset: (id: number) => request<{ message: string }>("DELETE", `/earn-assets/${id}`),
 };
 
 export interface UserItem {
@@ -225,4 +240,16 @@ export interface AdminItem {
 export interface AuditEntry {
   id: number; adminUsername: string; action: string; targetType?: string;
   targetId?: string; details?: Record<string, unknown>; createdAt: string;
+}
+
+export interface EarnAsset {
+  id: number;
+  category: string;
+  title: string;
+  url: string;
+  thumbnail_url: string | null;
+  asset_type: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
 }

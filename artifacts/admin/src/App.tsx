@@ -19,6 +19,7 @@ import Control from "@/pages/control";
 import NotFound from "@/pages/not-found";
 import InvestmentPlans from "@/pages/investment-plans";
 import InvestmentAccounts from "@/pages/investment-accounts";
+import TaskAssets from "@/pages/task-assets";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -60,6 +61,7 @@ function Router() {
         <Route path="/control" component={Control} />
         <Route path="/investment-plans" component={InvestmentPlans} />
         <Route path="/investment-accounts" component={InvestmentAccounts} />
+        <Route path="/task-assets" component={TaskAssets} />
         <Route component={NotFound} />
       </Switch>
     </AuthGuard>

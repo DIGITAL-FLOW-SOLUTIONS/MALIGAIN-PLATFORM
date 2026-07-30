@@ -13,6 +13,7 @@ import adminWithdrawalsRouter from "./withdrawals";
 import adminSettingsRouter from "./settings";
 import adminControlRouter from "./control";
 import adminInvestmentsRouter from "./investments";
+import adminEarnAssetsRouter from "./earn-assets";
 
 const router: IRouter = Router();
 
@@ -29,5 +30,6 @@ router.use("/withdrawals", requireAdmin, adminWithdrawalsRouter);
 router.use("/settings", requireAdmin, adminSettingsRouter);
 router.use("/control", requireAdmin, adminControlRouter);
 router.use("/investments", requireAdmin, adminInvestmentsRouter);
+router.use("/earn-assets", requireAdmin, adminEarnAssetsRouter);
 
 export default router;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useGetTasks, useCompleteTask } from "@workspace/api-client-react";
 import { useCurrency } from "@/hooks/use-currency";
@@ -7,53 +7,42 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Music2, Youtube, Film, Clapperboard, Megaphone,
   Clock, Trophy, CheckCircle2, Send, X, AlertCircle,
-  Play, ChevronLeft, ChevronRight, Tv2,
+  Play, ChevronLeft, ChevronRight, Tv2, WifiOff, Image as ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// ─── Video libraries ──────────────────────────────────────────────────────────
-type VideoItem = { id: string; title: string; channel?: string };
+// ─── Asset types ──────────────────────────────────────────────────────────────
+interface EarnAsset {
+  id: number;
+  title: string;
+  url: string;
+  thumbnail_url: string | null;
+  asset_type: "video_link" | "image_url";
+  sort_order: number;
+}
 
-// All embed as standard YouTube iframes (YouTube supports Shorts, trailers, ads)
-const VIDEO_LIBRARY: Record<string, VideoItem[]> = {
-  tiktok: [
-    // YouTube Shorts — same vertical short-form format as TikTok
-    { id: "QH2-TGUlwu4", title: "Nyan Cat — Original 🌈", channel: "saraj00n" },
-    { id: "StTqXEQ2l-Y", title: "Charlie Bit My Finger 😂", channel: "HDCYT" },
-    { id: "jNQXAC9IVRw", title: "Me at the Zoo 🎬", channel: "jawed" },
-    { id: "7ytELs3omCI", title: "Funny Moment Compilation", channel: "Trending" },
-    { id: "2vjPBrBU-TM", title: "Viral Dance Challenge 💃", channel: "Dance Crew" },
-  ],
-  youtube: [
-    { id: "dQw4w9WgXcQ", title: "Never Gonna Give You Up 🎵", channel: "Rick Astley" },
-    { id: "9bZkp7q19f0", title: "GANGNAM STYLE 🐴", channel: "PSY" },
-    { id: "kJQP7kiw5Fk", title: "Despacito ft. Daddy Yankee", channel: "Luis Fonsi" },
-    { id: "JGwWNGJdvx8", title: "Shape of You 🎶", channel: "Ed Sheeran" },
-    { id: "OPf0YbXqDm0", title: "Uptown Funk 🎸", channel: "Mark Ronson ft. Bruno Mars" },
-  ],
-  movies: [
-    { id: "sGbxmsDFVnE", title: "Interstellar — Official Trailer", channel: "Warner Bros." },
-    { id: "EXeTwQWrcwY", title: "The Dark Knight — Trailer", channel: "Warner Bros." },
-    { id: "66TuSJo4dZM", title: "Inception — Official Trailer", channel: "Warner Bros." },
-    { id: "hA6hldpSTF8", title: "Avatar: The Way of Water", channel: "20th Century Studios" },
-    { id: "d9MyW72ELq0", title: "The Lion King — Official Trailer", channel: "Disney" },
-  ],
-  reals: [
-    // Short vertical-style content — YouTube Shorts
-    { id: "7ytELs3omCI", title: "Funny Moments Reel 😂", channel: "Fun Clips" },
-    { id: "2vjPBrBU-TM", title: "Dance Reel ✨", channel: "Dance World" },
-    { id: "HPDzCOMiQ70", title: "Nyan Cat 10 Hours 🌟", channel: "Viral" },
-    { id: "StTqXEQ2l-Y", title: "Classic Viral Reel", channel: "Top Reals" },
-    { id: "jNQXAC9IVRw", title: "OG Reel 🎬", channel: "Classics" },
-  ],
-  ads: [
-    { id: "kffacxfA7G4", title: "Old Spice: The Man Your Man Could Smell Like", channel: "Old Spice" },
-    { id: "PPtBe-A5gXM", title: "Apple — Think Different", channel: "Apple" },
-    { id: "iqJgFTOAQQI", title: "Nike — You Can't Stop Us", channel: "Nike" },
-    { id: "8bCB3tbAqmA", title: "Coca-Cola Holiday Commercial 🎅", channel: "Coca-Cola" },
-    { id: "wqBiRNphXZM", title: "Samsung Galaxy Launch Ad", channel: "Samsung" },
-  ],
-};
+// ─── YouTube URL → ID ─────────────────────────────────────────────────────────
+function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m?.[1]) return m[1];
+  }
+  return null;
+}
+
+function thumbnailFor(asset: EarnAsset): string {
+  if (asset.thumbnail_url) return asset.thumbnail_url;
+  if (asset.asset_type === "video_link") {
+    const id = extractYouTubeId(asset.url);
+    return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : "";
+  }
+  return asset.url; // image_url — use directly as thumbnail too
+}
 
 // ─── Platform config ──────────────────────────────────────────────────────────
 type PlatformKey = "tiktok" | "youtube" | "movies" | "reals" | "ads";
@@ -73,8 +62,8 @@ interface PlatformConfig {
   requiredSeconds: number;
   emoji: string;
   taskType: string;
-  aspectClass: string;   // CSS aspect ratio for the player
-  playerNote: string;    // shown below the player
+  aspectClass: string;
+  playerNote: string;
 }
 
 const PLATFORMS: Record<string, PlatformConfig> = {
@@ -170,6 +159,57 @@ const PLATFORMS: Record<string, PlatformConfig> = {
   },
 };
 
+// ─── useEarnAssets: fetch + SSE live-refresh ──────────────────────────────────
+function useEarnAssets(category: PlatformKey) {
+  const [assets, setAssets] = useState<EarnAsset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [liveConnected, setLiveConnected] = useState(false);
+
+  const fetchAssets = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/earn-assets?category=${encodeURIComponent(category)}`);
+      if (!res.ok) throw new Error("fetch failed");
+      const data = await res.json() as { assets: EarnAsset[] };
+      setAssets(data.assets ?? []);
+      setError(false);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [category]);
+
+  // Initial fetch
+  useEffect(() => {
+    setLoading(true);
+    setAssets([]);
+    fetchAssets();
+  }, [fetchAssets]);
+
+  // SSE subscription for real-time updates
+  useEffect(() => {
+    const es = new EventSource("/api/earn-assets/stream");
+
+    es.addEventListener("connected", () => setLiveConnected(true));
+    es.addEventListener("heartbeat", () => {/* keep-alive */});
+    es.addEventListener("update", (e: MessageEvent) => {
+      try {
+        const payload = JSON.parse(e.data) as { category: string; action: string };
+        if (payload.category === category) {
+          fetchAssets(); // refetch when our category changes
+        }
+      } catch { /* ignore parse errors */ }
+    });
+
+    es.onerror = () => setLiveConnected(false);
+
+    return () => es.close();
+  }, [category, fetchAssets]);
+
+  return { assets, loading, error, liveConnected, refetch: fetchAssets };
+}
+
 // ─── Claim Dialog ─────────────────────────────────────────────────────────────
 function ClaimDialog({
   task,
@@ -228,7 +268,6 @@ function ClaimDialog({
           </button>
         </div>
 
-        {/* Reward */}
         <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
           <Trophy className="w-6 h-6 text-amber-500 flex-shrink-0" />
           <div>
@@ -252,29 +291,133 @@ function ClaimDialog({
   );
 }
 
+// ─── Lazy iframe / image asset player ────────────────────────────────────────
+function AssetPlayer({
+  asset,
+  platform,
+  onVisible,
+}: {
+  asset: EarnAsset;
+  platform: PlatformConfig;
+  onVisible?: () => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  // IntersectionObserver — only render the iframe/img when in viewport (lazy)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          onVisible?.();
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [onVisible]);
+
+  if (asset.asset_type === "image_url") {
+    return (
+      <div ref={containerRef} className={cn("w-full relative bg-black", platform.aspectClass)}>
+        {visible ? (
+          <img
+            src={asset.url}
+            alt={asset.title}
+            className="w-full h-full object-contain"
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-black">
+            <ImageIcon className="w-8 h-8 text-white/30 animate-pulse" />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // video_link — embed as YouTube iframe
+  const ytId = extractYouTubeId(asset.url);
+  const embedUrl = ytId
+    ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&autoplay=0`
+    : null;
+
+  return (
+    <div ref={containerRef} className={cn("w-full relative bg-black", platform.aspectClass)}>
+      {visible && embedUrl ? (
+        <iframe
+          key={`${platform.key}-${asset.id}`}
+          src={embedUrl}
+          title={asset.title}
+          className="w-full h-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Empty state (no assets uploaded yet) ─────────────────────────────────────
+function EmptyAssets({ platform }: { platform: PlatformConfig }) {
+  const Icon = platform.icon;
+  return (
+    <div className={cn(
+      "flex flex-col items-center justify-center py-12 rounded-2xl border text-center gap-3",
+      platform.bgAccent, platform.borderAccent,
+    )}>
+      <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center", platform.accentColor)}>
+        <Icon className="w-7 h-7 text-white" />
+      </div>
+      <div>
+        <p className="font-black text-foreground">No content yet</p>
+        <p className="text-xs text-muted-foreground mt-1">
+          The admin hasn't uploaded any {platform.label} content yet.
+          <br />Check back soon!
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main EarnFun Page ────────────────────────────────────────────────────────
 export default function EarnFun() {
   const [location] = useLocation();
-  const { data, isLoading, isError, refetch } = useGetTasks();
+  const { data, isLoading: tasksLoading, isError: tasksError, refetch: refetchTasks } = useGetTasks();
   const { fmt } = useCurrency();
   const queryClient = useQueryClient();
 
   const platform = PLATFORMS[location];
-  const videos = VIDEO_LIBRARY[platform?.key ?? ""] ?? [];
+  const { assets, loading: assetsLoading, error: assetsError, liveConnected, refetch: refetchAssets } = useEarnAssets(platform?.key ?? "tiktok");
 
-  const [currentVideoIdx, setCurrentVideoIdx] = useState(0);
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [isWatching, setIsWatching] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [showClaim, setShowClaim] = useState(false);
   const [claimTask, setClaimTask] = useState<{ id: number; name: string; type: string; reward: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Reset timer when video changes
+  // Reset on video/page change
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setIsWatching(false);
     setElapsed(0);
-  }, [currentVideoIdx, location]);
+  }, [currentIdx, location]);
+
+  // Also reset when assets change (SSE update) — keep idx in bounds
+  useEffect(() => {
+    setCurrentIdx(prev => (assets.length > 0 ? Math.min(prev, assets.length - 1) : 0));
+  }, [assets]);
 
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
@@ -296,17 +439,14 @@ export default function EarnFun() {
   const activeTask = tasks.find(t => !t.doneToday) ?? null;
   const taskDone = tasks.length > 0 && tasks.every(t => t.doneToday);
 
+  const currentAsset = assets[currentIdx] ?? null;
+
   const startWatching = () => {
     if (isWatching) return;
     setIsWatching(true);
     setElapsed(0);
     timerRef.current = setInterval(() => {
-      setElapsed(prev => {
-        if (prev + 1 >= required) {
-          // Don't stop the timer so we can track total watch time
-        }
-        return prev + 1;
-      });
+      setElapsed(prev => prev + 1);
     }, 1000);
   };
 
@@ -320,21 +460,15 @@ export default function EarnFun() {
   const handleClaimSuccess = () => {
     queryClient.invalidateQueries({ queryKey: ["/api/wallet/balances"] });
     queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
-    refetch();
+    refetchTasks();
     setIsWatching(false);
     setElapsed(0);
   };
 
-  const prevVideo = () => setCurrentVideoIdx(i => (i - 1 + videos.length) % videos.length);
-  const nextVideo = () => setCurrentVideoIdx(i => (i + 1) % videos.length);
+  const prevAsset = () => setCurrentIdx(i => (i - 1 + assets.length) % assets.length);
+  const nextAsset = () => setCurrentIdx(i => (i + 1) % assets.length);
 
-  const currentVideo = videos[currentVideoIdx];
   const Icon = platform.icon;
-
-  // Embed URL — autoplay=0 so user controls when they start
-  const embedUrl = currentVideo
-    ? `https://www.youtube.com/embed/${currentVideo.id}?rel=0&modestbranding=1&autoplay=0`
-    : null;
 
   return (
     <>
@@ -363,102 +497,131 @@ export default function EarnFun() {
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest block">
-                  Earn with Fun
-                </span>
-                <h1 className="text-white font-black text-xl leading-tight">
-                  {platform.emoji} {platform.label}
-                </h1>
+                <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest block">Earn with Fun</span>
+                <h1 className="text-white font-black text-xl leading-tight">{platform.emoji} {platform.label}</h1>
                 <p className="text-white/60 text-xs">{platform.tagline}</p>
               </div>
             </div>
-            {activeTask && (
-              <div className="text-right">
-                <p className="text-white font-black text-lg leading-none">{fmt(activeTask.reward)}</p>
-                <p className="text-white/60 text-[10px] uppercase tracking-wide">per task</p>
+            <div className="flex flex-col items-end gap-1">
+              {activeTask && (
+                <div className="text-right">
+                  <p className="text-white font-black text-lg leading-none">{fmt(activeTask.reward)}</p>
+                  <p className="text-white/60 text-[10px] uppercase tracking-wide">per task</p>
+                </div>
+              )}
+              {/* Live indicator */}
+              <div className={cn(
+                "flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold border",
+                liveConnected
+                  ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-200"
+                  : "bg-white/10 border-white/20 text-white/40"
+              )}>
+                {liveConnected
+                  ? <><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />LIVE</>
+                  : <><WifiOff className="w-2.5 h-2.5" />OFFLINE</>}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Video Player Card */}
+        {/* Video / Asset Player Card */}
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
 
           {/* Card header */}
-          <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
-            <div className="flex items-center gap-2">
-              <Tv2 className={cn("w-4 h-4", platform.textAccent)} />
-              <span className="text-foreground text-sm font-black">
-                {currentVideo?.title ?? "Loading…"}
-              </span>
-            </div>
-            {/* Video navigation */}
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground text-[10px] mr-1">
-                {currentVideoIdx + 1}/{videos.length}
-              </span>
-              <button onClick={prevVideo} className="w-7 h-7 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center transition-all">
-                <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
-              <button onClick={nextVideo} className="w-7 h-7 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center transition-all">
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
-            </div>
-          </div>
-
-          {/* Embedded video */}
-          <div className={cn("w-full relative bg-black", platform.aspectClass)}>
-            {embedUrl ? (
-              <iframe
-                key={`${platform.key}-${currentVideoIdx}`}
-                src={embedUrl}
-                title={currentVideo?.title}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+          {!assetsLoading && assets.length > 0 && currentAsset && (
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
+              <div className="flex items-center gap-2 min-w-0">
+                <Tv2 className={cn("w-4 h-4 flex-shrink-0", platform.textAccent)} />
+                <span className="text-foreground text-sm font-black truncate">{currentAsset.title}</span>
               </div>
-            )}
-          </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <span className="text-muted-foreground text-[10px] mr-1">
+                  {currentIdx + 1}/{assets.length}
+                </span>
+                <button onClick={prevAsset} className="w-7 h-7 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center transition-all">
+                  <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+                <button onClick={nextAsset} className="w-7 h-7 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center transition-all">
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+                </button>
+              </div>
+            </div>
+          )}
 
-          {/* Video playlist thumbnails */}
-          <div className="flex gap-2 px-4 py-3 overflow-x-auto border-t border-border scrollbar-none">
-            {videos.map((v, i) => (
-              <button
-                key={v.id}
-                onClick={() => setCurrentVideoIdx(i)}
-                className={cn(
-                  "flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
-                  i === currentVideoIdx ? platform.borderAccent : "border-transparent opacity-60 hover:opacity-80",
-                )}
-              >
-                <img
-                  src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
-                  alt={v.title}
-                  className="w-20 h-12 object-cover"
-                  loading="lazy"
-                />
-              </button>
-            ))}
-          </div>
+          {/* Player area */}
+          {assetsLoading ? (
+            <div className={cn("w-full flex items-center justify-center bg-muted/30", platform.aspectClass)}>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <p className="text-xs text-muted-foreground">Loading content…</p>
+              </div>
+            </div>
+          ) : assetsError ? (
+            <div className={cn("w-full flex items-center justify-center bg-muted/30", platform.aspectClass)}>
+              <div className="flex flex-col items-center gap-2 text-center p-4">
+                <AlertCircle className="w-6 h-6 text-destructive/60" />
+                <p className="text-sm text-muted-foreground">Failed to load content</p>
+                <button onClick={refetchAssets} className="text-xs text-primary underline">Retry</button>
+              </div>
+            </div>
+          ) : assets.length === 0 ? (
+            <div className="p-4">
+              <EmptyAssets platform={platform} />
+            </div>
+          ) : currentAsset ? (
+            <AssetPlayer
+              key={`${platform.key}-${currentAsset.id}`}
+              asset={currentAsset}
+              platform={platform}
+            />
+          ) : null}
+
+          {/* Thumbnails strip — lazy loaded */}
+          {!assetsLoading && assets.length > 1 && (
+            <div className="flex gap-2 px-4 py-3 overflow-x-auto border-t border-border" style={{ scrollbarWidth: "none" }}>
+              {assets.map((a, i) => {
+                const thumb = thumbnailFor(a);
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => setCurrentIdx(i)}
+                    className={cn(
+                      "flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all",
+                      i === currentIdx ? platform.borderAccent : "border-transparent opacity-60 hover:opacity-80",
+                    )}
+                  >
+                    {thumb ? (
+                      <img
+                        src={thumb}
+                        alt={a.title}
+                        loading="lazy"
+                        className="w-20 h-12 object-cover"
+                      />
+                    ) : (
+                      <div className={cn("w-20 h-12 flex items-center justify-center", platform.bgAccent)}>
+                        <Icon className={cn("w-5 h-5", platform.textAccent)} />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Watch & Earn Card */}
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
           <div className="px-5 py-4 space-y-4">
 
-            {isLoading ? (
+            {tasksLoading ? (
               <div className="flex justify-center py-6">
                 <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               </div>
-            ) : isError ? (
+            ) : tasksError ? (
               <div className="flex flex-col items-center gap-2 py-6 text-center">
                 <AlertCircle className="w-6 h-6 text-destructive/60" />
                 <p className="text-sm text-muted-foreground">Could not load task data.</p>
-                <button onClick={() => refetch()} className="text-xs text-primary underline">Retry</button>
+                <button onClick={() => refetchTasks()} className="text-xs text-primary underline">Retry</button>
               </div>
             ) : taskDone ? (
               <div className="flex flex-col items-center gap-2 py-6 text-center">
@@ -514,12 +677,21 @@ export default function EarnFun() {
                   </div>
                 )}
 
-                {/* CTA */}
-                {!isWatching ? (
+                {/* Disabled state: no assets */}
+                {assets.length === 0 && !assetsLoading ? (
+                  <div className={cn(
+                    "flex items-center gap-2.5 px-4 py-3 rounded-xl border text-sm",
+                    platform.bgAccent, platform.borderAccent, platform.textAccent,
+                  )}>
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span className="font-bold">No content available yet — check back soon</span>
+                  </div>
+                ) : !isWatching ? (
                   <button
                     onClick={startWatching}
+                    disabled={assets.length === 0}
                     className={cn(
-                      "w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-black text-sm text-white transition-all active:scale-[0.98]",
+                      "w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-black text-sm text-white transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed",
                       `bg-gradient-to-r ${platform.gradientFrom} ${platform.gradientTo}`,
                       "shadow-md",
                     )}
@@ -545,9 +717,9 @@ export default function EarnFun() {
                   </div>
                 )}
 
-                {!isWatching && (
+                {!isWatching && assets.length > 0 && (
                   <p className="text-center text-muted-foreground text-xs">
-                    Press play on the video above, then click Start Watching
+                    Press play on the content above, then click Start Watching
                   </p>
                 )}
               </>
