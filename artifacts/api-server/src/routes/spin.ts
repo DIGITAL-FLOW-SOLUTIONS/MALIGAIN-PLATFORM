@@ -170,9 +170,7 @@ router.post("/free", async (req: Request, res: Response) => {
 
     if (amountKES > 0) {
       await supabase.from("wallet").update({
-        main_wallet:      num(wallet["main_wallet"])  + amountLocal,
         spin_earnings:    num(wallet["spin_earnings"]) + amountLocal,
-        total_earned:     num(wallet["total_earned"])  + amountLocal,
         spin_last_free_at: now,
       }).eq("user_id", userId);
 
@@ -202,7 +200,7 @@ router.post("/free", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/spin/bet  — costs spinCost from spin_balance, winnings → main_wallet
+// POST /api/spin/bet  — costs spinCost from spin_balance, winnings → spin_earnings only
 router.post("/bet", async (req: Request, res: Response) => {
   try {
     const userId = req.session.userId!;
@@ -226,16 +224,13 @@ router.post("/bet", async (req: Request, res: Response) => {
     const amountKES    = segment.valueKES;
     const winAmountLocal = kesToLocal(amountKES, country);
 
-    const newBalance = Math.max(0, spinBalance - spinCostLocal + winAmountLocal);
+    // Deduct spin cost from spin_balance; winnings go to spin_earnings only
+    const newBalance = Math.max(0, spinBalance - spinCostLocal);
 
     const walletUpdate: Record<string, unknown> = {
       spin_balance:  newBalance,
       spin_earnings: num(wallet["spin_earnings"]) + winAmountLocal,
     };
-    if (winAmountLocal > 0) {
-      walletUpdate["main_wallet"]  = num(wallet["main_wallet"])  + winAmountLocal;
-      walletUpdate["total_earned"] = num(wallet["total_earned"]) + winAmountLocal;
-    }
     await supabase.from("wallet").update(walletUpdate).eq("user_id", userId);
 
     await supabase.from("transactions").insert({
