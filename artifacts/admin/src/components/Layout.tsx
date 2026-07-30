@@ -24,11 +24,11 @@ const NAV = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-function NavItem({ href, label, icon: Icon, collapsed }: { href: string; label: string; icon: React.FC<{ className?: string }>; collapsed: boolean }) {
+function NavItem({ href, label, icon: Icon, collapsed, onNavigate }: { href: string; label: string; icon: React.FC<{ className?: string }>; collapsed: boolean; onNavigate?: () => void }) {
   const [active] = useRoute(href === "/" ? "/" : `${href}*`);
   
   const content = (
-    <Link href={href} className={`
+    <Link href={href} onClick={onNavigate} className={`
       relative flex items-center h-10 px-3 transition-colors group cursor-pointer
       ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}
       ${collapsed ? "justify-center" : "gap-3"}
@@ -105,7 +105,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
         {/* Nav Links */}
         <nav className="flex-1 overflow-y-auto py-3 space-y-[1px] custom-scrollbar">
-          {NAV.map(n => <NavItem key={n.href} {...n} collapsed={collapsed && !mobileOpen} />)}
+          {NAV.map(n => <NavItem key={n.href} {...n} collapsed={collapsed && !mobileOpen} onNavigate={() => setMobileOpen(false)} />)}
         </nav>
 
         {/* Sidebar Footer */}
