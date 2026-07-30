@@ -112,7 +112,7 @@ function AssetForm({
 
   const isPending = createMut.isPending || updateMut.isPending;
   const submit = () => {
-    if (!title.trim() || !url.trim()) { toast({ title: "Title and URL are required", variant: "destructive" }); return; }
+    if (!url.trim()) { toast({ title: "URL is required", variant: "destructive" }); return; }
     existing ? updateMut.mutate() : createMut.mutate();
   };
 
@@ -149,13 +149,15 @@ function AssetForm({
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Title */}
+        {/* Title (optional) */}
         <div className="sm:col-span-2">
-          <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Title</label>
+          <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+            Title <span className="font-normal normal-case text-muted-foreground/60">(optional)</span>
+          </label>
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
-            placeholder="e.g. Funny Dance Reel"
+            placeholder="e.g. Funny Dance Reel — leave blank to use the URL"
             className="w-full px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
