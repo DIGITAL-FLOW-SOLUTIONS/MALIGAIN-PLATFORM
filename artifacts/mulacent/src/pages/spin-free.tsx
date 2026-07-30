@@ -229,26 +229,6 @@ export default function SpinFree() {
         </div>
       )}
 
-      {/* Prizes legend */}
-      <div className="mx-4 mt-5">
-        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 px-1">Wheel prizes (in {spin.currency})</p>
-        <div className="grid grid-cols-4 gap-2">
-          {SPIN_SEGMENTS.map((seg, i) => {
-            const localVal = kesToLocal(seg.valueKES, country);
-            const label    = seg.label.startsWith("x") ? seg.label : localVal === 0 ? "0" : localVal.toLocaleString();
-            return (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-1 p-2 rounded-xl"
-                style={{ backgroundColor: seg.color + "22", border: `1px solid ${seg.color}55` }}
-              >
-                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: seg.color }} />
-                <span className="text-xs font-bold text-foreground">{label}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
       {/* Result overlay */}
       {result && (
