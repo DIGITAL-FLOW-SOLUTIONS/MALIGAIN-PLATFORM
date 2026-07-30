@@ -13,6 +13,7 @@ import verifyRouter from "./verify";
 import settingsRouter from "./settings";
 import smtpRouter from "./smtp";
 import investmentsRouter from "./investments";
+import spinRouter from "./spin";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,6 @@ router.use("/verify", verifyRouter);
 router.use("/settings", settingsRouter);
 router.use("/smtp", smtpRouter);
 router.use("/investments", investmentsRouter);
+router.use("/spin", spinRouter);
 
 export default router;

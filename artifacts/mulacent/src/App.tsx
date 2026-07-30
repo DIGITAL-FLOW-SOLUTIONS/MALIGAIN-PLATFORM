@@ -46,6 +46,9 @@ import NotFound from "@/pages/not-found";
 import SmtpDebug from "@/pages/smtp-debug";
 import Investments from "@/pages/investments";
 import InvestmentsCurrent from "@/pages/investments-current";
+import SpinWin from "@/pages/spin-win";
+import SpinFree from "@/pages/spin-free";
+import SpinBet from "@/pages/spin-bet";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -292,6 +295,9 @@ function Router() {
       <Route path="/rwanda-pay" component={() => <RwandaPayRoute />} />
       <Route path="/investments" component={() => <ProtectedRoute component={Investments} />} />
       <Route path="/investments/current" component={() => <ProtectedRoute component={InvestmentsCurrent} />} />
+      <Route path="/spin-win"  component={() => <ProtectedRoute component={SpinWin}  />} />
+      <Route path="/spin/free" component={() => <ProtectedRoute component={SpinFree} />} />
+      <Route path="/spin/bet"  component={() => <ProtectedRoute component={SpinBet}  />} />
       <Route path="/smtp/debug" component={SmtpDebug} />
 
       <Route component={NotFound} />

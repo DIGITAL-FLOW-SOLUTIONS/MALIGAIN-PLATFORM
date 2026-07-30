@@ -72,7 +72,7 @@ const INVEST_SUB_ITEMS: NavItem[] = [
 ];
 
 const PRODUCT_ITEMS: NavItem[] = [
-  { icon: Dices,         label: "Spin & Win",           color: "bg-pink-500"                          },
+  { icon: Dices,         label: "Spin & Win", href: "/spin-win", color: "bg-pink-500"                 },
   { icon: ClipboardList, label: "Survey",               href: "/surveys",        color: "bg-teal-500" },
   { icon: MessageCircle, label: "Chat with Foreigners", href: "/chat-foreigners",color: "bg-violet-500"},
   { icon: HelpCircle,    label: "Trivia",               href: "/trivia",         color: "bg-secondary"},

@@ -185,6 +185,60 @@ async function creditUser(opts: {
       log.error({ step: "credit_invest_no_id", txnExtra }, "CALLBACK_DEBUG: Missing investment ID");
     }
 
+  } else if (txnType === "spin") {
+    // Spin balance top-up via M-Pesa (Kenya)
+    log.info({ step: "credit_spin", userId, creditAmount }, "CALLBACK_DEBUG: Crediting spin_balance");
+
+    const { data: wallets, error: walletFetchErr } = await supabase
+      .from("wallet")
+      .select("spin_balance")
+      .eq("user_id", userId)
+      .limit(1);
+    log.info({ step: "credit_spin_wallet_fetch", supabaseError: walletFetchErr, wallets }, "CALLBACK_DEBUG: spin wallet fetch");
+
+    if (wallets && wallets.length > 0) {
+      const w = wallets[0] as Record<string, unknown>;
+      const newSpinBalance = (parseFloat(String(w["spin_balance"] ?? "0")) || 0) + creditAmount;
+      const { error: walletErr } = await supabase
+        .from("wallet")
+        .update({ spin_balance: newSpinBalance })
+        .eq("user_id", userId);
+      log.info({ step: "credit_spin_wallet_result", supabaseError: walletErr, newSpinBalance }, "CALLBACK_DEBUG: spin_balance update result");
+    } else {
+      // No wallet row — create one with spin balance
+      const { error: insertErr } = await supabase.from("wallet").insert({
+        user_id:      userId,
+        spin_balance: creditAmount,
+        spin_earnings: 0,
+        main_wallet:  0,
+        team_earnings: 0,
+        total_withdrawn: 0,
+        total_earned: 0,
+        today_earnings: 0,
+        affiliate_balance: 0,
+        commissions: 0,
+      });
+      log.info({ step: "credit_spin_wallet_insert", supabaseError: insertErr }, "CALLBACK_DEBUG: spin wallet insert");
+    }
+
+    if (txnId) {
+      await supabase.from("transactions").update({ status: "completed" }).eq("id", txnId);
+    } else {
+      await supabase.from("transactions").insert({
+        user_id: userId,
+        type: "recharge",
+        amount: creditAmount,
+        status: "completed",
+        description: `PAYHERO:${checkoutRequestId}:spin (recovered from ${externalReference})`,
+      });
+    }
+
+    // Emit SSE update so the spin page refreshes immediately
+    try {
+      const { spinEventBus } = await import("../lib/spin-events");
+      spinEventBus.emit(`wallet:${userId}`);
+    } catch { /* non-fatal */ }
+
   } else {
     log.error({ step: "credit_unknown_type", txnType }, "CALLBACK_DEBUG: Unknown txnType — nothing credited");
   }

@@ -196,7 +196,11 @@ export interface ReferralBonusItem {
 
 export interface VerificationItem {
   id: number; userId: number; username: string; email: string; phone: string;
-  screenshotUrl: string; amountPaid: number; currency: string; status: string; adminNote?: string; createdAt: string;
+  screenshotUrl: string; amountPaid: number; currency: string; status: string;
+  adminNote?: string;
+  /** Derived from admin_note: activation | recharge | investment | spin */
+  purpose?: "activation" | "recharge" | "investment" | "spin";
+  createdAt: string;
 }
 
 export interface TransactionItem {

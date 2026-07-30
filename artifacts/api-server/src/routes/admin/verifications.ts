@@ -5,6 +5,14 @@ import { triggerReferralBonus } from "../../lib/referralBonus";
 
 const router: IRouter = Router();
 
+/** Derive the purpose of a verification from its admin_note field. */
+function getVerificationPurpose(adminNote: string | null | undefined, userIsInactive: boolean): "activation" | "recharge" | "investment" | "spin" {
+  if (adminNote?.startsWith("INVESTMENT |")) return "investment";
+  if (adminNote?.startsWith("SPIN |"))       return "spin";
+  if (userIsInactive)                         return "activation";
+  return "recharge";
+}
+
 function num(v: unknown) { return parseFloat(String(v ?? "0")) || 0; }
 
 router.get("/", async (req: Request, res: Response) => {
@@ -46,7 +54,9 @@ router.get("/", async (req: Request, res: Response) => {
     if (error) throw error;
 
     const items = (data ?? []).map((v: Record<string, unknown>) => {
-      const user = v["users"] as Record<string, unknown> | null;
+      const user    = v["users"] as Record<string, unknown> | null;
+      const note    = v["admin_note"] as string | null ?? null;
+      const purpose = getVerificationPurpose(note, false); // status unknown at list level
       return {
         id: v["id"],
         userId: v["user_id"],
@@ -57,7 +67,8 @@ router.get("/", async (req: Request, res: Response) => {
         amountPaid: num(v["amount_paid"]),
         currency: (v["currency"] as string | null) ?? "KES",
         status: v["status"],
-        adminNote: v["admin_note"] ?? null,
+        adminNote: note,
+        purpose,
         createdAt: v["created_at"],
       };
     });
@@ -95,8 +106,9 @@ router.post("/:id/approve", async (req: Request, res: Response) => {
       res.status(400).json({ error: "ValidationError", message: "Only pending verifications can be approved" }); return;
     }
 
-    const userId = verification["user_id"] as number;
-    const amount = num(verification["amount_paid"]);
+    const userId    = verification["user_id"] as number;
+    const amount    = num(verification["amount_paid"]);
+    const adminNote = verification["admin_note"] as string | null ?? null;
 
     // Check the user's current status to decide how to handle the approval
     const { data: userRows, error: userFetchError } = await supabase
@@ -108,14 +120,16 @@ router.post("/:id/approve", async (req: Request, res: Response) => {
     if (userFetchError) throw userFetchError;
 
     const userStatus = ((userRows ?? [])[0] as Record<string, unknown> | undefined)?.["status"] as string | undefined;
-    const isActivation = userStatus === "inactive";
+    const isInactive = userStatus === "inactive";
+
+    // Determine purpose from admin_note (takes priority over user status)
+    const purpose = getVerificationPurpose(adminNote, isInactive);
 
     // Atomically mark the verification as approved — the .eq("status", "pending")
-    // filter ensures only one concurrent request can succeed. If another request
-    // already processed this verification, zero rows will be returned and we abort.
+    // filter ensures only one concurrent request can succeed.
     const { data: updatedRows, error: updateVerifError } = await supabase
       .from("eversend_verifications")
-      .update({ status: "approved", admin_note: note ?? null })
+      .update({ status: "approved", admin_note: note ?? adminNote })
       .eq("id", id)
       .eq("status", "pending")
       .select("id");
@@ -123,46 +137,74 @@ router.post("/:id/approve", async (req: Request, res: Response) => {
     if (updateVerifError) throw updateVerifError;
 
     if (!updatedRows || updatedRows.length === 0) {
-      // Another concurrent request already processed this verification
       res.status(409).json({ error: "Conflict", message: "This verification was already processed. Refresh to see the latest status." });
       return;
     }
 
-    // Always activate the user
-    const { error: updateUserError } = await supabase
-      .from("users")
-      .update({ status: "active" })
-      .eq("id", userId);
+    if (purpose === "spin") {
+      // ── Spin balance top-up ───────────────────────────────────────────────
+      // Fetch current spin_balance, increment it
+      const { data: wallets } = await supabase
+        .from("wallet")
+        .select("spin_balance")
+        .eq("user_id", userId)
+        .limit(1);
 
-    if (updateUserError) throw updateUserError;
+      if (wallets && wallets.length > 0) {
+        const w = wallets[0] as Record<string, unknown>;
+        const newSpinBalance = num(w["spin_balance"]) + amount;
+        const { error: wErr } = await supabase.from("wallet")
+          .update({ spin_balance: newSpinBalance })
+          .eq("user_id", userId);
+        if (wErr) throw wErr;
+      } else {
+        // No wallet yet — create one
+        await supabase.from("wallet").insert({
+          user_id: userId, spin_balance: amount, spin_earnings: 0,
+          main_wallet: 0, team_earnings: 0, total_withdrawn: 0,
+          total_earned: 0, today_earnings: 0, affiliate_balance: 0, commissions: 0,
+        });
+      }
 
-    if (isActivation) {
-      // Activation: flip status and trigger referral bonuses for uplines
+      await supabase.from("transactions").insert({
+        user_id: userId, type: "recharge", amount, status: "completed",
+        description: "Spin balance top-up verified by admin",
+      });
+
+      // Emit SSE so the spin page refreshes immediately
+      try {
+        const { spinEventBus } = await import("../../lib/spin-events");
+        spinEventBus.emit(`wallet:${userId}`);
+      } catch { /* non-fatal */ }
+
+      await logAdminAction(req.session.adminUsername!, "approve_verification", "eversend_verification", id, { userId, amount, type: "spin" });
+      res.json({ message: "Verification approved and spin balance credited" });
+
+    } else if (purpose === "activation") {
+      // ── Activation ────────────────────────────────────────────────────────
+      const { error: updateUserError } = await supabase
+        .from("users").update({ status: "active" }).eq("id", userId);
+      if (updateUserError) throw updateUserError;
+
       await triggerReferralBonus(userId, req.log);
       await logAdminAction(req.session.adminUsername!, "approve_verification", "eversend_verification", id, { userId, type: "activation" });
       res.json({ message: "Verification approved and user activated" });
+
     } else {
-      // Recharge: credit the wallet atomically.
-      // Uses an upsert-based SQL function (credit_wallet) so that:
-      //   • if a wallet row exists → it increments in place (no read-then-write race)
-      //   • if no row exists yet   → it creates one with the correct starting balance
-      // This replaces the previous check-then-insert pattern which could create
-      // duplicate wallet rows when the DB was under memory pressure and a SELECT
-      // returned zero rows despite the row existing.
+      // ── Wallet recharge (default) ─────────────────────────────────────────
+      // Always activate user in case they were somehow still inactive
+      await supabase.from("users").update({ status: "active" }).eq("id", userId);
+
       const { error: creditError } = await supabase.rpc("credit_wallet", {
         p_user_id: userId,
-        p_amount: amount,
+        p_amount:  amount,
       });
       if (creditError) throw creditError;
 
       const { error: txError } = await supabase.from("transactions").insert({
-        user_id: userId,
-        type: "recharge",
-        amount,
-        status: "completed",
+        user_id: userId, type: "recharge", amount, status: "completed",
         description: "Eversend payment verified by admin",
       });
-
       if (txError) throw txError;
 
       await logAdminAction(req.session.adminUsername!, "approve_verification", "eversend_verification", id, { userId, amount, type: "recharge" });

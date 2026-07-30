@@ -12,6 +12,13 @@ export const COUNTRY_CURRENCY_MAP: Record<string, { code: string; symbol: string
   UG: { code: "UGX", symbol: "UGX" },
   TZ: { code: "TZS", symbol: "TZS" },
   ZM: { code: "ZK",  symbol: "ZK"  },
+  NG: { code: "NGN", symbol: "NGN" },
+  RW: { code: "RWF", symbol: "RWF" },
+  BI: { code: "BIF", symbol: "BIF" },
+  MW: { code: "MWK", symbol: "MWK" },
+  BW: { code: "BWP", symbol: "BWP" },
+  SS: { code: "SSP", symbol: "SSP" },
+  CG: { code: "XAF", symbol: "XAF" },
 };
 
 export const DEFAULT_CURRENCY = COUNTRY_CURRENCY_MAP["KE"];
