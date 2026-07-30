@@ -10,11 +10,46 @@ import {
 
 // ─── Category config ───────────────────────────────────────────────────────
 const CATEGORIES = [
-  { key: "tiktok",   label: "TikTok Earn",   icon: Music2,       color: "text-rose-500",   bg: "bg-rose-50 dark:bg-rose-950/30",   border: "border-rose-200 dark:border-rose-800"   },
-  { key: "youtube",  label: "YouTube Earn",  icon: Youtube,      color: "text-red-500",    bg: "bg-red-50 dark:bg-red-950/30",     border: "border-red-200 dark:border-red-800"     },
-  { key: "movies",   label: "Movies",        icon: Film,         color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-950/30", border: "border-purple-200 dark:border-purple-800" },
-  { key: "reals",    label: "Reals",         icon: Clapperboard, color: "text-pink-500",   bg: "bg-pink-50 dark:bg-pink-950/30",   border: "border-pink-200 dark:border-pink-800"   },
-  { key: "ads",      label: "Ads Earnings",  icon: Megaphone,    color: "text-amber-500",  bg: "bg-amber-50 dark:bg-amber-950/30", border: "border-amber-200 dark:border-amber-800" },
+  {
+    key: "tiktok",  label: "TikTok Earn",  icon: Music2,       color: "text-rose-500",
+    bg: "bg-rose-50 dark:bg-rose-950/30",     border: "border-rose-200 dark:border-rose-800",
+    urlLabel: "TikTok URL",
+    urlPlaceholder: "https://www.tiktok.com/@username/video/...",
+    urlHint: "Paste the TikTok video link",
+    allowImageType: false,
+  },
+  {
+    key: "youtube", label: "YouTube Earn", icon: Youtube,      color: "text-red-500",
+    bg: "bg-red-50 dark:bg-red-950/30",       border: "border-red-200 dark:border-red-800",
+    urlLabel: "YouTube URL",
+    urlPlaceholder: "https://www.youtube.com/watch?v=...",
+    urlHint: "Thumbnail auto-detected from YouTube link",
+    allowImageType: false,
+  },
+  {
+    key: "movies",  label: "Movies",       icon: Film,         color: "text-purple-500",
+    bg: "bg-purple-50 dark:bg-purple-950/30", border: "border-purple-200 dark:border-purple-800",
+    urlLabel: "Video URL",
+    urlPlaceholder: "https://www.youtube.com/watch?v=... or any video URL",
+    urlHint: "YouTube links get an auto-thumbnail; paste a custom thumbnail for other sources",
+    allowImageType: false,
+  },
+  {
+    key: "reals",   label: "Reels",        icon: Clapperboard, color: "text-pink-500",
+    bg: "bg-pink-50 dark:bg-pink-950/30",     border: "border-pink-200 dark:border-pink-800",
+    urlLabel: "Instagram Reels URL",
+    urlPlaceholder: "https://www.instagram.com/reel/...",
+    urlHint: "Paste the Instagram Reel link",
+    allowImageType: false,
+  },
+  {
+    key: "ads",     label: "Ads Earnings", icon: Megaphone,    color: "text-amber-500",
+    bg: "bg-amber-50 dark:bg-amber-950/30",   border: "border-amber-200 dark:border-amber-800",
+    urlLabel: "Ad URL",
+    urlPlaceholder: "https://...",
+    urlHint: "Use a video link or an image URL",
+    allowImageType: true,
+  },
 ] as const;
 
 type CategoryKey = typeof CATEGORIES[number]["key"];
@@ -82,9 +117,12 @@ function AssetForm({
   };
 
   const cat = CATEGORIES.find(c => c.key === category)!;
-  const showAdsTypeSwitch = category === "ads";
 
   const previewThumb = thumbnailFor({ id: 0, category, title, url, thumbnail_url: thumbUrl || null, asset_type: assetType, sort_order: 0, is_active: true, created_at: "" });
+
+  // Derive URL field label/placeholder based on category + type
+  const urlLabel = assetType === "image_url" ? "Image URL" : cat.urlLabel;
+  const urlPlaceholder = assetType === "image_url" ? "https://example.com/image.jpg" : cat.urlPlaceholder;
 
   return (
     <div className={`rounded-xl border p-4 space-y-3 ${cat.bg} ${cat.border}`}>
@@ -92,8 +130,8 @@ function AssetForm({
         {existing ? "Edit asset" : "Add new asset"}
       </p>
 
-      {/* Type toggle — only for Ads */}
-      {showAdsTypeSwitch && (
+      {/* Type toggle — only for categories that allow images */}
+      {cat.allowImageType && (
         <div className="flex items-center gap-2">
           <button
             onClick={() => setAssetType("video_link")}
@@ -125,19 +163,24 @@ function AssetForm({
         {/* URL */}
         <div className="sm:col-span-2">
           <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
-            {assetType === "image_url" ? "Image URL" : "YouTube URL"}
+            {urlLabel}
           </label>
           <div className="relative">
             <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
               value={url}
               onChange={e => setUrl(e.target.value)}
-              placeholder={assetType === "image_url" ? "https://example.com/ad.jpg" : "https://www.youtube.com/watch?v=..."}
+              placeholder={urlPlaceholder}
               className="w-full pl-8 pr-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
-          {assetType === "video_link" && url && !extractYouTubeId(url) && (
+          {/* YouTube-only: warn if the URL doesn't look like a valid YouTube link */}
+          {category === "youtube" && assetType === "video_link" && url && !extractYouTubeId(url) && (
             <p className="text-[10px] text-destructive mt-1">Could not detect YouTube video ID — check the URL</p>
+          )}
+          {/* Hint text for non-YouTube categories */}
+          {category !== "youtube" && assetType === "video_link" && (
+            <p className="text-[10px] text-muted-foreground mt-1">{cat.urlHint}</p>
           )}
         </div>
 
