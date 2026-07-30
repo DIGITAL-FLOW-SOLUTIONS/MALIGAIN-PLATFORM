@@ -94,7 +94,7 @@ function AssetForm({
   const [url, setUrl] = useState(existing?.url ?? "");
   const [thumbUrl, setThumbUrl] = useState(existing?.thumbnail_url ?? "");
   const [assetType, setAssetType] = useState<"video_link" | "image_url">(
-    (existing?.asset_type as "video_link" | "image_url") ?? "video_link"
+    (existing?.asset_type as "video_link" | "image_url") ?? (category === "ads" ? "image_url" : "video_link")
   );
   const [sortOrder, setSortOrder] = useState(String(existing?.sort_order ?? 0));
 
