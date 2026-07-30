@@ -1,12 +1,12 @@
-import { ReactNode } from "react";
-import { Link, useRoute } from "wouter";
+import { ReactNode, useState, useEffect } from "react";
+import { Link, useRoute, useLocation } from "wouter";
 import { useAdmin } from "@/hooks/useAdmin";
 import {
   LayoutDashboard, Users, CreditCard, CheckSquare, ClipboardList,
-  ListOrdered, LogOut, Shield, Menu, X, UserCog, ArrowDownToLine, Gift, Settings, Sliders,
-  TrendingUp, BarChart2,
+  ListOrdered, LogOut, TerminalSquare, Menu, X, UserCog, ArrowDownToLine, Gift, Settings, Sliders,
+  TrendingUp, BarChart2, PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
-import { useState } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -24,77 +24,143 @@ const NAV = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-function NavItem({ href, label, icon: Icon }: { href: string; label: string; icon: React.FC<{ className?: string }> }) {
+function NavItem({ href, label, icon: Icon, collapsed }: { href: string; label: string; icon: React.FC<{ className?: string }>; collapsed: boolean }) {
   const [active] = useRoute(href === "/" ? "/" : `${href}*`);
-  return (
-    <Link href={href}>
-      <span className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
-        active
-          ? "bg-primary/10 text-primary"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      }`}>
-        <Icon className="h-4 w-4 shrink-0" />
-        {label}
-      </span>
+  
+  const content = (
+    <Link href={href} className={`
+      relative flex items-center h-10 px-3 transition-colors group cursor-pointer
+      ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}
+      ${collapsed ? "justify-center" : "gap-3"}
+    `}>
+      {active && (
+        <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary shadow-[0_0_8px_rgba(0,229,255,0.6)]" />
+      )}
+      <Icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
+      {!collapsed && <span className="text-xs font-mono tracking-wide uppercase truncate mt-0.5">{label}</span>}
     </Link>
   );
+
+  if (collapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {content}
+        </TooltipTrigger>
+        <TooltipContent side="right" className="font-mono text-[10px] uppercase tracking-widest bg-card border-border text-foreground rounded-none px-2 py-1 ml-1">
+          {label}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return content;
 }
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { admin, logout } = useAdmin();
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [location] = useLocation();
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved === "true") setCollapsed(true);
+  }, []);
+
+  const toggleCollapse = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    localStorage.setItem("sidebar-collapsed", String(next));
+  };
+
+  const currentPage = NAV.find(n => location === n.href || (n.href !== "/" && location.startsWith(n.href)))?.label || "Terminal";
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {open && (
-        <div className="fixed inset-0 z-20 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />
+    <div className="flex h-screen bg-background overflow-hidden selection:bg-primary/30 text-foreground">
+      {/* Mobile Backdrop */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 bg-black/80 lg:hidden backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
       )}
 
+      {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-30 w-64 bg-sidebar border-r border-sidebar-border flex flex-col transition-transform duration-200
+        fixed inset-y-0 left-0 z-50 bg-card border-r border-border flex flex-col transition-all duration-200 ease-in-out
         lg:relative lg:translate-x-0
-        ${open ? "translate-x-0" : "-translate-x-full"}
+        ${mobileOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0"}
+        ${collapsed && !mobileOpen ? "lg:w-[56px]" : "lg:w-[220px]"}
       `}>
-        <div className="flex items-center gap-2.5 px-4 py-5 border-b border-sidebar-border">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <Shield className="h-4 w-4 text-primary" />
+        {/* Brand */}
+        <div className={`flex items-center h-12 border-b border-border shrink-0 ${collapsed && !mobileOpen ? "justify-center px-0" : "px-4 gap-3"}`}>
+          <div className="h-6 w-6 bg-primary/10 border border-primary/50 flex items-center justify-center shrink-0">
+            <TerminalSquare className="h-3.5 w-3.5 text-primary" />
           </div>
-          <span className="text-foreground font-bold text-base">MALIGAIN Admin</span>
-          <button className="ml-auto lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
-            <X className="h-5 w-5" />
+          {(!collapsed || mobileOpen) && (
+            <span className="text-foreground font-bold font-mono tracking-widest text-xs uppercase mt-0.5 shadow-primary drop-shadow-[0_0_8px_rgba(0,229,255,0.3)]">MALIGAIN</span>
+          )}
+          <button className="ml-auto lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setMobileOpen(false)}>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-          {NAV.map(n => <NavItem key={n.href} {...n} />)}
+        {/* Nav Links */}
+        <nav className="flex-1 overflow-y-auto py-3 space-y-[1px] custom-scrollbar">
+          {NAV.map(n => <NavItem key={n.href} {...n} collapsed={collapsed && !mobileOpen} />)}
         </nav>
 
-        <div className="px-3 py-4 border-t border-sidebar-border">
-          <div className="flex items-center gap-3 px-3 py-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold shrink-0">
-              {admin?.username?.substring(0, 2).toUpperCase()}
-            </div>
-            <span className="text-foreground text-sm font-medium truncate">{admin?.username}</span>
-          </div>
-          <button
-            onClick={logout}
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </button>
+        {/* Sidebar Footer */}
+        <div className="border-t border-border p-2 shrink-0">
+          {!mobileOpen && (
+            <button 
+              onClick={toggleCollapse}
+              className="hidden lg:flex w-full items-center justify-center h-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+            >
+              {collapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
+            </button>
+          )}
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-card border-b border-border px-4 py-3 flex items-center lg:hidden">
-          <button onClick={() => setOpen(true)} className="text-muted-foreground hover:text-foreground">
-            <Menu className="h-5 w-5" />
-          </button>
-          <span className="ml-3 font-semibold text-foreground">MALIGAIN Admin</span>
+      {/* Main Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        {/* Decorative scanline background */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02] z-0" 
+             style={{ backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, #00e5ff 2px, #00e5ff 4px)`, backgroundSize: '100% 4px' }} />
+
+        {/* Topbar */}
+        <header className="h-12 bg-card border-b border-border flex items-center justify-between px-4 shrink-0 relative z-10">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setMobileOpen(true)} className="text-muted-foreground hover:text-foreground lg:hidden">
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-primary font-mono text-[10px] uppercase tracking-widest hidden sm:inline-block">SYS.PATH</span>
+              <span className="text-muted-foreground font-mono text-[10px] hidden sm:inline-block">/</span>
+              <span className="text-foreground font-mono text-xs font-bold tracking-widest uppercase mt-0.5">{currentPage}</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-right">
+              <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest hidden sm:inline-block">OP:</span>
+              <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase mt-0.5">{admin?.username}</span>
+            </div>
+            <div className="h-4 w-[1px] bg-border hidden sm:block" />
+            <button
+              onClick={logout}
+              className="text-muted-foreground hover:text-destructive transition-colors flex items-center gap-2"
+              title="Terminate Session"
+            >
+              <LogOut className="h-[18px] w-[18px]" />
+            </button>
+          </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 relative z-10 custom-scrollbar">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

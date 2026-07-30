@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useAdmin } from "@/hooks/useAdmin";
-import { Shield } from "lucide-react";
-
-const BG = `linear-gradient(145deg, #1e1650 0%, #2d2096 25%, #1e3a8a 60%, #1e40af 100%)`;
+import { ShieldAlert, TerminalSquare } from "lucide-react";
 
 export default function Login() {
   const { login } = useAdmin();
@@ -25,118 +23,97 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: "#f0f4ff" }}>
-
-      {/* ── Decorative left panel ─────────────────────────────────────── */}
-      <div
-        className="hidden lg:flex lg:w-[46%] xl:w-[42%] flex-col items-center justify-center px-10 relative overflow-hidden"
-        style={{ background: BG }}
-      >
-        {/* Topo lines */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.07)' stroke-width='1'%3E%3Cellipse cx='300' cy='300' rx='280' ry='140'/%3E%3Cellipse cx='300' cy='300' rx='240' ry='110'/%3E%3Cellipse cx='300' cy='300' rx='200' ry='82'/%3E%3Cellipse cx='300' cy='300' rx='160' ry='56'/%3E%3Cellipse cx='140' cy='460' rx='200' ry='100'/%3E%3Cellipse cx='460' cy='140' rx='220' ry='110'/%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: "600px 600px",
-            backgroundPosition: "center",
-          }}
-        />
-        <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(91,141,238,0.18) 0%, transparent 65%)" }} />
-
-        <div className="relative z-10 text-center max-w-xs">
-          <div
-            className="mx-auto mb-6 flex items-center justify-center rounded-2xl"
-            style={{ width: 80, height: 80, background: "rgba(91,141,238,0.15)", border: "1px solid rgba(255,255,255,0.25)", boxShadow: "0 0 40px rgba(91,141,238,0.4)" }}
-          >
-            <Shield className="h-10 w-10 text-white" />
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative font-mono overflow-hidden">
+      {/* Decorative Grid */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-20"
+        style={{
+          backgroundImage: `linear-gradient(to right, #27272a 1px, transparent 1px), linear-gradient(to bottom, #27272a 1px, transparent 1px)`,
+          backgroundSize: '40px 40px'
+        }}
+      />
+      
+      <div className="w-full max-w-sm relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex flex-col items-center mb-8">
+          <div className="h-12 w-12 bg-primary/10 border border-primary flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]">
+            <TerminalSquare className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 28, letterSpacing: "0.18em" }}>MALIGAIN</h1>
-          <p className="text-blue-200/70 font-semibold mb-1" style={{ fontSize: 13 }}>Admin Panel</p>
-          <p className="text-blue-200/50 mb-8" style={{ fontSize: 11, letterSpacing: "0.08em" }}>Platform Management System</p>
-
-          <div className="space-y-3 text-left">
-            {[
-              { icon: "👥", title: "User Management", desc: "View and manage all platform users" },
-              { icon: "💳", title: "Transactions", desc: "Monitor deposits, withdrawals & bonuses" },
-              { icon: "⚙️", title: "Platform Control", desc: "Configure fees, rates, and settings" },
-            ].map((item) => (
-              <div key={item.title} className="flex items-center gap-3 px-4 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
-                <span style={{ fontSize: 18 }}>{item.icon}</span>
-                <div>
-                  <p className="text-white font-semibold text-sm">{item.title}</p>
-                  <p className="text-blue-200/60 text-xs">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h1 className="text-foreground font-bold text-xl tracking-widest uppercase flex items-center gap-2">
+            <span className="w-2 h-2 bg-primary animate-pulse" />
+            MALIGAIN_SYS
+          </h1>
+          <p className="text-muted-foreground text-[10px] tracking-widest mt-1.5 uppercase border border-border px-2 py-0.5 bg-muted/20">
+            AUTHORIZED PERSONNEL ONLY
+          </p>
         </div>
-      </div>
 
-      {/* ── Right form panel ─────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-sm">
+        <div className="bg-card border border-border p-6 shadow-2xl relative">
+          {/* Corner accents */}
+          <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-primary" />
+          <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-primary" />
+          <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-primary" />
+          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-primary" />
 
-          {/* Mobile header */}
-          <div className="flex lg:hidden flex-col items-center gap-3 mb-8">
-            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <Shield className="h-8 w-8 text-primary" />
+          {error && (
+            <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 text-xs mb-6 flex items-start gap-3">
+              <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
+              <span className="uppercase tracking-wide leading-relaxed">{error}</span>
             </div>
-            <div className="text-center">
-              <h1 className="text-foreground font-bold text-xl">Admin Panel</h1>
-              <p className="text-muted-foreground text-sm">MALIGAIN Platform</p>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="on">
+            <div className="space-y-2">
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                Admin ID
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                className="w-full px-3 py-2.5 bg-background border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm font-mono"
+                placeholder="root"
+                required
+                autoFocus
+                autoComplete="username"
+              />
             </div>
-          </div>
-
-          <div className="bg-card rounded-2xl border border-border shadow-xl p-8">
-            <div className="mb-6">
-              <h2 className="text-foreground font-bold text-xl mb-1">Sign in</h2>
-              <p className="text-muted-foreground text-sm">Enter your admin credentials to continue.</p>
+            <div className="space-y-2">
+              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                Passkey
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full px-3 py-2.5 bg-background border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors text-sm font-mono"
+                placeholder="********"
+                required
+                autoComplete="current-password"
+              />
             </div>
-
-            {error && (
-              <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg px-4 py-3 text-sm mb-4">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4" autoComplete="on">
-              <div>
-                <label className="block text-sm font-medium text-foreground/80 mb-1.5">Username</label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all text-sm"
-                  placeholder="admin"
-                  required
-                  autoFocus
-                  autoComplete="username"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground/80 mb-1.5">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all text-sm"
-                  placeholder="••••••••"
-                  required
-                  autoComplete="current-password"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 rounded-xl font-semibold text-primary-foreground text-sm transition-all disabled:opacity-60 mt-1"
-                style={{ background: "linear-gradient(135deg, #5b8dee 0%, #3b6fd4 100%)", boxShadow: "0 4px 16px rgba(91,141,238,0.4)" }}
-              >
-                {loading ? "Signing in…" : "Sign In"}
-              </button>
-            </form>
-          </div>
-
-          <p className="text-center mt-5 text-xs text-muted-foreground">© 2026 MALIGAIN. All rights reserved.</p>
+            
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-primary text-primary-foreground font-bold text-[11px] uppercase tracking-widest hover:bg-primary/90 transition-colors disabled:opacity-50 mt-2 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="h-3 w-3 border-2 border-primary-foreground border-t-transparent animate-spin" />
+                  AUTHENTICATING...
+                </>
+              ) : (
+                "INITIATE_SESSION"
+              )}
+            </button>
+          </form>
+        </div>
+        
+        <div className="mt-8 text-center flex flex-col items-center gap-1">
+          <p className="text-[10px] text-muted-foreground/50 tracking-widest font-mono">
+            SYS.VER 4.2.9 // NODE_ACTIVE
+          </p>
+          <div className="h-0.5 w-8 bg-muted-foreground/20" />
         </div>
       </div>
     </div>
