@@ -38,12 +38,12 @@ router.post("/", async (req: Request, res: Response) => {
   if (!category || !VALID_CATEGORIES.includes(String(category))) {
     res.status(400).json({ error: "ValidationError", message: "Invalid category" }); return;
   }
-  if (!title || String(title).trim().length < 1) {
-    res.status(400).json({ error: "ValidationError", message: "Title is required" }); return;
-  }
   if (!url || String(url).trim().length < 1) {
     res.status(400).json({ error: "ValidationError", message: "URL is required" }); return;
   }
+  const finalTitle = (title && String(title).trim().length > 0)
+    ? String(title).trim()
+    : String(url).trim();
   const finalAssetType = asset_type && VALID_ASSET_TYPES.includes(String(asset_type))
     ? String(asset_type)
     : "video_link";
@@ -52,7 +52,7 @@ router.post("/", async (req: Request, res: Response) => {
     .from("earn_fun_assets")
     .insert({
       category: String(category),
-      title: String(title).trim(),
+      title: finalTitle,
       url: String(url).trim(),
       thumbnail_url: thumbnail_url ? String(thumbnail_url).trim() : null,
       asset_type: finalAssetType,
