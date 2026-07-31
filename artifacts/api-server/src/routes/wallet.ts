@@ -68,6 +68,17 @@ router.get("/balances", async (req: Request, res: Response) => {
       productsOwned: productsOwned ?? 0,
       commissions: num(wallet["commissions"]),
       affiliateBalance: num(wallet["affiliate_balance"]),
+      // Per-task earnings
+      tiktokEarnings: num(wallet["tiktok_earnings"]),
+      youtubeEarnings: num(wallet["youtube_earnings"]),
+      blogsEarnings: num(wallet["blogs_earnings"]),
+      reelEarnings: num(wallet["reel_earnings"]),
+      adsEarnings: num(wallet["ads_earnings"]),
+      movieEarnings: num(wallet["movie_earnings"]),
+      surveyEarnings: num(wallet["survey_earnings"]),
+      chatWithForeignersEarnings: num(wallet["chatwithforeigners_earnings"]),
+      videoEarnings: num(wallet["video_earnings"]),
+      triviaEarnings: num(wallet["trivia_earnings"]),
     });
   } catch (err) {
     req.log.error({ err }, "Get wallet error");

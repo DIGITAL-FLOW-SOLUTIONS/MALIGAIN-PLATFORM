@@ -86,6 +86,17 @@ export interface WalletBalances {
   productsOwned: number;
   commissions: number;
   affiliateBalance: number;
+  // Per-task earnings
+  tiktokEarnings: number;
+  youtubeEarnings: number;
+  blogsEarnings: number;
+  reelEarnings: number;
+  adsEarnings: number;
+  movieEarnings: number;
+  surveyEarnings: number;
+  chatWithForeignersEarnings: number;
+  videoEarnings: number;
+  triviaEarnings: number;
 }
 
 export interface WithdrawalRequest {

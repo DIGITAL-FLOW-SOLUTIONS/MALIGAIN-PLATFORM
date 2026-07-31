@@ -110,12 +110,16 @@ export default function Dashboard() {
   ];
 
   const SERVICE_ROWS = [
-    { label: "Ads Earnings",      icon: ClipboardList, color: "bg-blue-500",    value: fmt(0) },
-    { label: "TikTok Earnings",   icon: Play,          color: "bg-pink-500",    value: fmt(0) },
-    { label: "Youtube Earnings",  icon: Play,          color: "bg-red-500",     value: fmt(0) },
-    { label: "Survey Earnings",   icon: Puzzle,        color: "bg-amber-500",   value: fmt(0) },
-    { label: "Blog Earnings",     icon: PenLine,       color: "bg-violet-500",  value: fmt(0) },
-    { label: "Chat Earnings",     icon: HeartHandshake, color: "bg-emerald-500",value: fmt(0) },
+    { label: "Ads Earnings",             icon: ClipboardList,  color: "bg-blue-500",    value: fmt(balances?.adsEarnings                ?? 0) },
+    { label: "TikTok Earnings",          icon: Play,           color: "bg-pink-500",    value: fmt(balances?.tiktokEarnings             ?? 0) },
+    { label: "Youtube Earnings",         icon: Play,           color: "bg-red-500",     value: fmt(balances?.youtubeEarnings            ?? 0) },
+    { label: "Survey Earnings",          icon: Puzzle,         color: "bg-amber-500",   value: fmt(balances?.surveyEarnings             ?? 0) },
+    { label: "Blog Earnings",            icon: PenLine,        color: "bg-violet-500",  value: fmt(balances?.blogsEarnings              ?? 0) },
+    { label: "Chat with Foreigners",     icon: HeartHandshake, color: "bg-emerald-500", value: fmt(balances?.chatWithForeignersEarnings  ?? 0) },
+    { label: "Reels Earnings",           icon: Play,           color: "bg-orange-500",  value: fmt(balances?.reelEarnings               ?? 0) },
+    { label: "Movies Earnings",          icon: Play,           color: "bg-cyan-600",    value: fmt(balances?.movieEarnings              ?? 0) },
+    { label: "Watch & Earn",             icon: Play,           color: "bg-indigo-500",  value: fmt(balances?.videoEarnings              ?? 0) },
+    { label: "Trivia Earnings",          icon: Puzzle,         color: "bg-rose-500",    value: fmt(balances?.triviaEarnings             ?? 0) },
   ];
 
   if (loadingBalances || loadingStats) {
