@@ -116,7 +116,7 @@ export const api = {
 
   // Settings
   getSettings: () => request<{ settings: Record<string, string> }>("GET", "/settings"),
-  updateSettings: (data: Record<string, string>) => request<{ message: string }>("PUT", "/settings", data),
+  updateSettings: (data: Record<string, string | number>) => request<{ message: string }>("PUT", "/settings", data),
   updateLaunchSettings: (data: { enabled: boolean; launchDate: string }) =>
     request<{ message: string }>("PUT", "/settings/launch", data),
   getNotificationEmail: () => request<{ notificationEmail: string | null }>("GET", "/settings/notification-email"),

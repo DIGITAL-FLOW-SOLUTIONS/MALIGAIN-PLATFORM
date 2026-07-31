@@ -13,6 +13,22 @@ export const ACTIVATION_FEE_DEFAULTS: Record<string, number> = {
   BW: 75, RW: 5500, CG: 15000, MW: 12000, NG: 7500, SS: 20000, BI: 25000,
 };
 
+export const WELCOME_BONUS_DEFAULTS: Record<string, { amount: number; requiredReferrals: number }> = {
+  KE: { amount: 150, requiredReferrals: 30 },
+  TZ: { amount: 3500, requiredReferrals: 12 },
+  UG: { amount: 5000, requiredReferrals: 25 },
+  RW: { amount: 350, requiredReferrals: 25 },
+  BI: { amount: 6000, requiredReferrals: 25 },
+  ZM: { amount: 50, requiredReferrals: 25 },
+  BW: { amount: 50, requiredReferrals: 25 },
+  CM: { amount: 800, requiredReferrals: 25 },
+  GH: { amount: 20, requiredReferrals: 25 },
+  NG: { amount: 4000, requiredReferrals: 25 },
+  SS: { amount: 5000, requiredReferrals: 20 },
+  CG: { amount: 3500, requiredReferrals: 25 },
+  MW: { amount: 3500, requiredReferrals: 25 },
+};
+
 export const BONUS_TABLE_DEFAULTS: Record<string, Record<string, [number, number, number]>> = {
   // Kenya — upline earns in KES (L3=0 means no L3 bonus)
   KE: { KE:[200,80,25],   UG:[210,105,35],     TZ:[147,97,48],    GH:[281,168,112],  ZM:[354,141,106],  CM:[245,113,87],
@@ -76,6 +92,28 @@ export async function getActivationFees(): Promise<Record<string, number>> {
 export async function getActivationFee(countryCode: string): Promise<number> {
   const fees = await getActivationFees();
   return fees[countryCode.toUpperCase()] ?? ACTIVATION_FEE_DEFAULTS[countryCode.toUpperCase()] ?? 100;
+}
+
+export async function getWelcomeBonusSettings(): Promise<Record<string, { amount: number; requiredReferrals: number }>> {
+  const keys = COUNTRIES.flatMap(country => [
+    `welcome_bonus_${country}_amount`,
+    `welcome_bonus_${country}_referrals`,
+  ]);
+  const { data } = await supabase.from("app_settings").select("key, value").in("key", keys);
+  const result: Record<string, { amount: number; requiredReferrals: number }> = {};
+  for (const country of COUNTRIES) {
+    result[country] = { ...(WELCOME_BONUS_DEFAULTS[country] ?? { amount: 0, requiredReferrals: 0 }) };
+  }
+  for (const row of (data ?? []) as Array<{ key: string; value: string }>) {
+    const match = row.key.match(/^welcome_bonus_([A-Z]+)_(amount|referrals)$/);
+    if (!match) continue;
+    const country = match[1]!;
+    const value = Number(row.value);
+    if (!Number.isFinite(value) || value < 0 || !result[country]) continue;
+    if (match[2] === "amount") result[country]!.amount = value;
+    else result[country]!.requiredReferrals = Math.floor(value);
+  }
+  return result;
 }
 
 export async function getBonusTable(): Promise<Record<string, Record<string, [number, number, number]>>> {

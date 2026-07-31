@@ -2,7 +2,23 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Settings as SettingsIcon, Rocket, Bell, Smartphone } from "lucide-react";
+import { Save, Settings as SettingsIcon, Rocket, Bell, Smartphone, Gift } from "lucide-react";
+
+const WELCOME_COUNTRIES = [
+  { code: "KE", name: "Kenya", currency: "KES" },
+  { code: "TZ", name: "Tanzania", currency: "TZS" },
+  { code: "UG", name: "Uganda", currency: "UGX" },
+  { code: "RW", name: "Rwanda", currency: "RWF" },
+  { code: "BI", name: "Burundi", currency: "BIF" },
+  { code: "ZM", name: "Zambia", currency: "ZMW" },
+  { code: "BW", name: "Botswana", currency: "BWP" },
+  { code: "CM", name: "Cameroon", currency: "XAF" },
+  { code: "GH", name: "Ghana", currency: "GHS" },
+  { code: "NG", name: "Nigeria", currency: "NGN" },
+  { code: "SS", name: "South Sudan", currency: "SSP" },
+  { code: "CG", name: "Congo", currency: "CDF" },
+  { code: "MW", name: "Malawi", currency: "MWK" },
+];
 
 function toDatetimeLocal(isoString: string): string {
   if (!isoString) return "";
@@ -51,6 +67,9 @@ export default function Settings() {
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
   const [notificationEmail, setNotificationEmail] = useState("");
+  const [welcomeBonuses, setWelcomeBonuses] = useState<Record<string, { amount: string; referrals: string }>>(
+    Object.fromEntries(WELCOME_COUNTRIES.map(({ code }) => [code, { amount: "", referrals: "" }]))
+  );
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-settings"],
@@ -97,6 +116,10 @@ export default function Settings() {
       if (s["payhero_active_channel"]) setActiveChannel(s["payhero_active_channel"]);
       setLaunchEnabled(s["launch_mode_enabled"] === "true");
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
+      setWelcomeBonuses(Object.fromEntries(WELCOME_COUNTRIES.map(({ code }) => [
+        code,
+        { amount: s[`welcome_bonus_${code}_amount`] ?? "", referrals: s[`welcome_bonus_${code}_referrals`] ?? "" },
+      ])));
     }
   }, [data]);
 
@@ -178,6 +201,20 @@ export default function Settings() {
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
+  const saveWelcomeBonusesMut = useMutation({
+    mutationFn: () => api.updateSettings(Object.fromEntries(
+      WELCOME_COUNTRIES.flatMap(({ code }) => [
+        [`welcome_bonus_${code}_amount`, welcomeBonuses[code]?.amount ?? ""],
+        [`welcome_bonus_${code}_referrals`, welcomeBonuses[code]?.referrals ?? ""],
+      ])
+    )),
+    onSuccess: () => {
+      toast({ title: "Welcome bonuses saved", description: "Country bonus amounts and referral requirements have been updated." });
+      qc.invalidateQueries({ queryKey: ["admin-settings"] });
+    },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
   const PAYHERO_CHANNELS = [
     { id: "8080",  type: "Till",  detail: "5580730",            label: "M-Pesa Till" },
     { id: "10333", type: "Bank",  detail: "I & M Bank Limited", label: "I & M Bank" },
@@ -207,6 +244,62 @@ export default function Settings() {
         </div>
       ) : (
         <div className="space-y-6">
+
+          {/* ── WELCOME BONUSES ─────────────────────────────────────────── */}
+          <div className={`${sectionCard} max-w-4xl`}>
+            <div className={sectionHeader}>
+              <h2 className="font-semibold text-foreground flex items-center gap-2">
+                <Gift className="h-4 w-4 text-primary" />
+                Welcome Bonus Settings
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Set the one-time bonus credited to a user&apos;s main wallet after they reach the required active Level 1 referrals.
+              </p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs text-muted-foreground uppercase tracking-wide border-b border-border">
+                      <th className="pb-3 pr-4">Country</th>
+                      <th className="pb-3 pr-4">Bonus amount</th>
+                      <th className="pb-3">Active L1 referrals required</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {WELCOME_COUNTRIES.map(({ code, name, currency }) => (
+                      <tr key={code}>
+                        <td className="py-3 pr-4 font-medium text-foreground whitespace-nowrap">{name} <span className="text-xs text-muted-foreground">({code})</span></td>
+                        <td className="py-3 pr-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground w-10">{currency}</span>
+                            <input
+                              type="number" min="0" step="1"
+                              value={welcomeBonuses[code]?.amount ?? ""}
+                              onChange={(e) => setWelcomeBonuses((current) => ({ ...current, [code]: { ...current[code]!, amount: e.target.value } }))}
+                              className={`${inputCls} min-w-[120px]`}
+                            />
+                          </div>
+                        </td>
+                        <td className="py-3">
+                          <input
+                            type="number" min="0" step="1"
+                            value={welcomeBonuses[code]?.referrals ?? ""}
+                            onChange={(e) => setWelcomeBonuses((current) => ({ ...current, [code]: { ...current[code]!, referrals: e.target.value } }))}
+                            className={`${inputCls} min-w-[180px]`}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <button onClick={() => saveWelcomeBonusesMut.mutate()} disabled={saveWelcomeBonusesMut.isPending} className={saveBtnCls}>
+                <Save className="h-4 w-4" />
+                {saveWelcomeBonusesMut.isPending ? "Saving..." : "Save Welcome Bonus Settings"}
+              </button>
+            </div>
+          </div>
 
           {/* ── WITHDRAWAL NOTIFICATION EMAIL ────────────────────────────── */}
           <div className={sectionCard}>

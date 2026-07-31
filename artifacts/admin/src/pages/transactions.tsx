@@ -9,7 +9,7 @@ function TypeBadge({ type }: { type: string }) {
     withdrawal: "bg-secondary/10 text-secondary",
     credit: "bg-emerald-100 text-emerald-700",
     debit: "bg-destructive/10 text-destructive",
-    referral_bonus: "bg-primary/10 text-primary",
+    referral: "bg-primary/10 text-primary",
     commission: "bg-amber-100 text-amber-700",
   };
   return (
@@ -63,7 +63,7 @@ export default function Transactions() {
             <option value="withdrawal">Withdrawal</option>
             <option value="credit">Credit</option>
             <option value="debit">Debit</option>
-            <option value="referral_bonus">Referral Bonus</option>
+            <option value="referral">Referral Bonus</option>
           </select>
           <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }} className={selectCls}>
             <option value="all">All Status</option>

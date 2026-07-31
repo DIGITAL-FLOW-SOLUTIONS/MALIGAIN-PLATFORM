@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useGetWalletBalances, useGetReferralStats } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { formatCurrency, getCurrencyInfo, amountFontClass } from "@/lib/utils";
 import {
   Copy,
@@ -46,6 +47,13 @@ export default function Dashboard() {
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
   const [investBalance, setInvestBalance] = useState(0);
   const [activationFee, setActivationFee] = useState<number | null>(null);
+  const [welcomeBonus, setWelcomeBonus] = useState<{
+    country: string; currency: string; amount: number; requiredReferrals: number;
+    currentReferrals: number; claimed: boolean; canClaim: boolean; claimedAt: string | null;
+  } | null>(null);
+  const [welcomeBonusLoading, setWelcomeBonusLoading] = useState(true);
+  const [claimingWelcomeBonus, setClaimingWelcomeBonus] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch investment balance
   useEffect(() => {
@@ -66,6 +74,43 @@ export default function Dashboard() {
       })
       .catch(() => {});
   }, [user?.country]);
+
+  const loadWelcomeBonus = () => {
+    setWelcomeBonusLoading(true);
+    fetch(`${import.meta.env.BASE_URL}api/bonuses/welcome`, { credentials: "include" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unable to load welcome bonus");
+        return response.json();
+      })
+      .then(setWelcomeBonus)
+      .catch(() => setWelcomeBonus(null))
+      .finally(() => setWelcomeBonusLoading(false));
+  };
+
+  useEffect(() => {
+    if (user) loadWelcomeBonus();
+  }, [user?.id]);
+
+  const claimWelcomeBonus = async () => {
+    setClaimingWelcomeBonus(true);
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/bonuses/welcome/claim`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message ?? "Unable to claim welcome bonus");
+      setWelcomeBonus(result);
+      queryClient.invalidateQueries({ queryKey: ["/api/wallet/balances"] });
+      toast({ title: "Welcome bonus claimed!", description: result.message });
+    } catch (error) {
+      toast({ title: "Unable to claim bonus", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
+      loadWelcomeBonus();
+    } finally {
+      setClaimingWelcomeBonus(false);
+    }
+  };
 
   const country = user?.country ?? null;
   const currencyInfo = getCurrencyInfo(country);
@@ -149,6 +194,56 @@ export default function Dashboard() {
     <div className="space-y-5">
       {/* Referral notification banner */}
       <ReferralNotificationBanner count={stats?.todayReferrals ?? 0} />
+
+      {/* ── WELCOME BONUS ──────────────────────────────────────────────────── */}
+      <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-card to-orange-50 shadow-sm dark:border-amber-900/40 dark:from-amber-950/30 dark:to-orange-950/20">
+        <div className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-amber-300/20 blur-2xl pointer-events-none" />
+        <div className="relative flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-amber-400 text-white shadow-sm">
+              <Gift className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">Welcome Bonus</p>
+              {welcomeBonusLoading ? (
+                <div className="mt-2 h-5 w-48 animate-pulse rounded bg-amber-200/60" />
+              ) : welcomeBonus ? (
+                <>
+                  <p className="mt-0.5 text-lg font-black text-foreground">
+                    {welcomeBonus.currency} {welcomeBonus.amount.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {welcomeBonus.claimed
+                      ? "This one-time bonus has already been credited to your main wallet."
+                      : `${welcomeBonus.currentReferrals} of ${welcomeBonus.requiredReferrals} active Level 1 referrals`}
+                  </p>
+                </>
+              ) : (
+                <p className="mt-1 text-xs text-muted-foreground">Welcome bonus details are unavailable.</p>
+              )}
+            </div>
+          </div>
+          {welcomeBonus && !welcomeBonus.claimed && (
+            <button
+              type="button"
+              onClick={claimWelcomeBonus}
+              disabled={!welcomeBonus.canClaim || claimingWelcomeBonus}
+              className="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Gift className="h-4 w-4" />
+              {claimingWelcomeBonus ? "Claiming..." : welcomeBonus.canClaim ? "Claim bonus" : "Keep referring"}
+            </button>
+          )}
+        </div>
+        {welcomeBonus && !welcomeBonus.claimed && !welcomeBonusLoading && (
+          <div className="h-1.5 bg-amber-100 dark:bg-amber-950/50">
+            <div
+              className="h-full bg-amber-500 transition-all"
+              style={{ width: `${Math.min(100, (welcomeBonus.currentReferrals / Math.max(1, welcomeBonus.requiredReferrals)) * 100)}%` }}
+            />
+          </div>
+        )}
+      </div>
 
       {/* ── 1. HERO BANNER ─────────────────────────────────────────────────── */}
       <div

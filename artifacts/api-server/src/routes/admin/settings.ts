@@ -1,15 +1,18 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { supabase } from "../../lib/supabase";
 import { logAdminAction } from "../../middlewares/adminAuth";
+import { COUNTRIES } from "../../lib/appSettings";
 
 const router: IRouter = Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
+    const settingKeys = ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel"];
+    const welcomeKeys = COUNTRIES.flatMap(country => [`welcome_bonus_${country}_amount`, `welcome_bonus_${country}_referrals`]);
     const { data, error } = await supabase
       .from("app_settings")
       .select("key, value, business_name")
-      .in("key", ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel"]);
+      .in("key", [...settingKeys, ...welcomeKeys]);
 
     if (error) throw error;
 
@@ -117,6 +120,16 @@ router.put("/", async (req: Request, res: Response) => {
         return;
       }
       upserts.push({ key: "payhero_active_channel", value: payhero_active_channel.trim() });
+    }
+
+    for (const [key, rawValue] of Object.entries(req.body as Record<string, unknown>)) {
+      if (!/^welcome_bonus_[A-Z]+_(amount|referrals)$/.test(key)) continue;
+      const value = Number(rawValue);
+      if (!Number.isFinite(value) || value < 0 || (key.endsWith("_referrals") && !Number.isInteger(value))) {
+        res.status(400).json({ error: "ValidationError", message: `Invalid welcome bonus value for ${key}` });
+        return;
+      }
+      upserts.push({ key, value: String(value) });
     }
 
     for (const row of upserts) {

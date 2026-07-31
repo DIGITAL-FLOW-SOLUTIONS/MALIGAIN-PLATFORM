@@ -106,7 +106,7 @@ export async function triggerReferralBonus(activatedUserId: number, log?: { erro
 
       await supabase.from("transactions").insert({
         user_id: uplineId,
-        type: "referral_bonus",
+        type: "referral",
         amount: bonusAmount,
         status: "completed",
         description: `Level ${level} referral bonus — activation of user #${activatedUserId}`,

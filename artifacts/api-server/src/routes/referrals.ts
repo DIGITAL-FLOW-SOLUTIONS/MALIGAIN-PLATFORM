@@ -148,7 +148,7 @@ router.get("/stats", async (req: Request, res: Response) => {
 
     // Sum referral bonus earnings — no row limit
     const { rows: bonusTxns } = await pool.query<{ amount: string }>(
-      `SELECT amount FROM transactions WHERE user_id = $1 AND type = 'referral_bonus' AND status = 'completed'`,
+      `SELECT amount FROM transactions WHERE user_id = $1 AND type = 'referral' AND status = 'completed'`,
       [userId],
     );
 

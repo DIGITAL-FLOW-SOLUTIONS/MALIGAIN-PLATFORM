@@ -100,7 +100,7 @@ router.post("/bonus", async (req: Request, res: Response) => {
 
     await supabase.from("transactions").insert({
       user_id: Number(userId),
-      type: "referral_bonus",
+      type: "referral",
       amount: Number(amount),
       status: "completed",
       description: `Admin referral bonus: ${reason}`,
