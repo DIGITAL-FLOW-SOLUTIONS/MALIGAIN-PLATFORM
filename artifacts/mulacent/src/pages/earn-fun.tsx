@@ -35,6 +35,32 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
+// ─── TikTok URL → video ID ────────────────────────────────────────────────────
+function extractTikTokId(url: string): string | null {
+  if (!url) return null;
+  const m = url.match(/video\/(\d+)/);
+  return m?.[1] ?? null;
+}
+
+// ─── Instagram URL → shortcode ────────────────────────────────────────────────
+function extractInstagramShortcode(url: string): string | null {
+  if (!url) return null;
+  const m = url.match(/\/(reel|p|tv)\/([A-Za-z0-9_-]+)/);
+  return m?.[2] ?? null;
+}
+
+// ─── Detect video platform ────────────────────────────────────────────────────
+type VideoPlatform = "youtube" | "tiktok" | "instagram" | "direct" | "generic";
+
+function detectVideoPlatform(url: string): VideoPlatform {
+  if (!url) return "generic";
+  if (/youtube\.com|youtu\.be/.test(url)) return "youtube";
+  if (/tiktok\.com/.test(url)) return "tiktok";
+  if (/instagram\.com/.test(url)) return "instagram";
+  if (/\.(mp4|webm|ogg|mov)(\?|$)/i.test(url)) return "direct";
+  return "generic";
+}
+
 function thumbnailFor(asset: EarnAsset): string {
   if (asset.thumbnail_url) return asset.thumbnail_url;
   if (asset.asset_type === "video_link") {
@@ -79,11 +105,11 @@ const PLATFORMS: Record<string, PlatformConfig> = {
     bgAccent: "bg-rose-50",
     borderAccent: "border-rose-200",
     badgeClass: "bg-rose-50 text-rose-600 border-rose-200",
-    requiredSeconds: 60,
+    requiredSeconds: 10,
     emoji: "🎵",
     taskType: "tiktok",
     aspectClass: "aspect-[9/16] max-h-[480px]",
-    playerNote: "Watch any video for 60 seconds",
+    playerNote: "Watch any video for 10 seconds",
   },
   "/youtube-earn": {
     key: "youtube",
@@ -133,11 +159,11 @@ const PLATFORMS: Record<string, PlatformConfig> = {
     bgAccent: "bg-pink-50",
     borderAccent: "border-pink-200",
     badgeClass: "bg-pink-50 text-pink-600 border-pink-200",
-    requiredSeconds: 60,
+    requiredSeconds: 10,
     emoji: "🎞️",
     taskType: "reals",
     aspectClass: "aspect-[9/16] max-h-[480px]",
-    playerNote: "Watch any reel for 60 seconds",
+    playerNote: "Watch any reel for 10 seconds",
   },
   "/ads-earn": {
     key: "ads",
@@ -341,24 +367,66 @@ function AssetPlayer({
     );
   }
 
-  // video_link — embed as YouTube iframe
-  const ytId = extractYouTubeId(asset.url);
-  const embedUrl = ytId
-    ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&autoplay=0`
-    : null;
+  // video_link — detect platform and embed accordingly
+  const videoPlatform = detectVideoPlatform(asset.url);
+
+  let embedUrl: string | null = null;
+  let isDirectVideo = false;
+
+  if (videoPlatform === "youtube") {
+    const ytId = extractYouTubeId(asset.url);
+    embedUrl = ytId
+      ? `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&autoplay=0`
+      : null;
+  } else if (videoPlatform === "tiktok") {
+    const tikId = extractTikTokId(asset.url);
+    embedUrl = tikId
+      ? `https://www.tiktok.com/embed/v2/${tikId}`
+      : null;
+  } else if (videoPlatform === "instagram") {
+    const shortcode = extractInstagramShortcode(asset.url);
+    // Determine if it's a reel or regular post
+    const isReel = /\/reel\//.test(asset.url);
+    embedUrl = shortcode
+      ? `https://www.instagram.com/${isReel ? "reel" : "p"}/${shortcode}/embed/`
+      : null;
+  } else if (videoPlatform === "direct") {
+    isDirectVideo = true;
+  } else {
+    // generic — try to embed directly as iframe
+    embedUrl = asset.url;
+  }
 
   return (
     <div ref={containerRef} className={cn("w-full relative bg-black", platform.aspectClass)}>
-      {visible && embedUrl ? (
-        <iframe
-          key={`${platform.key}-${asset.id}`}
-          src={embedUrl}
-          title={asset.title}
-          className="w-full h-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          loading="lazy"
-        />
+      {visible ? (
+        isDirectVideo ? (
+          <video
+            key={`${platform.key}-${asset.id}`}
+            src={asset.url}
+            title={asset.title}
+            className="w-full h-full"
+            controls
+            playsInline
+          />
+        ) : embedUrl ? (
+          <iframe
+            key={`${platform.key}-${asset.id}`}
+            src={embedUrl}
+            title={asset.title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2 text-center p-4">
+              <AlertCircle className="w-6 h-6 text-white/50" />
+              <p className="text-white/60 text-xs">Unable to embed this video URL</p>
+            </div>
+          </div>
+        )
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin" />
