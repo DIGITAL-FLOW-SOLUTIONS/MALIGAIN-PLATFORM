@@ -83,7 +83,7 @@ export const TASKS = [
     type: "tiktok" as const,
     rewardKES: 15,
     availableCount: 50,
-    description: "Open TikTok, watch videos for 60 seconds and earn",
+    description: "Open TikTok, watch videos for 10 seconds and earn",
     difficulty: "Easy",
   },
   {
@@ -110,7 +110,7 @@ export const TASKS = [
     type: "reals" as const,
     rewardKES: 12,
     availableCount: 60,
-    description: "Watch Instagram Reels or YouTube Shorts for 60 seconds and earn",
+    description: "Watch Instagram Reels or YouTube Shorts for 10 seconds and earn",
     difficulty: "Easy",
   },
   {
@@ -119,7 +119,7 @@ export const TASKS = [
     type: "ads" as const,
     rewardKES: 10,
     availableCount: 100,
-    description: "Watch an ad for 30 seconds and earn",
+    description: "Watch an ad for 10 seconds and earn",
     difficulty: "Easy",
   },
 ];
@@ -332,11 +332,11 @@ router.post("/:id/complete", async (req: Request, res: Response) => {
 
     // Earn-with-fun tasks — timer-based validation
     const FUN_EARN_MINIMUMS: Record<string, number> = {
-      tiktok:  60,   // 60 seconds on TikTok
+      tiktok:  10,   // 10 seconds on TikTok
       youtube: 120,  // 2 minutes on YouTube
       movies:  180,  // 3 minutes watching a movie
-      reals:   60,   // 60 seconds watching Reals
-      ads:     30,   // 30 seconds watching an ad
+      reals:   10,   // 10 seconds watching Reals
+      ads:     10,   // 10 seconds watching an ad
     };
     if (task.type in FUN_EARN_MINIMUMS) {
       const minSeconds = FUN_EARN_MINIMUMS[task.type]!;

@@ -177,11 +177,11 @@ const PLATFORMS: Record<string, PlatformConfig> = {
     bgAccent: "bg-amber-50",
     borderAccent: "border-amber-200",
     badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
-    requiredSeconds: 30,
+    requiredSeconds: 10,
     emoji: "📣",
     taskType: "ads",
     aspectClass: "aspect-video",
-    playerNote: "Watch any ad for 30 seconds",
+    playerNote: "Watch any ad for 10 seconds",
   },
 };
 
