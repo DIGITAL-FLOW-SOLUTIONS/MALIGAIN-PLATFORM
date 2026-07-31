@@ -45,6 +45,7 @@ export default function Dashboard() {
   const [, navigate] = useLocation();
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
   const [investBalance, setInvestBalance] = useState(0);
+  const [activationFee, setActivationFee] = useState<number | null>(null);
 
   // Fetch investment balance
   useEffect(() => {
@@ -53,6 +54,18 @@ export default function Dashboard() {
       .then(d => setInvestBalance(d.totalEarned ?? 0))
       .catch(() => {});
   }, []);
+
+  // Fetch activation fee for the user's country
+  useEffect(() => {
+    if (!user?.country) return;
+    fetch(`${import.meta.env.BASE_URL}api/settings/activation-fees`, { credentials: "include" })
+      .then(r => r.json())
+      .then((d: { fees?: Record<string, number> }) => {
+        const fee = d.fees?.[user.country!.toUpperCase()];
+        if (fee != null) setActivationFee(fee);
+      })
+      .catch(() => {});
+  }, [user?.country]);
 
   const country = user?.country ?? null;
   const currencyInfo = getCurrencyInfo(country);
@@ -189,10 +202,12 @@ export default function Dashboard() {
 
           {/* Two stats with divider */}
           <div className="flex items-center">
-            {/* Left: Expense */}
+            {/* Left: Expense (activation fee for user's country) */}
             <div className="flex-1">
               <p className="text-amber-300 text-[11px] font-semibold mb-0.5">Expense</p>
-              <p className={`text-white font-black leading-none ${amountFontClass(fmt(mainBal), "lg")}`}>{fmt(mainBal)}</p>
+              <p className={`text-white font-black leading-none ${amountFontClass(fmt(activationFee ?? 0), "lg")}`}>
+                {activationFee != null ? fmt(activationFee) : "—"}
+              </p>
             </div>
 
             {/* Divider */}
