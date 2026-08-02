@@ -132,7 +132,15 @@ export default function Activate() {
 
           <div className="p-6">
             {isKenya ? (
-              <form onSubmit={handleActivate} className="space-y-4">
+              <div className="space-y-3">
+                <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
+                  <p className="text-foreground text-sm mb-1">
+                    Activate your account for{" "}
+                    <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">Choose automatic PayHero or manual M-Pesa Till payment</p>
+                </div>
+                <form onSubmit={handleActivate} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     M-PESA Phone Number
@@ -162,7 +170,15 @@ export default function Activate() {
                   )}
                   {loading ? "Processing..." : "Pay & Activate Account"}
                 </button>
-              </form>
+                </form>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/kenya-pay?amount=${displayAmount}`)}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-foreground border border-primary bg-primary/5 hover:bg-primary/10 flex items-center justify-center gap-2 transition-all"
+                >
+                  <ShieldCheck className="w-4 h-4 text-primary" /> Manual Payment (M-Pesa Till)
+                </button>
+              </div>
 
             ) : isUganda ? (
               <div className="space-y-3">

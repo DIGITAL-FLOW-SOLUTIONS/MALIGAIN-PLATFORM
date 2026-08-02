@@ -34,6 +34,7 @@ import EarnFun from "@/pages/earn-fun";
 import PayClient from "@/pages/pay-client";
 import Verify from "@/pages/verify";
 import UgandaPay from "@/pages/uganda-pay";
+import KenyaPay from "@/pages/kenya-pay";
 import ZambiaPay from "@/pages/zambia-pay";
 import TanzaniaPay from "@/pages/tanzania-pay";
 import CameroonPay from "@/pages/cameroon-pay";
@@ -189,6 +190,13 @@ function UgandaPayRoute() {
   return <UgandaPay />;
 }
 
+function KenyaPayRoute() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <LoadingSpinner />;
+  if (!user) return <Redirect to="/login" />;
+  return <KenyaPay />;
+}
+
 function ZambiaPayRoute() {
   const { user, isLoading } = useAuth();
   if (isLoading) return <LoadingSpinner />;
@@ -286,6 +294,7 @@ function Router() {
       <Route path="/pay-client" component={() => <ProtectedRoute component={PayClient} />} />
       <Route path="/verify" component={() => <VerifyRoute />} />
       <Route path="/uganda-pay" component={() => <UgandaPayRoute />} />
+      <Route path="/kenya-pay" component={() => <KenyaPayRoute />} />
       <Route path="/zambia-pay" component={() => <ZambiaPayRoute />} />
       <Route path="/tanzania-pay" component={() => <TanzaniaPayRoute />} />
       <Route path="/cameroon-pay" component={() => <CameroonPayRoute />} />

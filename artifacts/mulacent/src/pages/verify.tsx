@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import {
   ShieldCheck,
   Upload,
@@ -60,9 +60,11 @@ export default function Verify() {
   const userCurrency = COUNTRY_CURRENCY[user?.country ?? "KE"] ?? "KES";
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const search = useSearch();
+  const verificationAmount = new URLSearchParams(search).get("amount") ?? "";
 
   const [phone, setPhone] = useState(user?.phone ?? "");
-  const [amountPaid, setAmountPaid] = useState("");
+  const [amountPaid, setAmountPaid] = useState(verificationAmount);
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -174,7 +176,7 @@ export default function Verify() {
             </div>
           </div>
           <h1 className="relative z-10 text-xl font-black text-white tracking-wider uppercase">
-            Eversend Payment Verification
+             {user?.country === "KE" ? "M-Pesa Payment Verification" : "Payment Verification"}
           </h1>
           <p className="relative z-10 text-white/70 text-sm mt-1.5">
             Upload payment screenshot for verification
@@ -241,7 +243,7 @@ export default function Verify() {
                 type="number"
                 value={amountPaid}
                 onChange={(e) => setAmountPaid(e.target.value)}
-                placeholder={`e.g. 100`}
+                 placeholder={`e.g. ${userCurrency === "KES" ? "350" : "100"}`}
                 disabled={hasPending}
                 min="1"
                 className={cn(

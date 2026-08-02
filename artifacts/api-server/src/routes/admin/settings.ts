@@ -7,7 +7,7 @@ const router: IRouter = Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const settingKeys = ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel"];
+    const settingKeys = ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel", "kenya_till_number", "kenya_till_business_name"];
     const welcomeKeys = COUNTRIES.flatMap(country => [`welcome_bonus_${country}_amount`, `welcome_bonus_${country}_referrals`]);
     const { data, error } = await supabase
       .from("app_settings")
@@ -58,6 +58,8 @@ router.put("/", async (req: Request, res: Response) => {
       rwanda_phone,
       rwanda_business_name,
       payhero_active_channel,
+      kenya_till_number,
+      kenya_till_business_name,
     } = req.body as Record<string, string | undefined>;
 
     const upserts: Array<{ key: string; value: string; business_name?: string | null }> = [];
@@ -120,6 +122,20 @@ router.put("/", async (req: Request, res: Response) => {
         return;
       }
       upserts.push({ key: "payhero_active_channel", value: payhero_active_channel.trim() });
+    }
+    if (kenya_till_number !== undefined) {
+      if (!kenya_till_number.trim()) {
+        res.status(400).json({ error: "ValidationError", message: "Kenya Till number is required" });
+        return;
+      }
+      upserts.push({ key: "kenya_till_number", value: kenya_till_number.trim() });
+    }
+    if (kenya_till_business_name !== undefined) {
+      if (!kenya_till_business_name.trim()) {
+        res.status(400).json({ error: "ValidationError", message: "Kenya Till business name is required" });
+        return;
+      }
+      upserts.push({ key: "kenya_till_business_name", value: kenya_till_business_name.trim() });
     }
 
     for (const [key, rawValue] of Object.entries(req.body as Record<string, unknown>)) {

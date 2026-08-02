@@ -63,6 +63,8 @@ export default function Settings() {
   const [ssBusinessName, setSsBusinessName] = useState("");
   const [rwandaPhone, setRwandaPhone] = useState("");
   const [rwandaBusinessName, setRwandaBusinessName] = useState("");
+  const [kenyaTillNumber, setKenyaTillNumber] = useState("5580730");
+  const [kenyaTillBusinessName, setKenyaTillBusinessName] = useState("ZANY TECH EXPERTS");
   const [activeChannel, setActiveChannel] = useState("8080");
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
@@ -113,6 +115,8 @@ export default function Settings() {
       setSsBusinessName(s["ss_business_name"] ?? "");
       setRwandaPhone(s["rwanda_phone"] ?? "");
       setRwandaBusinessName(s["rwanda_business_name"] ?? "");
+      setKenyaTillNumber(s["kenya_till_number"] ?? "5580730");
+      setKenyaTillBusinessName(s["kenya_till_business_name"] ?? "ZANY TECH EXPERTS");
       if (s["payhero_active_channel"]) setActiveChannel(s["payhero_active_channel"]);
       setLaunchEnabled(s["launch_mode_enabled"] === "true");
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
@@ -196,8 +200,12 @@ export default function Settings() {
   });
 
   const saveKenyaMut = useMutation({
-    mutationFn: () => api.updateSettings({ payhero_active_channel: activeChannel }),
-    onSuccess: () => { toast({ title: "Channel updated", description: "Kenya PayHero channel is now active." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    mutationFn: () => api.updateSettings({
+      payhero_active_channel: activeChannel,
+      kenya_till_number: kenyaTillNumber.trim(),
+      kenya_till_business_name: kenyaTillBusinessName.trim(),
+    }),
+    onSuccess: () => { toast({ title: "Kenya settings saved", description: "PayHero and manual Till payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
@@ -216,7 +224,7 @@ export default function Settings() {
   });
 
   const PAYHERO_CHANNELS = [
-    { id: "8080",  type: "Till",  detail: "5580730",            label: "M-Pesa Till" },
+    { id: "8080",  type: "Till",  detail: kenyaTillNumber || "5580730", label: "M-Pesa Till" },
     { id: "10333", type: "Bank",  detail: "I & M Bank Limited", label: "I & M Bank" },
     { id: "8087",  type: "Bank",  detail: "Co-operative Bank",  label: "Co-operative Bank" },
   ];
@@ -411,12 +419,11 @@ export default function Settings() {
                 Kenya Payment Settings
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Choose which PayHero channel receives M-Pesa STK push payments from Kenyan users.
-                The change takes effect immediately.
+                Configure both automatic PayHero STK payments and the manual M-Pesa Till instructions shown to Kenyan users.
               </p>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-xs text-muted-foreground">Active channel — all PayHero STK pushes will be sent to this channel:</p>
+              <p className="text-xs text-muted-foreground">Active PayHero channel — all automatic STK pushes will be sent to this channel:</p>
               <div className="space-y-2">
                 {PAYHERO_CHANNELS.map(ch => (
                   <button
@@ -457,13 +464,40 @@ export default function Settings() {
                 ))}
               </div>
 
+              <div className="border-t border-border pt-5 space-y-3">
+                <h3 className={sectionSubhead}>Manual M-Pesa Till</h3>
+                <div>
+                  <label className={labelCls}>Till Number</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={kenyaTillNumber}
+                    onChange={(e) => setKenyaTillNumber(e.target.value)}
+                    placeholder="e.g. 5580730"
+                    className={inputCls}
+                  />
+                  <p className={subLabelCls}>Shown in the Buy Goods and Services payment steps.</p>
+                </div>
+                <div>
+                  <label className={labelCls}>Business Name</label>
+                  <input
+                    type="text"
+                    value={kenyaTillBusinessName}
+                    onChange={(e) => setKenyaTillBusinessName(e.target.value)}
+                    placeholder="e.g. ZANY TECH EXPERTS"
+                    className={inputCls}
+                  />
+                  <p className={subLabelCls}>Users confirm this name before completing payment.</p>
+                </div>
+              </div>
+
               <button
                 onClick={() => saveKenyaMut.mutate()}
-                disabled={saveKenyaMut.isPending}
+                disabled={saveKenyaMut.isPending || !kenyaTillNumber.trim() || !kenyaTillBusinessName.trim()}
                 className={saveBtnCls}
               >
                 <Save className="h-4 w-4" />
-                {saveKenyaMut.isPending ? "Saving..." : "Save Kenya Channel"}
+                {saveKenyaMut.isPending ? "Saving..." : "Save Kenya Payment Settings"}
               </button>
             </div>
           </div>
