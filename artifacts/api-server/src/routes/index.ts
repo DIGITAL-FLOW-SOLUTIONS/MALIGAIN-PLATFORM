@@ -15,6 +15,7 @@ import smtpRouter from "./smtp";
 import investmentsRouter from "./investments";
 import spinRouter from "./spin";
 import earnAssetsRouter from "./earn-assets";
+import hashbackRouter from "./hashback";
 
 const router: IRouter = Router();
 
@@ -34,5 +35,6 @@ router.use("/smtp", smtpRouter);
 router.use("/investments", investmentsRouter);
 router.use("/spin", spinRouter);
 router.use("/earn-assets", earnAssetsRouter);
+router.use("/hashback", hashbackRouter);
 
 export default router;

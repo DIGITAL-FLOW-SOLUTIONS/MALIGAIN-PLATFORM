@@ -6,6 +6,7 @@ import pinoHttp from "pino-http";
 import router from "./routes";
 import adminRouter from "./routes/admin";
 import mpesaRouter from "./routes/mpesa";
+import { handleHashbackCallback } from "./routes/hashback";
 import { logger } from "./lib/logger";
 import { pool } from "./lib/db";
 
@@ -73,9 +74,17 @@ app.use(
     credentials: true,
   }),
 );
+
+// Hashback signs the exact JSON request bytes. Mount this before the global
+// JSON parser so the callback handler can verify the raw request body.
+app.post(
+  "/hashbackcallback",
+  express.raw({ type: "application/json", limit: "1mb" }),
+  handleHashbackCallback,
+);
+
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
-
 
 app.use(cookieSessionMiddleware);
 

@@ -12,6 +12,8 @@ export default function PaymentStatus() {
   const txnId = params.get("txn_id") ?? "";
   const checkoutId = params.get("checkout_id") ?? "";
   const type = params.get("type") ?? "payment";
+  const provider = params.get("provider") ?? "payhero";
+  const reference = params.get("reference") ?? "";
 
   const [status, setStatus] = useState<PaymentState>("pending");
   const [message, setMessage] = useState("Waiting for your M-Pesa confirmation...");
@@ -25,10 +27,14 @@ export default function PaymentStatus() {
 
   const poll = async () => {
     try {
-      const qs = txnId
-        ? `txn_id=${encodeURIComponent(txnId)}`
-        : `checkout_id=${encodeURIComponent(checkoutId)}`;
-      const res = await fetch(`${import.meta.env.BASE_URL}api/mpesa/status?${qs}`, {
+      const endpoint = provider === "hashback"
+        ? `${import.meta.env.BASE_URL}api/hashback/status?reference=${encodeURIComponent(reference)}`
+        : `${import.meta.env.BASE_URL}api/mpesa/status?${
+            txnId
+              ? `txn_id=${encodeURIComponent(txnId)}`
+              : `checkout_id=${encodeURIComponent(checkoutId)}`
+          }`;
+      const res = await fetch(endpoint, {
         credentials: "include",
       });
       if (!res.ok) return;
@@ -59,7 +65,7 @@ export default function PaymentStatus() {
   };
 
   useEffect(() => {
-    if (!txnId && !checkoutId) {
+    if (provider === "hashback" ? !reference : !txnId && !checkoutId) {
       setStatus("failed");
       setMessage("Invalid payment reference. Please try again.");
       return;

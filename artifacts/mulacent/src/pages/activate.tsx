@@ -4,6 +4,21 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { ExternalLink, ShieldCheck, Phone } from "lucide-react";
 
+declare global {
+  interface Window {
+    HashPay?: {
+      setup: (options: {
+        account: string;
+        amount: number;
+        reference: string;
+        onSuccess: (transaction: { amount?: number; receipt?: string; status?: string }) => void;
+        onCancel: () => void;
+        onError: (error: unknown) => void;
+      }) => { openIframe: () => void };
+    };
+  }
+}
+
 const COUNTRY_FEES: Record<
   string,
   { label: string; amount: string; currency: string; hint: string }
@@ -35,6 +50,7 @@ export default function Activate() {
   const [, navigate] = useLocation();
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [loading, setLoading] = useState(false);
+  const [hashbackLoading, setHashbackLoading] = useState(false);
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
   const [dbFees, setDbFees] = useState<Record<string, number>>({});
   const ugxSetRef = useRef(false);
@@ -100,6 +116,85 @@ export default function Activate() {
       toast({ title: "Activation Failed", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleHashbackPayment = async () => {
+    setHashbackLoading(true);
+    try {
+      const setupResponse = await fetch(`${import.meta.env.BASE_URL}api/hashback/activate`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const setup = await setupResponse.json() as {
+        accountId?: string;
+        amount?: number;
+        reference?: string;
+        message?: string;
+      };
+      if (!setupResponse.ok || !setup.accountId || !setup.amount || !setup.reference) {
+        throw new Error(setup.message || "Hashback payment is unavailable.");
+      }
+
+      if (!window.HashPay) {
+        await new Promise<void>((resolve, reject) => {
+          const existing = document.querySelector<HTMLScriptElement>('script[data-hashpay="true"]');
+          if (existing) {
+            existing.addEventListener("load", () => resolve(), { once: true });
+            existing.addEventListener("error", () => reject(new Error("Unable to load Hashback payment.")), { once: true });
+            return;
+          }
+          const script = document.createElement("script");
+          script.src = "https://pay.hashback.co.ke/hashpay.js";
+          script.async = true;
+          script.dataset.hashpay = "true";
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error("Unable to load Hashback payment."));
+          document.head.appendChild(script);
+        });
+      }
+
+      if (!window.HashPay) throw new Error("Hashback payment could not be initialized.");
+
+      const handler = window.HashPay.setup({
+        account: setup.accountId,
+        amount: setup.amount,
+        reference: setup.reference,
+        onSuccess: (transaction) => {
+          if (Number(transaction.amount) !== Number(setup.amount)) {
+            toast({
+              title: "Payment Amount Mismatch",
+              description: "The payment amount could not be verified.",
+              variant: "destructive",
+            });
+            setHashbackLoading(false);
+            return;
+          }
+          navigate(
+            `/payment-status?type=activate&provider=hashback&reference=${encodeURIComponent(setup.reference!)}`,
+          );
+        },
+        onCancel: () => setHashbackLoading(false),
+        onError: (error) => {
+          console.error("Hashback payment error", error);
+          toast({
+            title: "Hashback Payment Failed",
+            description: "Please try again or use PayHero.",
+            variant: "destructive",
+          });
+          setHashbackLoading(false);
+        },
+      });
+
+      handler.openIframe();
+      setHashbackLoading(false);
+    } catch (err) {
+      toast({
+        title: "Hashback Payment Unavailable",
+        description: err instanceof Error ? err.message : "Please try again or use PayHero.",
+        variant: "destructive",
+      });
+      setHashbackLoading(false);
     }
   };
 
@@ -177,6 +272,14 @@ export default function Activate() {
                   className="w-full py-3.5 rounded-xl font-bold text-sm text-foreground border border-primary bg-primary/5 hover:bg-primary/10 flex items-center justify-center gap-2 transition-all"
                 >
                   <ShieldCheck className="w-4 h-4 text-primary" /> Manual Payment (M-Pesa Till)
+                </button>
+                <button
+                  type="button"
+                  onClick={handleHashbackPayment}
+                  disabled={hashbackLoading || loading}
+                  className="w-full py-3 rounded-xl font-bold text-xs text-foreground border border-border bg-muted/30 hover:bg-muted/50 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                >
+                  {hashbackLoading ? "Opening Hashback..." : "Pay with Hashback M-Pesa"}
                 </button>
               </div>
 

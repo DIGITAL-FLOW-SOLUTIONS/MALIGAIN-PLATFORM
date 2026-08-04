@@ -68,6 +68,14 @@ services:
         sync: false
       - key: PAYHERO_Account_ID
         sync: false
+      # Optional — Hashback / HashPay Kenya payment button and PULL verification
+      - key: hashback_api_key
+        sync: false
+      - key: hashback_account_id
+        sync: false
+      # Recommended — HMAC secret from HashPay Settings for webhook signatures
+      - key: HASHBACK_WEBHOOK_SECRET
+        sync: false
       # Public URL of this API service (used for webhook callbacks etc.)
       - key: APP_URL
         sync: false
