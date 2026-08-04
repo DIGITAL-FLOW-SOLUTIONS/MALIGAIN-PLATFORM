@@ -15,8 +15,10 @@ const isProd = process.env["NODE_ENV"] === "production";
 
 // ---------------------------------------------------------------------------
 // Sessions — cookie-session stores { userId } / { adminId } directly inside a
-// signed, tamper-proof cookie.  No database read or write happens for auth.
-// This eliminates ALL session-related Disk IO on Supabase.
+// signed, tamper-proof cookie. No database read or write happens for auth.
+// The admin and user frontends are separate custom domains from the API, so
+// production must use SameSite=None with Secure for credentialed cross-origin
+// requests. The API CORS allowlist still restricts which origins may use it.
 // ---------------------------------------------------------------------------
 const cookieSessionMiddleware = cookieSession({
   name: "session",
@@ -24,7 +26,7 @@ const cookieSessionMiddleware = cookieSession({
   maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
   httpOnly: true,
   secure: isProd,
-  sameSite: isProd ? "strict" : "lax",
+  sameSite: isProd ? "none" : "lax",
 });
 
 // ---------------------------------------------------------------------------
