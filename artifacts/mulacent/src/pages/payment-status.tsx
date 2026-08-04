@@ -116,11 +116,11 @@ export default function PaymentStatus() {
             <div className="relative z-10 flex items-center gap-3">
               <img
                 src={`${import.meta.env.BASE_URL}images/logo.png`}
-                alt="Logo"
-                className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
+                alt="Tripple Earn Agencies"
+                className="w-10 h-10 rounded-xl object-contain border-2 border-white/30"
               />
               <div>
-                <h1 className="text-white font-bold text-sm leading-tight">MALIGAIN</h1>
+                <h1 className="text-white font-bold text-sm leading-tight">TRIPPLE EARN</h1>
                 <p className="text-white/70 text-xs tracking-widest uppercase">Payment Status</p>
               </div>
             </div>

@@ -413,7 +413,7 @@ export default function DownlinesLevelPage({ level, status }: Props) {
 
       {/* Footer */}
       <p className="text-center text-xs text-muted-foreground pb-2">
-        © 2026 <span className="font-semibold text-foreground">MALIGAIN</span>. All rights reserved.
+        © 2026 <span className="font-semibold text-foreground">Tripple Earn Agencies</span>. All rights reserved.
       </p>
     </div>
   );

@@ -93,11 +93,11 @@ export default function Layout({ children }: { children: ReactNode }) {
       `}>
         {/* Brand */}
         <div className={`flex items-center h-12 border-b border-border shrink-0 ${collapsed && !mobileOpen ? "justify-center px-0" : "px-4 gap-3"}`}>
-          <div className="h-6 w-6 bg-primary/10 border border-primary/50 flex items-center justify-center shrink-0">
-            <TerminalSquare className="h-3.5 w-3.5 text-primary" />
+          <div className="h-7 w-7 bg-primary/10 border border-primary/50 flex items-center justify-center shrink-0 overflow-hidden">
+            <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="Tripple Earn Agencies" className="h-full w-full object-contain" />
           </div>
           {(!collapsed || mobileOpen) && (
-            <span className="text-foreground font-bold font-mono tracking-widest text-xs uppercase mt-0.5 shadow-primary drop-shadow-[0_0_8px_rgba(0,229,255,0.3)]">MALIGAIN</span>
+            <span className="text-foreground font-bold font-mono tracking-widest text-xs uppercase mt-0.5 shadow-primary drop-shadow-[0_0_8px_rgba(0,229,255,0.3)]">TRIPPLE EARN</span>
           )}
           <button className="ml-auto lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setMobileOpen(false)}>
             <X className="h-4 w-4" />

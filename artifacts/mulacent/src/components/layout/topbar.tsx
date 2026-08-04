@@ -19,7 +19,8 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         </button>
 
         <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="font-bold text-foreground tracking-wide text-sm lg:text-base">MALIGAIN</span>
+          <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="Tripple Earn Agencies" className="h-8 w-8 rounded-lg object-contain" />
+          <span className="font-bold text-foreground tracking-wide text-sm lg:text-base">TRIPPLE EARN</span>
         </Link>
       </div>
 

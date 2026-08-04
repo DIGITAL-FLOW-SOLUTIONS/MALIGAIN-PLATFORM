@@ -84,16 +84,16 @@ export default function CameroonPay() {
           <div className="flex items-center gap-3 mb-5">
             <img
               src={`${import.meta.env.BASE_URL}images/logo.png`}
-              alt="Logo"
-              className="w-10 h-10 rounded-full object-cover"
+              alt="Tripple Earn Agencies"
+              className="w-10 h-10 rounded-xl object-contain"
             />
             <span className="text-primary font-black text-xl tracking-wide">
-              MALIGAIN
+              TRIPPLE EARN
             </span>
           </div>
 
           <h2 className="text-primary font-bold text-center text-base underline mb-1 leading-snug">
-            🚀 MALIGAIN AGENCY – PAYMENT PROCEDURE 💰
+            🚀 TRIPPLE EARN AGENCIES – PAYMENT PROCEDURE 💰
           </h2>
           <p className="text-center text-muted-foreground text-xs mb-5">📌 Follow these steps carefully:</p>
 

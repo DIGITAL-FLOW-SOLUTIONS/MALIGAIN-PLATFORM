@@ -134,7 +134,7 @@ export default function Dashboard() {
   };
 
   const shareUrl = encodeURIComponent(inviteLink);
-  const shareText = encodeURIComponent("Join MALIGAIN and start earning today! 💰");
+  const shareText = encodeURIComponent("Join Tripple Earn Agencies and start earning today! 💰");
 
   const STAT_CARDS = [
     {
@@ -206,7 +206,7 @@ export default function Dashboard() {
             className="font-black uppercase tracking-widest text-white/[0.06] whitespace-nowrap"
             style={{ fontSize: "clamp(3rem, 12vw, 7rem)", letterSpacing: "0.2em" }}
           >
-            MALIGAIN
+            TRIPPLE EARN
           </span>
         </div>
 
@@ -241,7 +241,7 @@ export default function Dashboard() {
 
           {/* Promo text */}
           <p className="text-white/75 text-[11px] leading-relaxed mb-5 max-w-xs">
-            Boost your digital journey with MALIGAIN's smart tools! Ads, YouTube, trivia, and more — designed to help you{" "}
+            Boost your digital journey with Tripple Earn Agencies' smart tools! Ads, YouTube, trivia, and more — designed to help you{" "}
             <span className="font-bold text-white">succeed online.</span>
           </p>
 
@@ -441,7 +441,7 @@ export default function Dashboard() {
                   <Facebook className="w-4 h-4" />
                 </a>
                 <a
-                  href={`mailto:?subject=Join+MALIGAIN&body=${shareText}%20${shareUrl}`}
+                  href={`mailto:?subject=Join+Tripple+Earn+Agencies&body=${shareText}%20${shareUrl}`}
                   className="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-white hover:scale-110 transition-transform"
                 >
                   <Mail className="w-4 h-4" />
@@ -523,7 +523,7 @@ export default function Dashboard() {
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <p className="text-center text-xs text-muted-foreground pb-2">
-        © 2026 <span className="font-semibold text-foreground">MALIGAIN</span>. All rights reserved.
+        © 2026 <span className="font-semibold text-foreground">Tripple Earn Agencies</span>. All rights reserved.
       </p>
     </div>
   );

@@ -561,7 +561,7 @@ export default function Settings() {
                 </div>
                 <div>
                   <label className={labelCls}>Business Name</label>
-                  <input type="text" value={mtnBusinessName} onChange={(e) => setMtnBusinessName(e.target.value)} placeholder="e.g. MALIGAIN LTD" className={inputCls} />
+                  <input type="text" value={mtnBusinessName} onChange={(e) => setMtnBusinessName(e.target.value)} placeholder="e.g. Tripple Earn Agencies" className={inputCls} />
                   <p className={subLabelCls}>Displayed in the "CONFIRM it is..." step</p>
                 </div>
               </div>
@@ -574,7 +574,7 @@ export default function Settings() {
                 </div>
                 <div>
                   <label className={labelCls}>Business Name</label>
-                  <input type="text" value={airtelBusinessName} onChange={(e) => setAirtelBusinessName(e.target.value)} placeholder="e.g. MALIGAIN LTD" className={inputCls} />
+                  <input type="text" value={airtelBusinessName} onChange={(e) => setAirtelBusinessName(e.target.value)} placeholder="e.g. Tripple Earn Agencies" className={inputCls} />
                   <p className={subLabelCls}>Displayed in the "CONFIRM it is..." step</p>
                 </div>
               </div>

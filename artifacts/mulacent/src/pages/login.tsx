@@ -67,11 +67,11 @@ export default function Login() {
             className="mx-auto mb-6 flex items-center justify-center rounded-2xl overflow-hidden"
             style={{ width: 88, height: 88, boxShadow: "0 0 40px rgba(91,141,238,0.55), 0 4px 24px rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.25)" }}
           >
-            <img src={`${BASE}images/logo.png`} alt="MALIGAIN" style={{ width: 88, height: 88, objectFit: "cover" }} />
+            <img src={`${BASE}images/logo.png`} alt="Tripple Earn Agencies" style={{ width: 88, height: 88, objectFit: "contain" }} />
           </div>
 
-          <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 32, letterSpacing: "0.18em" }}>MALIGAIN</h1>
-          <p className="text-blue-200/70 font-medium mb-8" style={{ fontSize: 11, letterSpacing: "0.12em" }}>DIGITAL AGENCY PLATFORM</p>
+          <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 32, letterSpacing: "0.12em" }}>TRIPPLE EARN</h1>
+          <p className="text-blue-200/70 font-medium mb-8" style={{ fontSize: 11, letterSpacing: "0.12em" }}>AGENCY EARNINGS PLATFORM</p>
 
           <div className="space-y-4">
             {[
@@ -96,10 +96,10 @@ export default function Login() {
 
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-3 mb-7 justify-center">
-            <img src={`${BASE}images/logo.png`} alt="Logo" className="w-12 h-12 rounded-xl object-cover" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
+            <img src={`${BASE}images/logo.png`} alt="Tripple Earn Agencies" className="w-12 h-12 rounded-xl object-contain" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
             <div>
-              <h1 className="font-black tracking-widest text-slate-800" style={{ fontSize: 22, letterSpacing: "0.15em" }}>MALIGAIN</h1>
-              <p className="text-slate-400 text-xs">Digital Agency Platform</p>
+              <h1 className="font-black tracking-widest text-slate-800" style={{ fontSize: 22, letterSpacing: "0.1em" }}>TRIPPLE EARN</h1>
+              <p className="text-slate-400 text-xs">Agency Earnings Platform</p>
             </div>
           </div>
 
@@ -183,7 +183,7 @@ export default function Login() {
             </p>
           </div>
 
-          <p className="text-center mt-5 text-xs text-slate-400">© 2026 MALIGAIN. All rights reserved.</p>
+          <p className="text-center mt-5 text-xs text-slate-400">© 2026 Tripple Earn Agencies. All rights reserved.</p>
         </div>
       </div>
     </div>

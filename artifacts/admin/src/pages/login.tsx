@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAdmin } from "@/hooks/useAdmin";
-import { ShieldAlert, TerminalSquare } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 export default function Login() {
   const { login } = useAdmin();
@@ -35,12 +35,12 @@ export default function Login() {
       
       <div className="w-full max-w-sm relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 bg-primary/10 border border-primary flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]">
-            <TerminalSquare className="h-6 w-6 text-primary" />
+          <div className="h-14 w-14 bg-primary/10 border border-primary flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)] overflow-hidden">
+            <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="Tripple Earn Agencies" className="h-full w-full object-contain" />
           </div>
           <h1 className="text-foreground font-bold text-xl tracking-widest uppercase flex items-center gap-2">
             <span className="w-2 h-2 bg-primary animate-pulse" />
-            MALIGAIN_SYS
+            TRIPPLE_EARN_SYS
           </h1>
           <p className="text-muted-foreground text-[10px] tracking-widest mt-1.5 uppercase border border-border px-2 py-0.5 bg-muted/20">
             AUTHORIZED PERSONNEL ONLY
