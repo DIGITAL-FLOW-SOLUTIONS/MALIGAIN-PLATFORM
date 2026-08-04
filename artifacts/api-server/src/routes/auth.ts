@@ -10,7 +10,7 @@ import {
   normalizePhone,
   randomActivationAmount,
 } from "../lib/payhero";
-import { getActivationFee } from "../lib/appSettings";
+import { getActivationFee, getKenyaAutomaticPaymentProvider } from "../lib/appSettings";
 
 const router: IRouter = Router();
 
@@ -258,6 +258,18 @@ router.post("/activate", requireAuth, async (req: Request, res: Response) => {
     if (user["status"] === "active") {
       res.status(400).json({ error: "AlreadyActive", message: "Account is already active" });
       return;
+    }
+
+    if (String(user["country"] ?? "").toUpperCase() === "KE") {
+      const automaticProvider = await getKenyaAutomaticPaymentProvider();
+      if (automaticProvider !== "PAYHERO") {
+        res.status(409).json({
+          error: "PaymentProviderChanged",
+          message: "PayHero is currently disabled for Kenya. Please use Hashback M-Pesa.",
+          provider: automaticProvider,
+        });
+        return;
+      }
     }
 
     const stkAmount = await getActivationFee("KE");

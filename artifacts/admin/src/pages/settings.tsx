@@ -65,6 +65,7 @@ export default function Settings() {
   const [rwandaBusinessName, setRwandaBusinessName] = useState("");
   const [kenyaTillNumber, setKenyaTillNumber] = useState("5580730");
   const [kenyaTillBusinessName, setKenyaTillBusinessName] = useState("ZANY TECH EXPERTS");
+  const [kenyaPaymentProvider, setKenyaPaymentProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
   const [activeChannel, setActiveChannel] = useState("8080");
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
@@ -117,6 +118,7 @@ export default function Settings() {
       setRwandaBusinessName(s["rwanda_business_name"] ?? "");
       setKenyaTillNumber(s["kenya_till_number"] ?? "5580730");
       setKenyaTillBusinessName(s["kenya_till_business_name"] ?? "ZANY TECH EXPERTS");
+      setKenyaPaymentProvider(s["kenya_payment_provider"] === "HASHBACK" ? "HASHBACK" : "PAYHERO");
       if (s["payhero_active_channel"]) setActiveChannel(s["payhero_active_channel"]);
       setLaunchEnabled(s["launch_mode_enabled"] === "true");
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
@@ -202,10 +204,11 @@ export default function Settings() {
   const saveKenyaMut = useMutation({
     mutationFn: () => api.updateSettings({
       payhero_active_channel: activeChannel,
+      kenya_payment_provider: kenyaPaymentProvider,
       kenya_till_number: kenyaTillNumber.trim(),
       kenya_till_business_name: kenyaTillBusinessName.trim(),
     }),
-    onSuccess: () => { toast({ title: "Kenya settings saved", description: "PayHero and manual Till payment settings have been updated." }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onSuccess: () => { toast({ title: "Kenya settings saved", description: `${kenyaPaymentProvider === "PAYHERO" ? "PayHero" : "Hashback"} is now the active Kenya automatic payment method.` }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
@@ -411,7 +414,7 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* ── KENYA (PayHero channel selector) ────────────────────── */}
+          {/* ── KENYA (automatic provider and PayHero channel selector) ── */}
           <div className={sectionCard}>
             <div className={sectionHeader}>
               <h2 className="font-semibold text-foreground flex items-center gap-2">
@@ -419,11 +422,50 @@ export default function Settings() {
                 Kenya Payment Settings
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Configure both automatic PayHero STK payments and the manual M-Pesa Till instructions shown to Kenyan users.
+                Choose the automatic provider used by Kenyan users. The change takes effect immediately; manual Till instructions remain available.
               </p>
             </div>
             <div className="p-6 space-y-4">
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">Active Kenya automatic payment provider:</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {([
+                    { value: "PAYHERO" as const, label: "PayHero", detail: "M-Pesa STK Push" },
+                    { value: "HASHBACK" as const, label: "Hashback", detail: "HashPay M-Pesa" },
+                  ]).map((provider) => (
+                    <button
+                      key={provider.value}
+                      type="button"
+                      onClick={() => setKenyaPaymentProvider(provider.value)}
+                      className={`rounded-xl border-2 px-3 py-3 text-left transition-all ${
+                        kenyaPaymentProvider === provider.value
+                          ? "border-primary bg-primary/5"
+                          : "border-border bg-muted/10 hover:bg-muted/20"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                          kenyaPaymentProvider === provider.value ? "border-primary" : "border-muted-foreground/40"
+                        }`}>
+                          {kenyaPaymentProvider === provider.value && <span className="h-2 w-2 rounded-full bg-primary" />}
+                        </span>
+                        <span className="text-sm font-semibold text-foreground">{provider.label}</span>
+                      </span>
+                      <span className="block pl-6 pt-1 text-xs text-muted-foreground">{provider.detail}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {kenyaPaymentProvider === "PAYHERO"
+                    ? "Kenyan users will receive a PayHero STK prompt."
+                    : "Kenyan users will use the Hashback payment button. PayHero will be disabled until switched back."}
+                </p>
+              </div>
+
+              {kenyaPaymentProvider === "PAYHERO" && (
               <p className="text-xs text-muted-foreground">Active PayHero channel — all automatic STK pushes will be sent to this channel:</p>
+              )}
+              {kenyaPaymentProvider === "PAYHERO" && (
               <div className="space-y-2">
                 {PAYHERO_CHANNELS.map(ch => (
                   <button
@@ -463,6 +505,7 @@ export default function Settings() {
                   </button>
                 ))}
               </div>
+              )}
 
               <div className="border-t border-border pt-5 space-y-3">
                 <h3 className={sectionSubhead}>Manual M-Pesa Till</h3>

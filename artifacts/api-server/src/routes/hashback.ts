@@ -1,7 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import crypto from "crypto";
 import { requireAuth } from "../middlewares/auth";
-import { getActivationFee } from "../lib/appSettings";
+import { getActivationFee, getKenyaAutomaticPaymentProvider } from "../lib/appSettings";
 import {
   getHashbackAccountId,
   hasHashbackWebhookSecret,
@@ -23,6 +23,16 @@ function activationDescription(reference: string): string {
 
 router.post("/activate", requireAuth, async (req: Request, res: Response) => {
   try {
+    const automaticProvider = await getKenyaAutomaticPaymentProvider();
+    if (automaticProvider !== "HASHBACK") {
+      res.status(409).json({
+        error: "PaymentProviderChanged",
+        message: "Hashback is currently disabled for Kenya. Please use PayHero M-Pesa.",
+        provider: automaticProvider,
+      });
+      return;
+    }
+
     const userId = req.session.userId!;
     const accountId = getHashbackAccountId();
     const apiKey = String(process.env["hashback_api_key"] ?? "").trim();

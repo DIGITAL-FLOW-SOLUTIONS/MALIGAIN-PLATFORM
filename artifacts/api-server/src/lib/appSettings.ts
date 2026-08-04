@@ -13,6 +13,24 @@ export const ACTIVATION_FEE_DEFAULTS: Record<string, number> = {
   BW: 75, RW: 5500, CG: 15000, MW: 12000, NG: 7500, SS: 20000, BI: 25000,
 };
 
+export type KenyaAutomaticPaymentProvider = "PAYHERO" | "HASHBACK";
+
+export async function getKenyaAutomaticPaymentProvider(): Promise<KenyaAutomaticPaymentProvider> {
+  try {
+    const { data } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "kenya_payment_provider")
+      .maybeSingle();
+
+    const provider = String((data as { value?: string } | null)?.value ?? "").trim().toUpperCase();
+    if (provider === "HASHBACK") return "HASHBACK";
+  } catch {
+    // PayHero is the safe/default provider when the setting is unavailable.
+  }
+  return "PAYHERO";
+}
+
 export const WELCOME_BONUS_DEFAULTS: Record<string, { amount: number; requiredReferrals: number }> = {
   KE: { amount: 150, requiredReferrals: 30 },
   TZ: { amount: 3500, requiredReferrals: 12 },

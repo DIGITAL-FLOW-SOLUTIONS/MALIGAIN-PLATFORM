@@ -56,10 +56,11 @@ router.get("/uganda", async (req, res) => {
 
 router.get("/kenya", async (req, res) => {
   try {
+    res.set("Cache-Control", "no-store");
     const { data, error } = await supabase
       .from("app_settings")
       .select("key, value")
-      .in("key", ["kenya_till_number", "kenya_till_business_name"]);
+      .in("key", ["kenya_till_number", "kenya_till_business_name", "kenya_payment_provider"]);
 
     if (error) throw error;
 
@@ -71,6 +72,9 @@ router.get("/kenya", async (req, res) => {
     res.json({
       tillNumber: settings["kenya_till_number"] ?? "5580730",
       businessName: settings["kenya_till_business_name"] ?? "ZANY TECH EXPERTS",
+      automaticProvider: settings["kenya_payment_provider"]?.toUpperCase() === "HASHBACK"
+        ? "HASHBACK"
+        : "PAYHERO",
     });
   } catch {
     res.status(500).json({ message: "Failed to fetch Kenya payment settings" });

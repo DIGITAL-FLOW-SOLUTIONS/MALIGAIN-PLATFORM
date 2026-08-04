@@ -1,3 +1,4 @@
 - [Session middleware pool exhaustion fix](session-pool-exhaustion.md) — static files served BEFORE session middleware; dedicated session pool; disableTouch=true
 - [Transaction enum compatibility](transaction-enum-compatibility.md) — the live transactions enum uses `referral`, so referral-bonus writers and queries must not use `referral_bonus`
 - [Cross-domain session cookies](cross-domain-session-cookies.md) — custom-domain frontends calling an onrender.com API need SameSite=None; Secure cookies
+- [Kenya automatic payment provider](kenya-payment-provider.md) — app_settings controls PAYHERO vs HASHBACK; default and fail-safe behavior is PayHero

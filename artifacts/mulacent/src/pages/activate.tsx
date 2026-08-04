@@ -51,6 +51,7 @@ export default function Activate() {
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [loading, setLoading] = useState(false);
   const [hashbackLoading, setHashbackLoading] = useState(false);
+  const [kenyaPaymentProvider, setKenyaPaymentProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
   const [dbFees, setDbFees] = useState<Record<string, number>>({});
   const ugxSetRef = useRef(false);
@@ -85,13 +86,19 @@ export default function Activate() {
         }
       })
       .catch(() => {});
+    if (isKenya) {
+      fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, { credentials: "include" })
+        .then((r) => r.json())
+        .then((d) => setKenyaPaymentProvider(d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO"))
+        .catch(() => setKenyaPaymentProvider("PAYHERO"));
+    }
     if (!hasOwnPage) {
       fetch(`${import.meta.env.BASE_URL}api/settings/eversend-link`, { credentials: "include" })
         .then((r) => r.json())
         .then((d) => { if (d.eversendLink) setEversendLink(d.eversendLink); })
         .catch(() => {});
     }
-  }, [hasOwnPage]);
+  }, [hasOwnPage, isKenya]);
 
   const handleActivate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,9 +240,13 @@ export default function Activate() {
                     Activate your account for{" "}
                     <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
                   </p>
-                  <p className="text-muted-foreground text-xs">Choose automatic PayHero or manual M-Pesa Till payment</p>
+                  <p className="text-muted-foreground text-xs">
+                    {kenyaPaymentProvider === "PAYHERO"
+                      ? "Pay automatically with PayHero or use manual M-Pesa Till payment"
+                      : "Pay automatically with Hashback or use manual M-Pesa Till payment"}
+                  </p>
                 </div>
-                <form onSubmit={handleActivate} className="space-y-4">
+                {kenyaPaymentProvider === "PAYHERO" && <form onSubmit={handleActivate} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     M-PESA Phone Number
@@ -265,7 +276,7 @@ export default function Activate() {
                   )}
                   {loading ? "Processing..." : "Pay & Activate Account"}
                 </button>
-                </form>
+                </form>}
                 <button
                   type="button"
                   onClick={() => navigate(`/kenya-pay?amount=${displayAmount}`)}
@@ -273,14 +284,14 @@ export default function Activate() {
                 >
                   <ShieldCheck className="w-4 h-4 text-primary" /> Manual Payment (M-Pesa Till)
                 </button>
-                <button
+                {kenyaPaymentProvider === "HASHBACK" && <button
                   type="button"
                   onClick={handleHashbackPayment}
                   disabled={hashbackLoading || loading}
                   className="w-full py-3 rounded-xl font-bold text-xs text-foreground border border-border bg-muted/30 hover:bg-muted/50 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
                 >
                   {hashbackLoading ? "Opening Hashback..." : "Pay with Hashback M-Pesa"}
-                </button>
+                </button>}
               </div>
 
             ) : isUganda ? (
