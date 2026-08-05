@@ -7,6 +7,7 @@ import router from "./routes";
 import adminRouter from "./routes/admin";
 import mpesaRouter from "./routes/mpesa";
 import { handleHashbackCallback } from "./routes/hashback";
+import { handleSoleasPayCallback } from "./routes/soleaspay";
 import { logger } from "./lib/logger";
 import { pool } from "./lib/db";
 
@@ -81,6 +82,11 @@ app.post(
   "/hashbackcallback",
   express.raw({ type: "application/json", limit: "1mb" }),
   handleHashbackCallback,
+);
+app.post(
+  "/soleaspaycallback",
+  express.raw({ type: "application/json", limit: "1mb" }),
+  handleSoleasPayCallback,
 );
 
 app.use(express.json({ limit: "15mb" }));

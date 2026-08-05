@@ -23,6 +23,7 @@ export default function Recharge() {
   const [amount, setAmount] = useState<number | "">("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [soleasPayLoading, setSoleasPayLoading] = useState(false);
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
   const { data: balances } = useGetWalletBalances();
   const { user } = useAuth();
@@ -39,7 +40,7 @@ export default function Recharge() {
   const selectedAmount = typeof amount === "number" ? amount : 0;
 
   useEffect(() => {
-    if (!isKenya && !isUganda && !isZambia && !isCameroon) {
+    if (!isKenya && !isUganda && !isZambia) {
       fetch(`${import.meta.env.BASE_URL}api/settings/eversend-link`, { credentials: "include" })
         .then((r) => r.json())
         .then((d) => { if (d.eversendLink) setEversendLink(d.eversendLink); })
@@ -75,6 +76,50 @@ export default function Recharge() {
       toast({ title: "Request Failed", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSoleasPayRecharge = async (paymentService: 1 | 2) => {
+    if (!amount || Number(amount) < 50 || Number(amount) > 50000) {
+      toast({
+        title: "Invalid Amount",
+        description: "Enter an amount between XAF 50 and XAF 50,000.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!phone || phone.trim().replace(/\D/g, "").length < 9) {
+      toast({
+        title: "Invalid Phone",
+        description: "Enter the Cameroon mobile-money number you will use to pay.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSoleasPayLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/soleaspay/recharge`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Number(amount), phoneNumber: phone.trim(), service: paymentService }),
+      });
+      const data = await response.json() as { orderId?: string; message?: string };
+      if (!response.ok || !data.orderId) {
+        throw new Error(data.message || "SoleasPay payment could not be started.");
+      }
+      navigate(
+        `/payment-status?type=recharge&provider=soleaspay&order_id=${encodeURIComponent(data.orderId)}&service=${paymentService}`,
+      );
+    } catch (err) {
+      toast({
+        title: "SoleasPay Payment Failed",
+        description: err instanceof Error ? err.message : "Please try again or use Eversend.",
+        variant: "destructive",
+      });
+    } finally {
+      setSoleasPayLoading(false);
     }
   };
 
@@ -246,26 +291,86 @@ export default function Recharge() {
             </button>
           </div>
         ) : isCameroon ? (
-          /* ── CAMEROON: MTN International ─────────────────────────────── */
+          /* ── CAMEROON: SoleasPay + Eversend ───────────────────────────── */
           <div className="space-y-5">
             <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
               <p className="text-slate-700 text-sm font-medium">
-                Deposit via MTN International Transfer
+                Deposit with SoleasPay
               </p>
               <p className="text-slate-400 text-xs">
-                Follow the payment steps on the next page
+                Pay in XAF using MTN or Orange Money Cameroon.
               </p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-4">
+              <p className="text-slate-700 text-sm font-medium">Deposit Amount</p>
+              <div className="flex items-center border border-secondary/40 rounded-xl overflow-hidden">
+                <div className="bg-secondary text-white text-xs font-bold px-4 py-3.5 flex items-center justify-center flex-shrink-0 select-none">
+                  XAF
+                </div>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
+                  placeholder="Enter amount"
+                  min={50}
+                  max={50000}
+                  className="flex-1 bg-transparent px-4 py-3 text-slate-800 text-sm font-semibold placeholder:text-slate-300 focus:outline-none"
+                />
+              </div>
+              <p className="text-xs text-slate-400">Minimum XAF 50 · Maximum XAF 50,000</p>
+              <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden">
+                <div className="flex items-center justify-center px-3.5 py-3 bg-slate-50 border-r border-slate-200">
+                  <Phone className="w-4 h-4 text-slate-400" />
+                </div>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="6XXXXXXXX"
+                  className="flex-1 bg-transparent px-3.5 py-3 text-slate-800 text-sm font-semibold placeholder:text-slate-300 focus:outline-none"
+                />
+              </div>
             </div>
             <button
               type="button"
-              onClick={() => navigate("/cameroon-pay?amount=2510")}
+              onClick={() => handleSoleasPayRecharge(1)}
+              disabled={soleasPayLoading}
               className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
               style={{
                 background: "linear-gradient(180deg, #7c3aed 0%, #9333ea 100%)",
               }}
             >
-              <Phone className="w-4 h-4" /> Pay with MTN Cameroon
+              <Phone className="w-4 h-4" /> {soleasPayLoading ? "Starting payment..." : "Pay with MTN Cameroon"}
             </button>
+            <button
+              type="button"
+              onClick={() => handleSoleasPayRecharge(2)}
+              disabled={soleasPayLoading}
+              className="w-full py-3.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+              style={{
+                background: "linear-gradient(180deg, #16a34a 0%, #15803d 100%)",
+              }}
+            >
+              <Phone className="w-4 h-4" /> {soleasPayLoading ? "Starting payment..." : "Pay with Orange Money"}
+            </button>
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
+              <p className="text-slate-500 text-xs text-center">Prefer manual payment?</p>
+              <a
+                href={eversendLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 rounded-xl font-semibold text-sm text-slate-700 flex items-center justify-center gap-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all"
+              >
+                <ExternalLink className="w-4 h-4 text-secondary" /> Pay via Eversend
+              </a>
+              <button
+                type="button"
+                onClick={() => navigate("/verify")}
+                className="w-full py-3 rounded-xl font-semibold text-sm text-slate-700 flex items-center justify-center gap-2 border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Manual Payment
+              </button>
+            </div>
           </div>
         ) : isZambia ? (
           /* ── ZAMBIA: MTN / Airtel ────────────────────────────────────── */

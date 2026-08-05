@@ -14,9 +14,15 @@ export default function PaymentStatus() {
   const type = params.get("type") ?? "payment";
   const provider = params.get("provider") ?? "payhero";
   const reference = params.get("reference") ?? "";
+  const orderId = params.get("order_id") ?? "";
+  const service = params.get("service") ?? "1";
 
   const [status, setStatus] = useState<PaymentState>("pending");
-  const [message, setMessage] = useState("Waiting for your M-Pesa confirmation...");
+  const [message, setMessage] = useState(
+    provider === "soleaspay"
+      ? "Waiting for your Cameroon mobile-money confirmation..."
+      : "Waiting for your M-Pesa confirmation...",
+  );
   const [elapsed, setElapsed] = useState(0);
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
@@ -27,7 +33,9 @@ export default function PaymentStatus() {
 
   const poll = async () => {
     try {
-      const endpoint = provider === "hashback"
+      const endpoint = provider === "soleaspay"
+        ? `${import.meta.env.BASE_URL}api/soleaspay/status?order_id=${encodeURIComponent(orderId)}&service=${encodeURIComponent(service)}`
+        : provider === "hashback"
         ? `${import.meta.env.BASE_URL}api/hashback/status?reference=${encodeURIComponent(reference)}`
         : `${import.meta.env.BASE_URL}api/mpesa/status?${
             txnId
@@ -65,7 +73,13 @@ export default function PaymentStatus() {
   };
 
   useEffect(() => {
-    if (provider === "hashback" ? !reference : !txnId && !checkoutId) {
+    if (
+      provider === "soleaspay"
+        ? !orderId
+        : provider === "hashback"
+          ? !reference
+          : !txnId && !checkoutId
+    ) {
       setStatus("failed");
       setMessage("Invalid payment reference. Please try again.");
       return;
@@ -91,7 +105,7 @@ export default function PaymentStatus() {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [txnId, checkoutId]);
+  }, [txnId, checkoutId, provider, reference, orderId, service]);
 
   const backPath =
     type === "activate"

@@ -16,6 +16,7 @@ import investmentsRouter from "./investments";
 import spinRouter from "./spin";
 import earnAssetsRouter from "./earn-assets";
 import hashbackRouter from "./hashback";
+import soleasPayRouter from "./soleaspay";
 
 const router: IRouter = Router();
 
@@ -36,5 +37,6 @@ router.use("/investments", investmentsRouter);
 router.use("/spin", spinRouter);
 router.use("/earn-assets", earnAssetsRouter);
 router.use("/hashback", hashbackRouter);
+router.use("/soleaspay", soleasPayRouter);
 
 export default router;

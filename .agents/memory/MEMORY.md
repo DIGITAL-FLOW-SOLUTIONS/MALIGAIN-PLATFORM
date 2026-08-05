@@ -5,3 +5,4 @@
 - [Production bundle verification](production-bundle-verification.md) — compare live asset hashes and compiled markers before assuming a static frontend fix is deployed
 - [Username referral links](username-referral-links.md) — new links use usernames while historical referral-code links remain accepted
 - [Kenya automatic payment provider](kenya-payment-provider.md) — app_settings controls PAYHERO vs HASHBACK; default and fail-safe behavior is PayHero
+- [SoleasPay Cameroon payment](soleaspay-cameroon-payment.md) — XAF Pay-In uses x-api-key and `/soleaspaycallback` validates SHA-512 callback signatures

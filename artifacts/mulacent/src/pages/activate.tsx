@@ -24,7 +24,7 @@ const COUNTRY_FEES: Record<
   { label: string; amount: string; currency: string; hint: string }
 > = {
   KE: { label: "Kenya",       amount: "350",   currency: "KES", hint: "Accepts: 07XX..., 254XX..., +254XX..." },
-  CM: { label: "Cameroon",    amount: "60",    currency: "USD", hint: "Pay via Eversend link below" },
+  CM: { label: "Cameroon",    amount: "2510",  currency: "XAF", hint: "Pay with MTN or Orange Money Cameroon" },
   GH: { label: "Ghana",       amount: "60",    currency: "GHS", hint: "Pay via Eversend link below" },
   NG: { label: "Nigeria",     amount: "7500",  currency: "NGN", hint: "Pay via Eversend link below" },
   UG: { label: "Uganda",      amount: "12000", currency: "UGX", hint: "Pay via MTN or Airtel Uganda" },
@@ -51,6 +51,7 @@ export default function Activate() {
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [loading, setLoading] = useState(false);
   const [hashbackLoading, setHashbackLoading] = useState(false);
+  const [soleasPayLoading, setSoleasPayLoading] = useState(false);
   const [kenyaPaymentProvider, setKenyaPaymentProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
   const [dbFees, setDbFees] = useState<Record<string, number>>({});
@@ -67,6 +68,7 @@ export default function Activate() {
   const isBotswana = country === "BW";
   const isSouthSudan = country === "SS";
   const isRwanda = country === "RW";
+  const isCameroon = country === "CM";
   // Cameroon, Ghana, Nigeria (and any unknown country) → Eversend link
   const hasOwnPage = isKenya || isUganda || isZambia || isTanzania || isCongo || isMalawi || isBotswana || isSouthSudan || isRwanda;
   const fee = COUNTRY_FEES[country] ?? COUNTRY_FEES["KE"];
@@ -202,6 +204,42 @@ export default function Activate() {
         variant: "destructive",
       });
       setHashbackLoading(false);
+    }
+  };
+
+  const handleSoleasPayActivation = async (paymentService: 1 | 2) => {
+    if (!phone.trim()) {
+      toast({
+        title: "Phone Required",
+        description: "Enter the Cameroon mobile-money number you will use to pay.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSoleasPayLoading(true);
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}api/soleaspay/activate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ phoneNumber: phone.trim(), service: paymentService }),
+      });
+      const data = await response.json() as { orderId?: string; message?: string };
+      if (!response.ok || !data.orderId) {
+        throw new Error(data.message || "SoleasPay payment could not be started.");
+      }
+      navigate(
+        `/payment-status?type=activate&provider=soleaspay&order_id=${encodeURIComponent(data.orderId)}&service=${paymentService}`,
+      );
+    } catch (err) {
+      toast({
+        title: "SoleasPay Payment Failed",
+        description: err instanceof Error ? err.message : "Please try again or use Eversend.",
+        variant: "destructive",
+      });
+    } finally {
+      setSoleasPayLoading(false);
     }
   };
 
@@ -511,6 +549,65 @@ export default function Activate() {
                 </div>
               </div>
 
+            ) : isCameroon ? (
+              <div className="space-y-3">
+                <div className="bg-muted/50 border border-border rounded-xl p-4 text-center">
+                  <p className="text-foreground text-sm mb-1">
+                    Activate your account for{" "}
+                    <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    Pay automatically with SoleasPay or use manual Eversend payment
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
+                    Cameroon mobile-money number
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="6XXXXXXXX"
+                    className="w-full text-center text-foreground text-sm py-3 px-4 rounded-xl outline-none transition-all bg-muted/30 border border-input focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                  />
+                  <p className="text-xs mt-1.5 text-center text-muted-foreground">{fee.hint}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleSoleasPayActivation(1)}
+                  disabled={soleasPayLoading}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
+                >
+                  {soleasPayLoading ? "Starting payment..." : "Pay with MTN Cameroon"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSoleasPayActivation(2)}
+                  disabled={soleasPayLoading}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-secondary hover:bg-secondary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
+                >
+                  {soleasPayLoading ? "Starting payment..." : "Pay with Orange Money"}
+                </button>
+                <a
+                  href={eversendLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 rounded-xl font-bold text-sm text-foreground border border-primary bg-primary/5 hover:bg-primary/10 flex items-center justify-center gap-2 transition-all"
+                >
+                  <ExternalLink className="w-4 h-4 text-primary" /> Pay manually via Eversend
+                </a>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-2">Already paid manually?</p>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/verify")}
+                    className="w-full py-3 rounded-xl font-bold text-sm text-foreground flex items-center justify-center gap-2 transition-all border border-border bg-muted/30 hover:bg-muted/50"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Verify Eversend Payment
+                  </button>
+                </div>
+              </div>
             ) : (
               /* Default: Eversend for other countries */
               <div className="space-y-3">
