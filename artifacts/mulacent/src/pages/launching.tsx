@@ -145,14 +145,14 @@ export default function LaunchingPage({ launchDate, onExpired }: LaunchingPagePr
           >
             <img
               src={`${import.meta.env.BASE_URL}images/logo.png`}
-              alt="Tripple Earn Agencies"
+              alt="MALIGAIN"
               style={{ width: 76, height: 76, objectFit: "contain" }}
             />
           </div>
 
           <div>
             <h1 className="text-white font-black tracking-widest" style={{ fontSize: 28, letterSpacing: "0.18em" }}>
-              TRIPPLE EARN
+              MALIGAIN
             </h1>
             <p className="text-blue-200/70 font-medium mt-0.5" style={{ fontSize: 11, letterSpacing: "0.12em" }}>
               AGENCY EARNINGS PLATFORM
@@ -356,7 +356,7 @@ export default function LaunchingPage({ launchDate, onExpired }: LaunchingPagePr
 
         {/* Footer */}
         <p className="text-blue-200/25 text-xs text-center mt-4 mb-2 px-4">
-          Join Tripple Earn Agencies today and start your earning journey 🚀
+          Join MALIGAIN today and start your earning journey 🚀
         </p>
 
       </div>

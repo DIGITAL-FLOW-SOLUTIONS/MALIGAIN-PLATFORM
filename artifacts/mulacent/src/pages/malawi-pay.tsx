@@ -66,8 +66,8 @@ export default function MalawiPay() {
       <div className="w-full max-w-sm">
         <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
           <div className="flex items-center gap-3 mb-5">
-            <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="Tripple Earn Agencies" className="w-10 h-10 rounded-xl object-contain" />
-            <span className="text-primary font-black text-xl tracking-wide">TRIPPLE EARN</span>
+            <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="MALIGAIN" className="w-10 h-10 rounded-xl object-contain" />
+            <span className="text-primary font-black text-xl tracking-wide">MALIGAIN</span>
           </div>
 
           <h2 className="text-primary font-bold text-center text-base underline mb-5 leading-snug">

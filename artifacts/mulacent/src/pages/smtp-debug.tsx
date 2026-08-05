@@ -37,7 +37,7 @@ function LogLine({ entry }: { entry: LogEntry }) {
 
 export default function SmtpDebug() {
   const [to, setTo] = useState("");
-  const [message, setMessage] = useState("Hello from Tripple Earn Agencies SMTP Debug Tool! This is a test email to verify the SMTP configuration is working correctly.");
+  const [message, setMessage] = useState("Hello from MALIGAIN SMTP Debug Tool! This is a test email to verify the SMTP configuration is working correctly.");
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState<Config | null>(null);
@@ -98,7 +98,7 @@ export default function SmtpDebug() {
           </div>
           <div>
             <h1 className="text-white font-black text-lg leading-none">SMTP Debug</h1>
-            <p className="text-slate-500 text-xs mt-0.5">Test email delivery · Tripple Earn Agencies</p>
+            <p className="text-slate-500 text-xs mt-0.5">Test email delivery · MALIGAIN</p>
           </div>
           <div className="ml-auto">
             <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 border border-amber-500/25 px-2.5 py-1 rounded-full uppercase tracking-wide">
@@ -262,7 +262,7 @@ export default function SmtpDebug() {
         </div>
 
         <p className="text-center text-xs text-slate-700 pb-2">
-          Tripple Earn Agencies Debug Tool · Not visible to users
+          MALIGAIN Debug Tool · Not visible to users
         </p>
       </div>
     </div>

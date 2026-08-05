@@ -217,11 +217,11 @@ export default function Activate() {
             <div className="relative z-10 flex items-center gap-3">
               <img
                 src={`${import.meta.env.BASE_URL}images/logo.png`}
-                alt="Tripple Earn Agencies"
+                alt="MALIGAIN"
                 className="w-11 h-11 rounded-xl object-contain border-2 border-white/30"
               />
               <div>
-                <h1 className="text-white font-bold text-base leading-tight tracking-wide">TRIPPLE EARN</h1>
+                <h1 className="text-white font-bold text-base leading-tight tracking-wide">MALIGAIN</h1>
                 <p className="text-white/70 text-xs tracking-widest uppercase">Account Activation</p>
               </div>
             </div>

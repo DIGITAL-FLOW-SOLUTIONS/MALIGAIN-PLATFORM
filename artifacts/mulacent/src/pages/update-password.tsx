@@ -119,9 +119,9 @@ export default function UpdatePassword() {
             className="mx-auto mb-6 flex items-center justify-center rounded-2xl overflow-hidden"
             style={{ width: 88, height: 88, boxShadow: "0 0 40px rgba(91,141,238,0.55), 0 4px 24px rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.25)" }}
           >
-            <img src={`${BASE}images/logo.png`} alt="Tripple Earn Agencies" style={{ width: 88, height: 88, objectFit: "contain" }} />
+            <img src={`${BASE}images/logo.png`} alt="MALIGAIN" style={{ width: 88, height: 88, objectFit: "contain" }} />
           </div>
-          <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 30, letterSpacing: "0.1em" }}>TRIPPLE EARN</h1>
+          <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 30, letterSpacing: "0.1em" }}>MALIGAIN</h1>
           <p className="text-blue-200/70 font-medium mb-2" style={{ fontSize: 11, letterSpacing: "0.12em" }}>DIGITAL AGENCY PLATFORM</p>
         </div>
       </div>
@@ -130,9 +130,9 @@ export default function UpdatePassword() {
       <div className="flex-1 flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <div className="flex lg:hidden items-center gap-3 mb-7 justify-center">
-            <img src={`${BASE}images/logo.png`} alt="Tripple Earn Agencies" className="w-12 h-12 rounded-xl object-contain" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
+            <img src={`${BASE}images/logo.png`} alt="MALIGAIN" className="w-12 h-12 rounded-xl object-contain" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
             <div>
-              <h1 className="font-black tracking-widest text-slate-800" style={{ fontSize: 21, letterSpacing: "0.08em" }}>TRIPPLE EARN</h1>
+              <h1 className="font-black tracking-widest text-slate-800" style={{ fontSize: 21, letterSpacing: "0.08em" }}>MALIGAIN</h1>
               <p className="text-slate-400 text-xs">Digital Agency Platform</p>
             </div>
           </div>
@@ -228,7 +228,7 @@ export default function UpdatePassword() {
             )}
           </div>
 
-          <p className="text-center mt-5 text-xs text-slate-400">© 2026 Tripple Earn Agencies. All rights reserved.</p>
+          <p className="text-center mt-5 text-xs text-slate-400">© 2026 MALIGAIN. All rights reserved.</p>
         </div>
       </div>
     </div>

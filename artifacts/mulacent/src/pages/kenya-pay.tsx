@@ -44,11 +44,11 @@ export default function KenyaPay() {
           <div className="flex items-center gap-3 mb-5">
             <img
               src={`${import.meta.env.BASE_URL}images/logo.png`}
-              alt="Tripple Earn Agencies"
+              alt="MALIGAIN"
               className="w-10 h-10 rounded-xl object-contain"
             />
             <span className="text-primary font-black text-xl tracking-wide">
-              TRIPPLE EARN
+              MALIGAIN
             </span>
           </div>
 

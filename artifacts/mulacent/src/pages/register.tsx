@@ -23,12 +23,12 @@ function TermsDialog({ open, onClose, onAccept }: { open: boolean; onClose: () =
 
         <div className="overflow-y-auto px-6 py-4 space-y-4 flex-1 text-sm text-muted-foreground">
           {[
-            { title: "1. Nature of Service", body: "Tripple Earn Agencies provides a digital subscription service. The registration fee grants immediate access to our Digital Marketing Hub and affiliate portal." },
+            { title: "1. Nature of Service", body: "MALIGAIN provides a digital subscription service. The registration fee grants immediate access to our Digital Marketing Hub and affiliate portal." },
             { title: "2. No-Refund Policy", body: "Due to the digital nature of our products, the registration fee is strictly non-refundable once the account is activated." },
             { title: "3. Anti-Fraud & Reversals", body: "Unauthorized payment reversals are a breach of contract and are reported to the relevant payment providers and authorities." },
             { title: "4. Affiliate Disclaimer", body: "We provide links to third-party platforms. We do not own these platforms and are not responsible for their independent terms." },
             { title: "5. Data Privacy", body: "We comply with applicable data protection laws. Your information is used solely for account management and service delivery." },
-            { title: "6. Earnings Disclaimer", body: "Earnings are based on your referral activity. Tripple Earn Agencies does not guarantee any specific income. Results vary by individual effort." },
+            { title: "6. Earnings Disclaimer", body: "Earnings are based on your referral activity. MALIGAIN does not guarantee any specific income. Results vary by individual effort." },
           ].map((s) => (
             <div key={s.title}>
               <p className="text-primary font-bold text-xs uppercase tracking-wide mb-1">{s.title}</p>
@@ -191,7 +191,7 @@ export default function Register() {
     if (phoneStatus === "taken") { toast({ title: "Phone Taken", description: "That phone number is already registered.", variant: "destructive" }); return; }
     registerUser(
       { username: data.username, email: data.email, phone: data.phone, country: data.country, password: data.password, referralCode: data.referralCode } as any,
-      () => { toast({ title: "Account Created!", description: "Welcome to Tripple Earn Agencies." }); },
+      () => { toast({ title: "Account Created!", description: "Welcome to MALIGAIN." }); },
       (err) => {
         const message = err?.data?.message || err?.message?.replace(/^HTTP \d+ [^:]+:\s*/i, "") || "Something went wrong";
         toast({ title: "Registration Failed", description: message, variant: "destructive" });
@@ -234,9 +234,9 @@ export default function Register() {
               className="mx-auto mb-6 flex items-center justify-center rounded-2xl overflow-hidden"
               style={{ width: 88, height: 88, boxShadow: "0 0 40px rgba(91,141,238,0.55), 0 4px 24px rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.25)" }}
             >
-              <img src={`${BASE}images/logo.png`} alt="Tripple Earn Agencies" style={{ width: 88, height: 88, objectFit: "contain" }} />
+              <img src={`${BASE}images/logo.png`} alt="MALIGAIN" style={{ width: 88, height: 88, objectFit: "contain" }} />
             </div>
-            <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 30, letterSpacing: "0.1em" }}>TRIPPLE EARN</h1>
+            <h1 className="text-white font-black tracking-widest mb-2" style={{ fontSize: 30, letterSpacing: "0.1em" }}>MALIGAIN</h1>
             <p className="text-blue-200/70 font-medium mb-8" style={{ fontSize: 11, letterSpacing: "0.12em" }}>DIGITAL AGENCY PLATFORM</p>
 
             <div className="space-y-3">
@@ -262,9 +262,9 @@ export default function Register() {
 
             {/* Mobile logo */}
             <div className="flex lg:hidden items-center gap-3 mb-6 justify-center">
-              <img src={`${BASE}images/logo.png`} alt="Tripple Earn Agencies" className="w-12 h-12 rounded-xl object-contain" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
+              <img src={`${BASE}images/logo.png`} alt="MALIGAIN" className="w-12 h-12 rounded-xl object-contain" style={{ boxShadow: "0 2px 12px rgba(91,141,238,0.4)" }} />
               <div>
-                <h1 className="font-black tracking-widest text-foreground" style={{ fontSize: 21, letterSpacing: "0.08em" }}>TRIPPLE EARN</h1>
+                <h1 className="font-black tracking-widest text-foreground" style={{ fontSize: 21, letterSpacing: "0.08em" }}>MALIGAIN</h1>
                 <p className="text-muted-foreground text-xs">Digital Agency Platform</p>
               </div>
             </div>
@@ -406,7 +406,7 @@ export default function Register() {
               </p>
             </div>
 
-            <p className="text-center mt-5 text-xs text-muted-foreground">© 2026 Tripple Earn Agencies. All rights reserved.</p>
+            <p className="text-center mt-5 text-xs text-muted-foreground">© 2026 MALIGAIN. All rights reserved.</p>
           </div>
         </div>
       </div>

@@ -283,7 +283,7 @@ export default function Profile() {
                 ML
               </div>
               <div>
-                <p className="text-foreground font-semibold">Tripple Earn Agencies</p>
+                <p className="text-foreground font-semibold">MALIGAIN</p>
                 <p className="flex items-center gap-1 text-muted-foreground text-xs mt-0.5">
                   <Globe className="w-3 h-3" /> {countryLabel(user?.country)}
                 </p>
