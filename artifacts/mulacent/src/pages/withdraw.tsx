@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useGetWalletBalances,
   useRequestWithdrawal,
 } from "@workspace/api-client-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useCurrency } from "@/hooks/use-currency";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -16,24 +15,25 @@ import {
 } from "lucide-react";
 import { cn, amountFontClass } from "@/lib/utils";
 
-const COUNTRY_RULES: Record<string, { min: number; charge: number }> = {
-  KE: { min: 300, charge: 45 },
-  TZ: { min: 10000, charge: 1250 },
-  UG: { min: 10000, charge: 1500 },
-  ZM: { min: 100, charge: 10 },
-  GH: { min: 60, charge: 5 },
-  CM: { min: 2500, charge: 250 },
-};
-const DEFAULT_RULES = { min: 300, charge: 45 };
+type WithdrawalRule = { min: number; charge: number; currency: string };
 
-const COUNTRY_CURRENCY: Record<string, string> = {
-  KE: "KES",
-  UG: "UGX",
-  TZ: "TZS",
-  ZM: "ZK",
-  GH: "GHS",
-  CM: "XAF",
+const WITHDRAWAL_RULES: Record<string, WithdrawalRule> = {
+  KE: { min: 400, charge: 45, currency: "KSH" },
+  TZ: { min: 10000, charge: 1200, currency: "TZS" },
+  UG: { min: 15000, charge: 1500, currency: "UGX" },
+  RW: { min: 6000, charge: 600, currency: "RWF" },
+  BI: { min: 10000, charge: 1000, currency: "BIF" },
+  ZM: { min: 120, charge: 10, currency: "ZK" },
+  MW: { min: 10000, charge: 500, currency: "MWK" },
+  BW: { min: 100, charge: 5, currency: "BWP" },
+  GH: { min: 70, charge: 7, currency: "GHC" },
+  NG: { min: 8000, charge: 700, currency: "NGN" },
+  CM: { min: 2000, charge: 500, currency: "XAF" },
+  SS: { min: 20000, charge: 2000, currency: "SSP" },
+  CG: { min: 20000, charge: 2000, currency: "CDF" },
+  CD: { min: 20000, charge: 2000, currency: "CDF" },
 };
+const DEFAULT_RULES: WithdrawalRule = WITHDRAWAL_RULES.KE;
 
 export default function Withdraw() {
   const { data: balances, isLoading } = useGetWalletBalances();
@@ -41,14 +41,26 @@ export default function Withdraw() {
   const withdrawMutation = useRequestWithdrawal();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { fmt } = useCurrency();
   const [, navigate] = useLocation();
 
   const [amount, setAmount] = useState("");
+  const [serverRules, setServerRules] = useState<Record<string, WithdrawalRule> | null>(null);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}api/settings/withdrawal-rules`, { credentials: "include" })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Failed to load withdrawal rules")))
+      .then((data: { rules?: Record<string, WithdrawalRule> }) => {
+        if (data.rules) setServerRules(data.rules);
+      })
+      .catch(() => {
+        // The exact same values remain available locally if settings are temporarily unavailable.
+      });
+  }, []);
 
   const countryCode = (user?.country ?? "KE").toUpperCase();
-  const rules = COUNTRY_RULES[countryCode] ?? DEFAULT_RULES;
-  const currencyCode = COUNTRY_CURRENCY[countryCode] ?? "KES";
+  const rules = serverRules?.[countryCode] ?? WITHDRAWAL_RULES[countryCode] ?? DEFAULT_RULES;
+  const currencyCode = rules.currency;
+  const formatAmount = (value: number) => `${currencyCode} ${Math.round(value).toLocaleString("en-US")}`;
 
   const affiliateBal = balances?.teamEarnings ?? 0;
   const minRequired = rules.min;
@@ -67,7 +79,7 @@ export default function Withdraw() {
         onSuccess: () => {
           toast({
             title: "Success!",
-            description: `Your Withdrawal of ${fmt(netAmount)} Has Been Sent! Payment will be Processed After Successful Verification On Time.`,
+              description: `Your Withdrawal of ${formatAmount(netAmount)} Has Been Sent! Payment will be Processed After Successful Verification On Time.`,
           });
           setAmount("");
           queryClient.invalidateQueries({ queryKey: ["/api/wallet/balances"] });
@@ -137,17 +149,17 @@ export default function Withdraw() {
         <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-slate-500 text-sm">Withdrawal Amount</span>
-            <span className={`text-slate-800 font-semibold ${amountFontClass(fmt(amountNum), "sm")}`}>
-              {fmt(amountNum)}
+            <span className={`text-slate-800 font-semibold ${amountFontClass(formatAmount(amountNum), "sm")}`}>
+              {formatAmount(amountNum)}
             </span>
           </div>
           <div className="h-px bg-slate-100" />
           <div className="flex justify-between items-center">
             <span className="text-slate-500 text-sm">
-              Transaction Fee ({fmt(charge)})
+              Transaction Fee ({formatAmount(charge)})
             </span>
-            <span className={`text-red-500 font-semibold ${amountFontClass(fmt(amountNum > 0 ? charge : 0), "sm")}`}>
-              - {fmt(amountNum > 0 ? charge : 0)}
+            <span className={`text-red-500 font-semibold ${amountFontClass(formatAmount(amountNum > 0 ? charge : 0), "sm")}`}>
+              - {formatAmount(amountNum > 0 ? charge : 0)}
             </span>
           </div>
           <div className="h-px bg-slate-100" />
@@ -155,8 +167,8 @@ export default function Withdraw() {
             <span className="text-slate-700 font-semibold text-sm">
               You Will Receive
             </span>
-            <span className={`text-emerald-500 font-bold ${amountFontClass(fmt(netAmount), "sm")}`}>
-              {fmt(netAmount)}
+            <span className={`text-emerald-500 font-bold ${amountFontClass(formatAmount(netAmount), "sm")}`}>
+              {formatAmount(netAmount)}
             </span>
           </div>
         </div>

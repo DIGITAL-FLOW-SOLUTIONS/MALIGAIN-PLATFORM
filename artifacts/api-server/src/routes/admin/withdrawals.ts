@@ -2,11 +2,7 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import { supabase } from "../../lib/supabase";
 import { logAdminAction } from "../../middlewares/adminAuth";
 import { sendWithdrawalConfirmationEmail } from "../../lib/mailer";
-
-const COUNTRY_CURRENCY: Record<string, string> = {
-  KE: "KES", TZ: "TZS", UG: "UGX",
-  GH: "GHS", ZM: "ZMW", CM: "XAF",
-};
+import { getWithdrawalRule } from "../../lib/appSettings";
 
 const router: IRouter = Router();
 
@@ -145,7 +141,7 @@ router.post("/:txnId/approve", async (req: Request, res: Response) => {
         const netAmount   = num(txn["amount"]);
         const serviceFee  = Math.max(0, grossAmount - netAmount);
         const country     = String(user["country"] ?? "KE").toUpperCase();
-        const currency    = COUNTRY_CURRENCY[country] ?? "KES";
+        const currency    = getWithdrawalRule(country).currency;
         await sendWithdrawalConfirmationEmail({
           toEmail:     String(user["email"]),
           username:    String(user["username"]),

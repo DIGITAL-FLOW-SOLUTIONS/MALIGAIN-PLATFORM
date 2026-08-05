@@ -7,3 +7,4 @@
 - [Kenya automatic payment provider](kenya-payment-provider.md) — app_settings controls PAYHERO vs HASHBACK; default and fail-safe behavior is PayHero
 - [SoleasPay Cameroon payment](soleaspay-cameroon-payment.md) — XAF Pay-In uses x-api-key and `/soleaspaycallback` validates SHA-512 callback signatures
 - [Payment settlement atomicity](payment-settlement-atomicity.md) — lock the pending transaction and commit provider settlement state together; cancel orphaned setup records on failure
+- [Withdrawal rules authority](withdrawal-rules-authority.md) — share country minimums, charges, currencies, and Congo aliases across API, UI, and notifications

@@ -13,6 +13,38 @@ export const ACTIVATION_FEE_DEFAULTS: Record<string, number> = {
   BW: 75, RW: 5500, CG: 15000, MW: 12000, NG: 7500, SS: 20000, BI: 25000,
 };
 
+export interface WithdrawalRule {
+  min: number;
+  charge: number;
+  currency: string;
+}
+
+// Withdrawal thresholds and service charges are fixed business rules, not
+// activation fees. Keep the CG alias for existing Congo accounts and CD for
+// ISO-style country values used by newer records.
+export const WITHDRAWAL_RULES: Record<string, WithdrawalRule> = {
+  KE: { min: 400, charge: 45, currency: "KSH" },
+  TZ: { min: 10_000, charge: 1_200, currency: "TZS" },
+  UG: { min: 15_000, charge: 1_500, currency: "UGX" },
+  RW: { min: 6_000, charge: 600, currency: "RWF" },
+  BI: { min: 10_000, charge: 1_000, currency: "BIF" },
+  ZM: { min: 120, charge: 10, currency: "ZK" },
+  MW: { min: 10_000, charge: 500, currency: "MWK" },
+  BW: { min: 100, charge: 5, currency: "BWP" },
+  GH: { min: 70, charge: 7, currency: "GHC" },
+  NG: { min: 8_000, charge: 700, currency: "NGN" },
+  CM: { min: 2_000, charge: 500, currency: "XAF" },
+  SS: { min: 20_000, charge: 2_000, currency: "SSP" },
+  CG: { min: 20_000, charge: 2_000, currency: "CDF" },
+  CD: { min: 20_000, charge: 2_000, currency: "CDF" },
+};
+
+export const DEFAULT_WITHDRAWAL_RULE: WithdrawalRule = WITHDRAWAL_RULES.KE;
+
+export function getWithdrawalRule(countryCode: string): WithdrawalRule {
+  return WITHDRAWAL_RULES[countryCode.trim().toUpperCase()] ?? DEFAULT_WITHDRAWAL_RULE;
+}
+
 export type KenyaAutomaticPaymentProvider = "PAYHERO" | "HASHBACK";
 
 export async function getKenyaAutomaticPaymentProvider(): Promise<KenyaAutomaticPaymentProvider> {

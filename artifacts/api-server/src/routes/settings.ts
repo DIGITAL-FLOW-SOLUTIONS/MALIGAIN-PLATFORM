@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { supabase } from "../lib/supabase";
-import { getActivationFees } from "../lib/appSettings";
+import { getActivationFees, WITHDRAWAL_RULES } from "../lib/appSettings";
 
 const router = Router();
 
@@ -27,6 +27,11 @@ router.get("/activation-fees", async (req, res) => {
   } catch {
     res.status(500).json({ message: "Failed to fetch activation fees" });
   }
+});
+
+router.get("/withdrawal-rules", (req, res) => {
+  res.set("Cache-Control", "public, max-age=300");
+  res.json({ rules: WITHDRAWAL_RULES });
 });
 
 router.get("/uganda", async (req, res) => {

@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { initiateSTKPush, normalizePhone } from "../lib/payhero";
 import { sendWithdrawalRequestNotificationEmail } from "../lib/mailer";
+import { getWithdrawalRule } from "../lib/appSettings";
 
 const router: IRouter = Router();
 router.use(requireAuth);
@@ -86,16 +87,6 @@ router.get("/balances", async (req: Request, res: Response) => {
   }
 });
 
-const COUNTRY_WITHDRAWAL_RULES: Record<string, { min: number; charge: number; currency: string }> = {
-  KE: { min: 300,    charge: 45,   currency: "KSH" },
-  TZ: { min: 10000,  charge: 1250, currency: "TZS" },
-  UG: { min: 10000,  charge: 1500, currency: "UGX" },
-  ZM: { min: 100,    charge: 10,   currency: "ZK"  },
-  GH: { min: 60,     charge: 5,    currency: "GHC" },
-  CM: { min: 2500,   charge: 250,  currency: "XAF" },
-};
-const DEFAULT_WITHDRAWAL_RULE = { min: 300, charge: 25, currency: "KSH" };
-
 router.post("/withdraw", async (req: Request, res: Response) => {
   try {
     const userId = req.session.userId!;
@@ -106,7 +97,7 @@ router.post("/withdraw", async (req: Request, res: Response) => {
     const { data: users } = await supabase.from("users").select("country").eq("id", userId).limit(1);
     const userCountry = ((users ?? [])[0] as Record<string, unknown> | undefined)?.["country"] as string | undefined;
     const countryCode = (userCountry ?? "KE").toUpperCase();
-    const rules = COUNTRY_WITHDRAWAL_RULES[countryCode] ?? DEFAULT_WITHDRAWAL_RULE;
+    const rules = getWithdrawalRule(countryCode);
 
     if (!amount || requestedAmount < rules.min) {
       res.status(400).json({
@@ -183,10 +174,7 @@ router.post("/withdraw", async (req: Request, res: Response) => {
 
       if (recipients.length > 0 && user) {
         const country = String(user["country"] ?? "KE").toUpperCase();
-        const COUNTRY_CURRENCY: Record<string, string> = {
-          KE: "KES", TZ: "TZS", UG: "UGX", GH: "GHS", ZM: "ZMW", CM: "XAF",
-        };
-        const currency = COUNTRY_CURRENCY[country] ?? "KES";
+        const currency = getWithdrawalRule(country).currency;
 
         await Promise.allSettled(
           recipients.map((toEmail) =>
