@@ -35,12 +35,14 @@ function normalizeCameroonWallet(value: string): string {
   return `237${digits}`;
 }
 
-function orderId(userId: number, type: "activate" | "recharge"): string {
+type SoleasPaymentType = "activate" | "recharge" | "investment" | "spin";
+
+function orderId(userId: number, type: SoleasPaymentType): string {
   return `MUL-SP-${type}-${userId}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
 }
 
-function baseDescription(order: string, type: "activate" | "recharge"): string {
-  return `SOLEASPAY:${order}:${type}`;
+function baseDescription(order: string, type: SoleasPaymentType, extra?: number): string {
+  return extra ? `SOLEASPAY:${order}:${type}:${extra}` : `SOLEASPAY:${order}:${type}`;
 }
 
 function descriptionForPayId(base: string, payId: string | null | undefined): string {
@@ -52,9 +54,14 @@ function payIdFromDescription(description: string): string {
   return parts[3] ?? "";
 }
 
-function typeFromDescription(description: string): "activate" | "recharge" | null {
+function typeFromDescription(description: string): SoleasPaymentType | null {
   const type = description.split(":")[2];
-  return type === "activate" || type === "recharge" ? type : null;
+  return type === "activate" || type === "recharge" || type === "investment" || type === "spin" ? type : null;
+}
+
+function extraFromDescription(description: string): number {
+  const extra = Number(description.split(":")[3] ?? 0);
+  return Number.isFinite(extra) ? extra : 0;
 }
 
 function appUrl(req: Request): string {
@@ -129,6 +136,7 @@ async function settlePayment(params: {
 
   const client = await pool.connect();
   let activatedNow = false;
+  let spinCredited = false;
   try {
     await client.query("BEGIN");
 
@@ -167,7 +175,46 @@ async function settlePayment(params: {
          RETURNING id`,
         [userId],
       );
-      activatedNow = updatedUser.rowCount > 0;
+       activatedNow = (updatedUser.rowCount ?? 0) > 0;
+    } else if (transactionType === "investment") {
+      const investmentId = extraFromDescription(String(current.description ?? ""));
+      if (!investmentId) {
+        await client.query("ROLLBACK");
+        params.log.error({ orderId: params.orderId }, "SoleasPay investment is missing its investment ID");
+        return "pending";
+      }
+      const now = new Date();
+      const updatedInvestment = await client.query(
+        `UPDATE user_investments
+         SET status = 'active',
+             start_date = $1,
+             next_credit_at = $2,
+             updated_at = $1
+         WHERE id = $3 AND user_id = $4 AND status = 'pending'
+         RETURNING id`,
+        [now.toISOString(), new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString(), investmentId, userId],
+      );
+      if (updatedInvestment.rowCount !== 1) {
+        await client.query("ROLLBACK");
+        params.log.warn({ orderId: params.orderId, investmentId, userId }, "SoleasPay investment is not pending");
+        return "pending";
+      }
+    } else if (transactionType === "spin") {
+      const lockedWallet = await client.query<{ spin_balance: string }>(
+        `SELECT spin_balance FROM wallet WHERE user_id = $1 FOR UPDATE`,
+        [userId],
+      );
+      const wallet = lockedWallet.rows[0];
+      if (!wallet) {
+        await client.query("ROLLBACK");
+        params.log.error({ orderId: params.orderId, userId }, "SoleasPay spin deposit has no wallet");
+        return "pending";
+      }
+      await client.query(
+        `UPDATE wallet SET spin_balance = spin_balance + $1 WHERE user_id = $2`,
+        [expectedAmount, userId],
+      );
+      spinCredited = true;
     } else {
       const lockedWallet = await client.query<{
         main_wallet: string;
@@ -216,6 +263,12 @@ async function settlePayment(params: {
 
   if (activatedNow) {
     await triggerReferralBonus(userId, params.log);
+  }
+  if (spinCredited) {
+    try {
+      const { spinEventBus } = await import("../lib/spin-events");
+      spinEventBus.emit(`wallet:${userId}`);
+    } catch { /* non-fatal */ }
   }
 
   params.log.info(
@@ -330,12 +383,151 @@ async function startPayment(req: Request, res: Response, type: "activate" | "rec
   }
 }
 
+async function startInvestmentPayment(req: Request, res: Response): Promise<void> {
+  let investmentId: number | null = null;
+  let transactionId: number | null = null;
+  try {
+    if (!hasSoleasPayApiKey()) {
+      res.status(503).json({ error: "ConfigurationError", message: "SoleasPay payment is not configured yet." });
+      return;
+    }
+    const userId = req.session!.userId as number;
+    const planId = Number(req.body?.planId);
+    const phoneNumber = String(req.body?.phoneNumber ?? "").trim();
+    const selectedService = service(req.body?.service);
+    if (!planId || !selectedService || phoneNumber.replace(/\D/g, "").length < 9) {
+      res.status(400).json({ error: "ValidationError", message: "A valid plan, Cameroon phone number, and payment method are required." });
+      return;
+    }
+    const { data: user } = await supabase.from("users").select("id, username, email, phone, country").eq("id", userId).single();
+    if (!user || !isCameroon(user as Record<string, unknown>)) {
+      res.status(400).json({ error: "ValidationError", message: "SoleasPay is available for Cameroon users only." });
+      return;
+    }
+    const { data: plan, error: planError } = await supabase.from("investment_plans").select("*").eq("id", planId).eq("is_active", true).single();
+    if (planError || !plan) {
+      res.status(404).json({ error: "NotFound", message: "Investment plan not found." });
+      return;
+    }
+    const planRecord = plan as Record<string, unknown>;
+    const { data: pending } = await supabase.from("user_investments").select("id").eq("user_id", userId).eq("plan_id", planId).eq("status", "pending").limit(1);
+    if (pending?.length) {
+      res.status(409).json({ error: "Conflict", message: "You already have a pending payment for this plan." });
+      return;
+    }
+    const { data: investment, error: investmentError } = await supabase.from("user_investments").insert({
+      user_id: userId, plan_id: planId, plan_name: planRecord["name"], brand_name: planRecord["brand_name"],
+      category: planRecord["category"], deposit_amount: amount(planRecord["deposit_amount"]),
+      daily_profit_amount: amount(planRecord["daily_profit"]), total_days: Number(planRecord["total_days"]),
+      total_profit: amount(planRecord["total_profit"]), image_url: planRecord["image_url"] ?? null, status: "pending",
+    }).select("id").single();
+    if (investmentError || !investment) throw investmentError ?? new Error("Failed to create investment");
+    investmentId = Number((investment as Record<string, unknown>)["id"]);
+    const paymentOrderId = orderId(userId, "investment");
+    const description = baseDescription(paymentOrderId, "investment", investmentId);
+    const { data: transaction, error: transactionError } = await supabase.from("transactions").insert({
+      user_id: userId, type: "investment", amount: amount(planRecord["deposit_amount"]), status: "pending", description, phone_number: phoneNumber,
+    }).select("id").single();
+    if (transactionError || !transaction) throw transactionError ?? new Error("Failed to create transaction");
+    transactionId = Number((transaction as Record<string, unknown>)["id"]);
+    const result = await collectSoleasPay({
+      service: selectedService, wallet: normalizeCameroonWallet(phoneNumber), amount: amount(planRecord["deposit_amount"]),
+      orderId: paymentOrderId, description: "MULACENT investment payment",
+      payer: String((user as Record<string, unknown>)["username"] ?? (user as Record<string, unknown>)["email"] ?? "MULACENT user"),
+      payerEmail: String((user as Record<string, unknown>)["email"] ?? ""),
+      successUrl: `${appUrl(req)}/payment-status?type=investment&provider=soleaspay&order_id=${encodeURIComponent(paymentOrderId)}&service=${selectedService}`,
+      failureUrl: `${appUrl(req)}/payment-status?type=investment&provider=soleaspay&order_id=${encodeURIComponent(paymentOrderId)}&service=${selectedService}`,
+    });
+    const payId = String(result.data?.reference ?? "").trim();
+    if (!result.success || !payId) {
+      await supabase.from("transactions").update({ status: "failed" }).eq("id", transaction["id"]);
+      await supabase.from("user_investments").update({ status: "cancelled" }).eq("id", investmentId).eq("status", "pending");
+      res.status(502).json({ error: "PaymentError", message: result.message ?? "Failed to initiate SoleasPay payment." });
+      return;
+    }
+    await supabase.from("transactions").update({ description: descriptionForPayId(description, payId) }).eq("id", transaction["id"]);
+    res.json({ pending: true, provider: "soleaspay", orderId: paymentOrderId, payId, transactionId: transaction["id"], investmentId, amount: amount(planRecord["deposit_amount"]), currency: SOLEASPAY_CURRENCY, service: selectedService });
+  } catch (err) {
+    if (transactionId) {
+      await supabase
+        .from("transactions")
+        .update({ status: "failed" })
+        .eq("id", transactionId)
+        .eq("status", "pending");
+    }
+    if (investmentId) {
+      await supabase
+        .from("user_investments")
+        .update({ status: "cancelled" })
+        .eq("id", investmentId)
+        .eq("status", "pending");
+    }
+    req.log.error({ err }, "SoleasPay investment setup error");
+    res.status(500).json({ error: "ServerError", message: "Failed to prepare SoleasPay investment payment." });
+  }
+}
+
+async function startSpinPayment(req: Request, res: Response): Promise<void> {
+  try {
+    if (!hasSoleasPayApiKey()) {
+      res.status(503).json({ error: "ConfigurationError", message: "SoleasPay payment is not configured yet." });
+      return;
+    }
+    const userId = req.session!.userId as number;
+    const phoneNumber = String(req.body?.phoneNumber ?? "").trim();
+    const selectedService = service(req.body?.service);
+    const paymentAmount = amount(req.body?.amount);
+    if (!selectedService || phoneNumber.replace(/\D/g, "").length < 9 || paymentAmount < MIN_RECHARGE || paymentAmount > MAX_RECHARGE) {
+      res.status(400).json({ error: "ValidationError", message: `A valid Cameroon phone number, payment method, and amount between XAF ${MIN_RECHARGE} and XAF ${MAX_RECHARGE} are required.` });
+      return;
+    }
+    const { data: user } = await supabase.from("users").select("id, username, email, country").eq("id", userId).single();
+    if (!user || !isCameroon(user as Record<string, unknown>)) {
+      res.status(400).json({ error: "ValidationError", message: "SoleasPay is available for Cameroon users only." });
+      return;
+    }
+    const paymentOrderId = orderId(userId, "spin");
+    const description = baseDescription(paymentOrderId, "spin");
+    const { data: transaction, error: transactionError } = await supabase.from("transactions").insert({
+      user_id: userId, type: "recharge", amount: paymentAmount, status: "pending", description, phone_number: phoneNumber,
+    }).select("id").single();
+    if (transactionError || !transaction) throw transactionError ?? new Error("Failed to create transaction");
+    const result = await collectSoleasPay({
+      service: selectedService, wallet: normalizeCameroonWallet(phoneNumber), amount: paymentAmount,
+      orderId: paymentOrderId, description: "MULACENT spin balance payment",
+      payer: String((user as Record<string, unknown>)["username"] ?? (user as Record<string, unknown>)["email"] ?? "MULACENT user"),
+      payerEmail: String((user as Record<string, unknown>)["email"] ?? ""),
+      successUrl: `${appUrl(req)}/payment-status?type=spin&provider=soleaspay&order_id=${encodeURIComponent(paymentOrderId)}&service=${selectedService}`,
+      failureUrl: `${appUrl(req)}/payment-status?type=spin&provider=soleaspay&order_id=${encodeURIComponent(paymentOrderId)}&service=${selectedService}`,
+    });
+    const payId = String(result.data?.reference ?? "").trim();
+    if (!result.success || !payId) {
+      await supabase.from("transactions").update({ status: "failed" }).eq("id", transaction["id"]);
+      res.status(502).json({ error: "PaymentError", message: result.message ?? "Failed to initiate SoleasPay payment." });
+      return;
+    }
+    await supabase.from("transactions").update({ description: descriptionForPayId(description, payId) }).eq("id", transaction["id"]);
+    res.json({ pending: true, provider: "soleaspay", orderId: paymentOrderId, payId, transactionId: transaction["id"], amount: paymentAmount, currency: SOLEASPAY_CURRENCY, service: selectedService });
+  } catch (err) {
+    req.log.error({ err }, "SoleasPay spin setup error");
+    res.status(500).json({ error: "ServerError", message: "Failed to prepare SoleasPay spin payment." });
+  }
+}
+
 router.post("/activate", requireAuth, async (req, res): Promise<void> => {
   await startPayment(req, res, "activate");
 });
 
 router.post("/recharge", requireAuth, async (req, res): Promise<void> => {
   await startPayment(req, res, "recharge");
+});
+
+router.post("/investment", requireAuth, async (req, res): Promise<void> => {
+  await startInvestmentPayment(req, res);
+});
+
+router.post("/spin", requireAuth, async (req, res): Promise<void> => {
+  await startSpinPayment(req, res);
 });
 
 router.get("/status", requireAuth, async (req, res): Promise<void> => {
@@ -355,7 +547,8 @@ router.get("/status", requireAuth, async (req, res): Promise<void> => {
 
     let status = String(transaction["status"] ?? "pending");
     const description = String(transaction["description"] ?? "");
-    const payId = payIdFromDescription(description);
+    const descriptionParts = description.split(":");
+    const payId = descriptionParts[descriptionParts.length - 1] ?? "";
     const selectedService = service(req.query["service"]) ?? 1;
     if (status === "pending" && payId) {
       const verification = await verifySoleasPayPayment({

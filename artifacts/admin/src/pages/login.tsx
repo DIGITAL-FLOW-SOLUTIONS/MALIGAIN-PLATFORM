@@ -40,7 +40,7 @@ export default function Login() {
           </div>
           <h1 className="text-foreground font-bold text-xl tracking-widest uppercase flex items-center gap-2">
             <span className="w-2 h-2 bg-primary animate-pulse" />
-            MALIGAIN_EARN_SYS
+            MALIGAIN_ADMIN_SYS
           </h1>
           <p className="text-muted-foreground text-[10px] tracking-widest mt-1.5 uppercase border border-border px-2 py-0.5 bg-muted/20">
             AUTHORIZED PERSONNEL ONLY

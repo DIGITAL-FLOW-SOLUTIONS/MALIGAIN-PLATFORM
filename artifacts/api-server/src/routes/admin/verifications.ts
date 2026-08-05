@@ -94,7 +94,7 @@ router.post("/:id/approve", async (req: Request, res: Response) => {
 
     const { data: rows, error: fetchError } = await supabase
       .from("eversend_verifications")
-      .select("user_id, amount_paid, status")
+      .select("user_id, amount_paid, status, admin_note")
       .eq("id", id)
       .limit(1);
 
@@ -127,9 +127,12 @@ router.post("/:id/approve", async (req: Request, res: Response) => {
 
     // Atomically mark the verification as approved — the .eq("status", "pending")
     // filter ensures only one concurrent request can succeed.
+    const preservedAdminNote = note
+      ? `${adminNote ?? ""} | ADMIN NOTE: ${String(note).trim()}`
+      : adminNote;
     const { data: updatedRows, error: updateVerifError } = await supabase
       .from("eversend_verifications")
-      .update({ status: "approved", admin_note: note ?? adminNote })
+      .update({ status: "approved", admin_note: preservedAdminNote })
       .eq("id", id)
       .eq("status", "pending")
       .select("id");
@@ -141,7 +144,63 @@ router.post("/:id/approve", async (req: Request, res: Response) => {
       return;
     }
 
-    if (purpose === "spin") {
+    if (purpose === "investment") {
+      // Investment submissions carry the pending investment ID in admin_note.
+      // Activate only that exact pending record so approving one plan cannot
+      // accidentally activate another plan for the same user.
+      const match = adminNote?.match(/investment_id=(\d+)/);
+      const investmentId = match ? Number(match[1]) : 0;
+      if (!investmentId) {
+        await supabase.from("eversend_verifications").update({ status: "pending" }).eq("id", id).eq("status", "approved");
+        res.status(422).json({ error: "ValidationError", message: "Investment payment is missing its pending investment reference." });
+        return;
+      }
+
+      const now = new Date();
+      const nextCredit = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+      const { data: updatedInvestments, error: investmentError } = await supabase
+        .from("user_investments")
+        .update({
+          status: "active",
+          start_date: now.toISOString(),
+          next_credit_at: nextCredit,
+          updated_at: now.toISOString(),
+        })
+        .eq("id", investmentId)
+        .eq("user_id", userId)
+        .eq("status", "pending")
+        .select("id");
+
+      if (investmentError) {
+        await supabase.from("eversend_verifications").update({ status: "pending" }).eq("id", id).eq("status", "approved");
+        throw investmentError;
+      }
+      if (!updatedInvestments || updatedInvestments.length === 0) {
+        // This is either a stale/invalid verification or a duplicate approval.
+        // Restore the verification so an administrator can inspect it rather
+        // than leaving an apparently approved payment with no active plan.
+        await supabase.from("eversend_verifications").update({ status: "pending" }).eq("id", id).eq("status", "approved");
+        res.status(409).json({ error: "Conflict", message: "The referenced investment is no longer pending. Refresh and review the payment." });
+        return;
+      }
+
+      const { error: txError } = await supabase.from("transactions").insert({
+        user_id: userId,
+        type: "investment",
+        amount,
+        status: "completed",
+        description: "Investment payment verified by admin",
+      });
+      if (txError) {
+        await supabase.from("user_investments").update({ status: "pending", start_date: null, next_credit_at: null, updated_at: new Date().toISOString() }).eq("id", investmentId).eq("status", "active");
+        await supabase.from("eversend_verifications").update({ status: "pending" }).eq("id", id).eq("status", "approved");
+        throw txError;
+      }
+
+      await logAdminAction(req.session.adminUsername!, "approve_verification", "eversend_verification", id, { userId, amount, type: "investment", investmentId });
+      res.json({ message: "Verification approved and investment activated" });
+
+    } else if (purpose === "spin") {
       // ── Spin balance top-up ───────────────────────────────────────────────
       // Fetch current spin_balance, increment it
       const { data: wallets } = await supabase

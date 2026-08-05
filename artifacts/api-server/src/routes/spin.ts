@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { initiateSTKPush } from "../lib/payhero";
 import { spinEventBus } from "../lib/spin-events";
+import { getKenyaAutomaticPaymentProvider } from "../lib/appSettings";
 
 const router = Router();
 
@@ -263,8 +264,17 @@ router.post("/bet", async (req: Request, res: Response) => {
 // POST /api/spin/deposit/kenya — M-Pesa STK push (Kenya only)
 router.post("/deposit/kenya", async (req: Request, res: Response) => {
   try {
+    if (await getKenyaAutomaticPaymentProvider() !== "PAYHERO") {
+      res.status(409).json({ error: "PaymentProviderChanged", message: "PayHero is currently disabled for Kenya. Please use Hashback or manual M-Pesa payment.", provider: "HASHBACK" });
+      return;
+    }
     const userId = req.session.userId!;
     const { phoneNumber, amount } = req.body;
+    const country = await getUserCountry(userId);
+    if (country.toUpperCase() !== "KE") {
+      res.status(400).json({ message: "PayHero Kenya payments are available for Kenya users only." });
+      return;
+    }
 
     if (!phoneNumber || !amount || Number(amount) < 1) {
       res.status(400).json({ message: "Phone number and amount are required" });

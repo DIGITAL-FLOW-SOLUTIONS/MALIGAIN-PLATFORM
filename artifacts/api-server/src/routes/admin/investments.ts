@@ -160,12 +160,16 @@ router.post("/payments/:id/approve", async (req, res) => {
 
     const { data: verif, error: verifErr } = await supabase
       .from("eversend_verifications")
-      .select("user_id, admin_note, amount_paid, currency")
+      .select("user_id, admin_note, amount_paid, currency, status")
       .eq("id", id)
       .single();
 
     if (verifErr || !verif) { res.status(404).json({ message: "Verification not found" }); return; }
     const v = verif as Record<string, unknown>;
+    if (v["status"] !== "pending") {
+      res.status(409).json({ message: "This payment has already been processed." });
+      return;
+    }
 
     // Parse investment_id from admin_note
     const adminNote  = String(v["admin_note"] ?? "");
@@ -181,15 +185,28 @@ router.post("/payments/:id/approve", async (req, res) => {
     const nextCredit = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
 
     // Activate the investment
-    const { error: invErr } = await supabase.from("user_investments").update({
+    const { data: updatedInvestments, error: invErr } = await supabase.from("user_investments").update({
       status: "active",
       start_date: now.toISOString(),
       next_credit_at: nextCredit,
       last_credited_at: null,
       updated_at: now.toISOString(),
-    }).eq("id", investmentId).eq("status", "pending");
+    }).eq("id", investmentId).eq("user_id", v["user_id"]).eq("status", "pending").select("id");
 
     if (invErr) throw invErr;
+    if (!updatedInvestments || updatedInvestments.length === 0) {
+      res.status(409).json({ message: "The investment is no longer pending." });
+      return;
+    }
+
+    const { error: txErr } = await supabase.from("transactions").insert({
+      user_id: v["user_id"], type: "investment", amount: num(v["amount_paid"]), status: "completed",
+      description: "Investment payment verified by admin",
+    });
+    if (txErr) {
+      await supabase.from("user_investments").update({ status: "pending", start_date: null, next_credit_at: null, last_credited_at: null, updated_at: new Date().toISOString() }).eq("id", investmentId).eq("status", "active");
+      throw txErr;
+    }
 
     // Mark verification approved
     await supabase.from("eversend_verifications").update({

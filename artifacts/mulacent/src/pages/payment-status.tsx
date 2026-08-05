@@ -112,6 +112,10 @@ export default function PaymentStatus() {
       ? "/activate"
       : type === "pay-client"
       ? "/pay-client"
+      : type === "investment"
+      ? "/investments/current"
+      : type === "spin"
+      ? "/spin-bet"
       : "/recharge";
 
   const isSuccess = status === "completed";

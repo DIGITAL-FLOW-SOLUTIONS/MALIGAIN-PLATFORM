@@ -5,7 +5,7 @@ import { useLocation } from "wouter";
 import { formatCurrency, getCurrencyInfo } from "@/lib/utils";
 import {
   TrendingUp, Star, ChevronRight, Clock, DollarSign, BarChart2,
-  CheckCircle, Loader2, ExternalLink, Phone
+  CheckCircle, Loader2, ExternalLink, Phone, ShieldCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,14 +23,31 @@ interface InvestmentPlan {
   country: string;
 }
 
+declare global {
+  interface Window {
+    HashPay?: {
+      setup: (options: {
+        account: string;
+        amount: number;
+        reference: string;
+        onSuccess: (transaction: { amount?: number; receipt?: string; status?: string }) => void;
+        onCancel: () => void;
+        onError: (error: unknown) => void;
+      }) => { openIframe: () => void };
+    };
+  }
+}
+
 /* ── country helpers (mirrors activate.tsx) ───────────────────────────── */
-const EVERSEND_COUNTRIES = new Set(["CM", "GH", "NG", "BI"]);
 const MOBILE_COUNTRIES   = new Set(["UG", "ZM", "TZ", "CG", "MW", "BW", "SS", "RW"]);
 
-function getPaymentType(country: string): "kenya" | "mobile" | "eversend" {
-  if (country === "KE") return "kenya";
+type PaymentType = "payhero" | "hashback" | "soleaspay" | "mobile" | "manual";
+
+function getPaymentType(country: string, kenyaProvider: "PAYHERO" | "HASHBACK"): PaymentType {
+  if (country === "KE") return kenyaProvider === "HASHBACK" ? "hashback" : "payhero";
+  if (country === "CM") return "soleaspay";
   if (MOBILE_COUNTRIES.has(country)) return "mobile";
-  return "eversend";
+  return "manual";
 }
 
 const MOBILE_HINTS: Record<string, { methods: string[]; hint: string }> = {
@@ -53,7 +70,10 @@ export default function Investments() {
   const [, navigate] = useLocation();
 
   const country     = user?.country ?? "KE";
-  const paymentType = getPaymentType(country);
+  const [kenyaProvider, setKenyaProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
+  const configuredPaymentType = getPaymentType(country, kenyaProvider);
+  const [manualFallback, setManualFallback] = useState(false);
+  const paymentType: PaymentType = manualFallback ? "manual" : configuredPaymentType;
   const fmt         = (n: number) => formatCurrency(n, country);
 
   const [plans, setPlans]           = useState<InvestmentPlan[]>([]);
@@ -68,20 +88,34 @@ export default function Investments() {
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [screenshotMime, setScreenshotMime] = useState("image/png");
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND);
+  const [kenyaTill, setKenyaTill] = useState("");
+  const [kenyaBusiness, setKenyaBusiness] = useState("");
+  const [soleasService, setSoleasService] = useState<1 | 2>(1);
 
   useEffect(() => {
+    setManualFallback(false);
     fetch(`${import.meta.env.BASE_URL}api/investments/plans`, { credentials: "include" })
       .then(r => r.json())
       .then(d => { setPlans(d.plans ?? []); setLoading(false); })
       .catch(() => setLoading(false));
 
-    if (paymentType === "eversend") {
+    if (country === "KE") {
+      fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, { credentials: "include" })
+        .then(r => r.json())
+        .then(d => {
+          setKenyaProvider(d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO");
+          setKenyaTill(d.tillNumber ?? "");
+          setKenyaBusiness(d.businessName ?? "");
+        })
+        .catch(() => setKenyaProvider("PAYHERO"));
+    }
+    if (country === "CM" || paymentType === "manual") {
       fetch(`${import.meta.env.BASE_URL}api/settings/eversend-link`, { credentials: "include" })
         .then(r => r.json())
         .then(d => { if (d.eversendLink) setEversendLink(d.eversendLink); })
         .catch(() => {});
     }
-  }, [paymentType]);
+  }, [configuredPaymentType, country]);
 
   const filtered = plans.filter(p => p.category === tab);
 
@@ -98,7 +132,7 @@ export default function Investments() {
     if (!selected) return;
     setSubmitting(true);
     try {
-      if (paymentType === "kenya") {
+      if (paymentType === "payhero") {
         if (!phone.trim()) { toast({ title: "Enter your M-PESA phone number", variant: "destructive" }); return; }
         const res = await fetch(`${import.meta.env.BASE_URL}api/investments/${selected.id}/pay/kenya`, {
           method: "POST", credentials: "include",
@@ -108,6 +142,63 @@ export default function Investments() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
         navigate(`/payment-status?type=investment&txn_id=${data.transactionId ?? ""}&checkout_id=${encodeURIComponent(data.checkoutRequestId ?? "")}`);
+      } else if (paymentType === "hashback") {
+        const setupResponse = await fetch(`${import.meta.env.BASE_URL}api/hashback/investment`, {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ planId: selected.id }),
+        });
+        const setup = await setupResponse.json() as { accountId?: string; amount?: number; reference?: string; message?: string };
+        if (!setupResponse.ok || !setup.accountId || !setup.amount || !setup.reference) {
+          throw new Error(setup.message ?? "Hashback payment is unavailable.");
+        }
+        if (!window.HashPay) {
+          await new Promise<void>((resolve, reject) => {
+            const existing = document.querySelector<HTMLScriptElement>('script[data-hashpay="true"]');
+            if (existing) {
+              existing.addEventListener("load", () => resolve(), { once: true });
+              existing.addEventListener("error", () => reject(new Error("Unable to load Hashback payment.")), { once: true });
+              return;
+            }
+            const script = document.createElement("script");
+            script.src = "https://pay.hashback.co.ke/hashpay.js";
+            script.async = true;
+            script.dataset.hashpay = "true";
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error("Unable to load Hashback payment."));
+            document.head.appendChild(script);
+          });
+        }
+        if (!window.HashPay) throw new Error("Hashback payment could not be initialized.");
+        window.HashPay.setup({
+          account: setup.accountId,
+          amount: setup.amount,
+          reference: setup.reference,
+          onSuccess: transaction => {
+            if (Number(transaction.amount) !== Number(setup.amount)) {
+              toast({ title: "Payment Amount Mismatch", description: "The payment amount could not be verified.", variant: "destructive" });
+              setSubmitting(false);
+              return;
+            }
+            navigate(`/payment-status?type=investment&provider=hashback&reference=${encodeURIComponent(setup.reference!)}`);
+          },
+          onCancel: () => setSubmitting(false),
+          onError: () => {
+            toast({ title: "Hashback Payment Failed", description: "Please try again or use manual payment.", variant: "destructive" });
+            setSubmitting(false);
+          },
+        }).openIframe();
+        return;
+      } else if (paymentType === "soleaspay") {
+        if (!phone.trim()) { toast({ title: "Enter your Cameroon mobile-money number", variant: "destructive" }); return; }
+        const res = await fetch(`${import.meta.env.BASE_URL}api/soleaspay/investment`, {
+          method: "POST", credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ planId: selected.id, phoneNumber: phone.trim(), service: soleasService }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        navigate(`/payment-status?type=investment&provider=soleaspay&order_id=${encodeURIComponent(data.orderId ?? "")}&service=${soleasService}`);
       } else if (paymentType === "mobile") {
         if (!phone.trim() || !payMethod) { toast({ title: "Enter phone and select payment method", variant: "destructive" }); return; }
         const res = await fetch(`${import.meta.env.BASE_URL}api/investments/${selected.id}/pay/mobile`, {
@@ -121,7 +212,7 @@ export default function Investments() {
         setSelected(null);
         navigate("/investments/current");
       } else {
-        // eversend — needs screenshot
+        // Manual payment (Eversend or Kenya M-Pesa Till) — needs proof.
         if (!screenshot) { toast({ title: "Upload payment screenshot", variant: "destructive" }); return; }
         if (!phone.trim()) { toast({ title: "Enter your phone number", variant: "destructive" }); return; }
         const res = await fetch(`${import.meta.env.BASE_URL}api/investments/${selected.id}/pay/manual`, {
@@ -212,6 +303,13 @@ export default function Investments() {
           screenshot={screenshot}
           handleFileChange={handleFileChange}
           eversendLink={eversendLink}
+           kenyaTill={kenyaTill}
+           kenyaBusiness={kenyaBusiness}
+           soleasService={soleasService}
+           setSoleasService={setSoleasService}
+           canUseManualFallback={country === "KE" || country === "CM"}
+           onUseManual={() => setManualFallback(true)}
+           onUseAutomatic={() => setManualFallback(false)}
           mobileHints={MOBILE_HINTS[country]}
           submitting={submitting}
           onPay={handlePay}
@@ -287,11 +385,13 @@ function PlanCard({
 /* ── Payment Modal ────────────────────────────────────────────────────── */
 function PaymentModal({
   plan, fmt, paymentType, country, phone, setPhone, payMethod, setPayMethod,
-  screenshot, handleFileChange, eversendLink, mobileHints, submitting, onPay, onClose,
+  screenshot, handleFileChange, eversendLink, kenyaTill, kenyaBusiness, soleasService,
+  setSoleasService, canUseManualFallback, onUseManual, onUseAutomatic,
+  mobileHints, submitting, onPay, onClose,
 }: {
   plan: InvestmentPlan;
   fmt: (n: number) => string;
-  paymentType: "kenya" | "mobile" | "eversend";
+  paymentType: PaymentType;
   country: string;
   phone: string;
   setPhone: (v: string) => void;
@@ -300,6 +400,13 @@ function PaymentModal({
   screenshot: string | null;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   eversendLink: string;
+  kenyaTill: string;
+  kenyaBusiness: string;
+  soleasService: 1 | 2;
+  setSoleasService: (value: 1 | 2) => void;
+  canUseManualFallback: boolean;
+  onUseManual: () => void;
+  onUseAutomatic: () => void;
   mobileHints: { methods: string[]; hint: string } | undefined;
   submitting: boolean;
   onPay: () => void;
@@ -330,7 +437,7 @@ function PaymentModal({
 
         {/* Payment Form */}
         <div className="p-5 space-y-4">
-          {paymentType === "kenya" && (
+          {paymentType === "payhero" && (
             <>
               <p className="text-sm font-semibold text-foreground">Pay via M-PESA</p>
               <p className="text-xs text-muted-foreground -mt-2">An STK push will be sent to your phone</p>
@@ -341,6 +448,31 @@ function PaymentModal({
                   placeholder="07XXXXXXXX"
                   className="w-full text-center text-foreground text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
+              </div>
+            </>
+          )}
+
+          {paymentType === "hashback" && (
+            <>
+              <p className="text-sm font-semibold text-foreground">Pay via Hashback M-Pesa</p>
+              <p className="text-xs text-muted-foreground -mt-2">A secure Hashback payment window will open</p>
+            </>
+          )}
+
+          {paymentType === "soleaspay" && (
+            <>
+              <p className="text-sm font-semibold text-foreground">Pay via Cameroon Mobile Money</p>
+              <p className="text-xs text-muted-foreground -mt-2">Confirm the payment request on your MTN or Orange phone</p>
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">Cameroon Mobile-Money Number</label>
+                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="6XXXXXXXX" className="w-full text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1.5">Payment Network</label>
+                <select value={soleasService} onChange={e => setSoleasService(Number(e.target.value) === 2 ? 2 : 1)} className="w-full text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary">
+                  <option value="1">MTN Mobile Money</option>
+                  <option value="2">Orange Money</option>
+                </select>
               </div>
             </>
           )}
@@ -367,16 +499,22 @@ function PaymentModal({
             </>
           )}
 
-          {paymentType === "eversend" && (
+          {paymentType === "manual" && (
             <>
-              <p className="text-sm font-semibold text-foreground">Pay via Eversend</p>
+              <p className="text-sm font-semibold text-foreground">{country === "KE" ? "Manual M-Pesa Till Payment" : "Pay via Eversend"}</p>
               <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-3 text-xs text-blue-800 dark:text-blue-300">
-                <p>Send <strong>{fmt(plan.depositAmount)}</strong> via Eversend, take a screenshot, and upload it below.</p>
+                {country === "KE" ? (
+                  <p>Send <strong>{fmt(plan.depositAmount)}</strong> to Till <strong>{kenyaTill || "the configured M-Pesa Till"}</strong>{kenyaBusiness ? ` (${kenyaBusiness})` : ""}, then upload your payment proof.</p>
+                ) : (
+                  <p>Send <strong>{fmt(plan.depositAmount)}</strong> via Eversend, take a screenshot, and upload it below.</p>
+                )}
               </div>
-              <a href={eversendLink} target="_blank" rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-colors">
-                <ExternalLink className="w-4 h-4" />Open Eversend Link
-              </a>
+              {country !== "KE" && (
+                <a href={eversendLink} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-colors">
+                  <ExternalLink className="w-4 h-4" />Open Eversend Link
+                </a>
+              )}
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">Your Phone Number</label>
                 <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Your phone" className="w-full text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary" />
@@ -390,6 +528,17 @@ function PaymentModal({
                 </label>
               </div>
             </>
+          )}
+
+          {canUseManualFallback && paymentType !== "manual" && (
+            <button type="button" onClick={onUseManual} className="w-full py-2.5 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/40">
+              {country === "KE" ? "Use manual M-Pesa Till instead" : "Use manual Eversend instead"}
+            </button>
+          )}
+          {canUseManualFallback && paymentType === "manual" && (
+            <button type="button" onClick={onUseAutomatic} className="w-full py-2.5 rounded-xl border border-primary/30 text-xs font-semibold text-primary hover:bg-primary/5">
+              Use automatic payment instead
+            </button>
           )}
 
           <button

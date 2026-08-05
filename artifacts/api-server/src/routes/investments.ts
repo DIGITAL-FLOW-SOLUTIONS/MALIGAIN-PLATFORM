@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { initiateSTKPush } from "../lib/payhero";
 import { logger } from "../lib/logger";
+import { getKenyaAutomaticPaymentProvider } from "../lib/appSettings";
 
 const router = Router();
 router.use(requireAuth);
@@ -103,7 +104,12 @@ router.get("/my", async (req: Request, res: Response) => {
 // ── POST /api/investments/:planId/pay/kenya ───────────────────────────────────
 // Initiates PayHero STK push for Kenyan users
 router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
+  let investmentId: number | null = null;
   try {
+    if (await getKenyaAutomaticPaymentProvider() !== "PAYHERO") {
+      res.status(409).json({ error: "PaymentProviderChanged", message: "PayHero is currently disabled for Kenya. Please use Hashback or manual M-Pesa payment.", provider: "HASHBACK" });
+      return;
+    }
     const userId   = req.session.userId!;
     const planId   = parseInt(String(req.params["planId"]));
     const { phoneNumber } = req.body;
@@ -121,6 +127,11 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
       return;
     }
     const plan = planData as Record<string, unknown>;
+    const { data: userData } = await supabase.from("users").select("country").eq("id", userId).single();
+    if (String((userData as Record<string, unknown> | null)?.["country"] ?? "").toUpperCase() !== "KE") {
+      res.status(400).json({ message: "PayHero Kenya payments are available for Kenya users only." });
+      return;
+    }
 
     // Create pending investment record
     const { data: inv, error: invErr } = await supabase
@@ -142,7 +153,7 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
       .single();
 
     if (invErr || !inv) throw invErr ?? new Error("Failed to create investment");
-    const investmentId = (inv as Record<string, unknown>)["id"];
+    investmentId = Number((inv as Record<string, unknown>)["id"]);
 
     const amount = num(plan["deposit_amount"]);
     const externalRef = `MUL-invest-${userId}-${investmentId}-${Date.now()}`;
@@ -178,6 +189,13 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
       message: "STK push sent",
     });
   } catch (err) {
+    if (investmentId) {
+      await supabase
+        .from("user_investments")
+        .update({ status: "cancelled" })
+        .eq("id", investmentId)
+        .eq("status", "pending");
+    }
     req.log.error({ err }, "Investment Kenya pay error");
     res.status(500).json({ message: "Failed to initiate payment" });
   }
@@ -186,6 +204,7 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
 // ── POST /api/investments/:planId/pay/manual ──────────────────────────────────
 // Manual payment with screenshot (Cameroon, Ghana, Nigeria, Burundi)
 router.post("/:planId/pay/manual", async (req: Request, res: Response) => {
+  let investmentId: number | null = null;
   try {
     const userId = req.session.userId!;
     const planId = parseInt(String(req.params["planId"]));
@@ -243,19 +262,27 @@ router.post("/:planId/pay/manual", async (req: Request, res: Response) => {
       status: "pending",
     }).select("id").single();
 
-    const investmentId = (inv as Record<string, unknown>)?.["id"];
+    investmentId = Number((inv as Record<string, unknown>)?.["id"]);
 
     // Create eversend_verifications record with purpose tag
-    await supabase.from("eversend_verifications").insert({
+    const { error: verificationError } = await supabase.from("eversend_verifications").insert({
       user_id: userId, email, phone: phone.trim(),
       screenshot_url: urlData.publicUrl,
       amount_paid: parseFloat(amountPaid),
       currency, status: "pending",
       admin_note: `INVESTMENT | plan_id=${planId} | investment_id=${investmentId} | plan=${String(plan["name"])}`,
     });
+    if (verificationError) throw verificationError;
 
     res.json({ message: "Payment submitted for review. Your investment will be activated within 24 hours.", investmentId });
   } catch (err) {
+    if (investmentId) {
+      await supabase
+        .from("user_investments")
+        .update({ status: "cancelled" })
+        .eq("id", investmentId)
+        .eq("status", "pending");
+    }
     req.log.error({ err }, "Investment manual pay error");
     res.status(500).json({ message: "Failed to submit payment" });
   }
@@ -264,6 +291,7 @@ router.post("/:planId/pay/manual", async (req: Request, res: Response) => {
 // ── POST /api/investments/:planId/pay/mobile ──────────────────────────────────
 // Manual mobile money (Uganda, Tanzania, Zambia, etc.) — no screenshot needed
 router.post("/:planId/pay/mobile", async (req: Request, res: Response) => {
+  let investmentId: number | null = null;
   try {
     const userId = req.session.userId!;
     const planId = parseInt(String(req.params["planId"]));
@@ -302,16 +330,24 @@ router.post("/:planId/pay/mobile", async (req: Request, res: Response) => {
       status: "pending",
     }).select("id").single();
 
-    const investmentId = (inv as Record<string, unknown>)?.["id"];
+    investmentId = Number((inv as Record<string, unknown>)?.["id"]);
 
-    await supabase.from("eversend_verifications").insert({
+    const { error: verificationError } = await supabase.from("eversend_verifications").insert({
       user_id: userId, email, phone: phone.trim(),
       screenshot_url: "", amount_paid: num(plan["deposit_amount"]), currency, status: "pending",
       admin_note: `INVESTMENT | plan_id=${planId} | investment_id=${investmentId} | plan=${String(plan["name"])} | payment_method=${paymentMethod}`,
     });
+    if (verificationError) throw verificationError;
 
     res.json({ message: "Payment submitted for review. Your investment will be activated shortly.", investmentId });
   } catch (err) {
+    if (investmentId) {
+      await supabase
+        .from("user_investments")
+        .update({ status: "cancelled" })
+        .eq("id", investmentId)
+        .eq("status", "pending");
+    }
     req.log.error({ err }, "Investment mobile pay error");
     res.status(500).json({ message: "Failed to submit payment" });
   }
