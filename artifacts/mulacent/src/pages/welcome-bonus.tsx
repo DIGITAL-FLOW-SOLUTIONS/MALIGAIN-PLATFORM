@@ -286,10 +286,6 @@ export default function WelcomeBonus() {
         </div>
       )}
 
-      <p className="text-center text-xs text-muted-foreground">
-        {currency.code} rewards are subject to the active bonus settings for
-        your country.
-      </p>
     </div>
   );
 }
