@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useGetTransactions } from "@workspace/api-client-react";
-import { formatDate } from "@/lib/utils";
 import { useCurrency } from "@/hooks/use-currency";
 import { useLocation } from "wouter";
 import {
@@ -178,7 +177,6 @@ export default function History() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <p className="text-foreground font-bold text-sm capitalize leading-tight">{typeMeta.label}</p>
-                    <p className="text-muted-foreground text-[11px] mt-0.5 truncate">{tx.description || formatDate(tx.createdAt)}</p>
                   </div>
 
                   {/* Status + Amount */}
