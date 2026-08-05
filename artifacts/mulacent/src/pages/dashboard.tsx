@@ -175,7 +175,7 @@ export default function Dashboard() {
       color: "bg-amber-400",
     },
     {
-      label: "Withdrawn",
+      label: "Withdrawals",
       value: fmt(withdrawn),
       badge: "+10%",
       icon: ArrowDownCircle,
@@ -191,7 +191,7 @@ export default function Dashboard() {
       color: "bg-emerald-500",
     },
     {
-      label: "My Investments",
+      label: "Investments",
       value: fmt(investBalance),
       badge: "daily",
       icon: TrendingUp,
@@ -377,7 +377,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── 2. FOUR STAT CARDS ─────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         {STAT_CARDS.map(({ label, value, badge, icon: Icon, href, color }) => (
           <div
             key={label}
@@ -420,7 +420,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── 3. WELCOME BONUS ───────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-card to-orange-50 shadow-sm dark:border-amber-900/40 dark:from-amber-950/30 dark:to-orange-950/20">
+      <div className="w-full relative overflow-hidden rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 via-card to-orange-50 shadow-sm dark:border-amber-900/40 dark:from-amber-950/30 dark:to-orange-950/20">
         <div className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-amber-300/20 blur-2xl pointer-events-none" />
         <div className="relative flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex items-start gap-3">
