@@ -85,8 +85,8 @@ router.post("/", async (req, res) => {
     const userId = req.session.userId!;
     const { phone, screenshotBase64, screenshotMime, amountPaid } = req.body;
 
-    if (!phone || !screenshotBase64 || !amountPaid) {
-      res.status(400).json({ message: "Phone, screenshot, and amount are required." });
+    if (!phone || !amountPaid) {
+      res.status(400).json({ message: "Phone and amount are required." });
       return;
     }
 
@@ -124,26 +124,33 @@ router.post("/", async (req, res) => {
     const email = userData.email as string;
     const currency = getCurrencyForCountry(userData.country as string | null);
 
-    const base64Data = screenshotBase64.replace(/^data:image\/\w+;base64,/, "");
-    const buffer = Buffer.from(base64Data, "base64");
-    const mime = screenshotMime || "image/png";
-    const ext = mime.split("/")[1] || "png";
-    const fileName = `verifications/${userId}_${Date.now()}.${ext}`;
+    let screenshotUrl = "";
 
-    const { error: uploadError } = await supabase.storage
-      .from("verifications")
-      .upload(fileName, buffer, { contentType: mime, upsert: false });
+    // The screenshot is optional. Only access Supabase Storage when the user
+    // actually provided an image, so verification submissions do not depend on
+    // the storage bucket being available.
+    if (screenshotBase64) {
+      const base64Data = screenshotBase64.replace(/^data:image\/\w+;base64,/, "");
+      const buffer = Buffer.from(base64Data, "base64");
+      const mime = screenshotMime || "image/png";
+      const ext = mime.split("/")[1] || "png";
+      const fileName = `verifications/${userId}_${Date.now()}.${ext}`;
 
-    if (uploadError) {
-      res.status(500).json({ message: `Failed to upload screenshot: ${uploadError.message}` });
-      return;
+      const { error: uploadError } = await supabase.storage
+        .from("verifications")
+        .upload(fileName, buffer, { contentType: mime, upsert: false });
+
+      if (uploadError) {
+        res.status(500).json({ message: `Failed to upload screenshot: ${uploadError.message}` });
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from("verifications")
+        .getPublicUrl(fileName);
+
+      screenshotUrl = publicUrlData.publicUrl;
     }
-
-    const { data: publicUrlData } = supabase.storage
-      .from("verifications")
-      .getPublicUrl(fileName);
-
-    const screenshotUrl = publicUrlData.publicUrl;
 
     const { error: insertError } = await supabase
       .from("eversend_verifications")

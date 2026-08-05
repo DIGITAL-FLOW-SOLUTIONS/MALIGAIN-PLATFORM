@@ -120,10 +120,6 @@ export default function Verify() {
       toast({ title: "Phone Required", description: "Please enter your phone number.", variant: "destructive" });
       return;
     }
-    if (!screenshotFile || !screenshotPreview) {
-      toast({ title: "Screenshot Required", description: "Please upload your payment screenshot.", variant: "destructive" });
-      return;
-    }
     if (!amountPaid || parseFloat(amountPaid) <= 0) {
       toast({ title: "Amount Required", description: "Please enter the amount you paid.", variant: "destructive" });
       return;
@@ -138,7 +134,7 @@ export default function Verify() {
         body: JSON.stringify({
           phone: phone.trim(),
           screenshotBase64: screenshotPreview,
-          screenshotMime: screenshotFile.type,
+          screenshotMime: screenshotFile?.type ?? null,
           amountPaid,
         }),
       });
@@ -179,7 +175,7 @@ export default function Verify() {
              {user?.country === "KE" ? "M-Pesa Payment Verification" : "Payment Verification"}
           </h1>
           <p className="relative z-10 text-white/70 text-sm mt-1.5">
-            Upload payment screenshot for verification
+            Submit your payment details for verification
           </p>
         </div>
 
@@ -255,7 +251,7 @@ export default function Verify() {
 
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-primary mb-1.5">
-                Payment Screenshot
+                Payment Screenshot <span className="font-semibold normal-case tracking-normal text-muted-foreground">(optional)</span>
               </label>
               <input
                 ref={fileInputRef}
@@ -307,7 +303,7 @@ export default function Verify() {
               ) : (
                 <Upload className="w-4 h-4" />
               )}
-              {loading ? "Uploading..." : "Upload & Verify"}
+              {loading ? "Submitting..." : screenshotFile ? "Upload & Verify" : "Submit for Verification"}
             </button>
           </form>
 
