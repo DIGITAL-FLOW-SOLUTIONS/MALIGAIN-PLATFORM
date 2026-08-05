@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [_, setLocation] = useLocation();
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading, isError } = useGetCurrentUser({
+  const { data: user, isLoading } = useGetCurrentUser({
     query: {
       queryKey: getGetCurrentUserQueryKey(),
       retry: false,
@@ -78,7 +78,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user: isError ? null : user || null,
+        // Prefer the cached user whenever one exists. An initial /me request
+        // can legitimately return 401 before login; React Query may retain
+        // that error state briefly even after a successful login writes the
+        // authenticated user into the cache.
+        user: user ?? null,
         isLoading,
         login,
         register,
