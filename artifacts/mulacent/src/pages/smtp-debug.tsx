@@ -9,10 +9,10 @@ interface LogEntry {
 }
 
 interface Config {
-  host: string;
-  port: string;
-  user: string;
-  passSet: boolean;
+  provider: string;
+  from: string;
+  apiKeySet: boolean;
+  apiKeySource: string | null;
   appUrl: string;
 }
 
@@ -120,18 +120,17 @@ export default function SmtpDebug() {
           ) : config ? (
             <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
               {[
-                { key: "Host",      val: config.host },
-                { key: "Port",      val: config.port },
-                { key: "User",      val: config.user },
-                { key: "Password",  val: config.passSet ? "✓ Set" : "✗ NOT SET — emails will fail" },
-                { key: "APP URL",   val: config.appUrl },
+                { key: "Provider",   val: config.provider },
+                { key: "From",       val: config.from },
+                { key: "API Key",    val: config.apiKeySet ? `✓ Set${config.apiKeySource ? ` (${config.apiKeySource})` : ""}` : "✗ NOT SET — emails will fail" },
+                { key: "APP URL",    val: config.appUrl },
               ].map(({ key, val }) => (
                 <div key={key} className="flex items-center gap-2">
                   <span className="text-slate-600 text-[11px] font-mono w-20 flex-shrink-0">{key}</span>
                   <span className={cn(
                     "text-[12px] font-mono truncate",
-                    key === "Password" && !config.passSet ? "text-red-400 font-bold" :
-                    key === "Password" ? "text-emerald-400" : "text-slate-300"
+                    key === "API Key" && !config.apiKeySet ? "text-red-400 font-bold" :
+                    key === "API Key" ? "text-emerald-400" : "text-slate-300"
                   )}>{val}</span>
                 </div>
               ))}
@@ -144,10 +143,10 @@ export default function SmtpDebug() {
           {config && (
             <div className={cn(
               "flex items-center gap-2 px-4 py-2.5 border-t border-white/5 text-xs font-semibold",
-              config.passSet ? "text-emerald-400" : "text-red-400"
+              config.apiKeySet ? "text-emerald-400" : "text-red-400"
             )}>
-              {config.passSet ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
-              {config.passSet ? "Configuration looks complete — ready to test" : "SMTP_PASS is not set — set it in environment variables"}
+              {config.apiKeySet ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+              {config.apiKeySet ? "Resend configuration looks complete — ready to test" : "Resend API key is not set — set RESEND_API_KEY or SMTP_PASS in environment variables"}
             </div>
           )}
         </div>

@@ -5,12 +5,13 @@ const router = Router();
 
 // GET /api/smtp/config — return what config is loaded (no key value)
 router.get("/config", (_req, res) => {
-  const apiKey = process.env.RESEND_API_KEY ?? process.env.SMTP_PASS;
+  const apiKey = process.env.RESEND_API_KEY || process.env.SMTP_PASS;
   res.json({
     provider:  "Resend HTTP API",
     from:      process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@maligain.com",
     apiKeySet: !!apiKey,
     apiKeyLen: apiKey?.length ?? 0,
+    apiKeySource: process.env.RESEND_API_KEY ? "RESEND_API_KEY" : process.env.SMTP_PASS ? "SMTP_PASS" : null,
     appUrl:    process.env.APP_URL ?? "(not set — fallback: https://www.maligain.com)",
   });
 });
@@ -24,7 +25,7 @@ router.post("/test", async (req, res) => {
     logs.push({ ts: new Date().toISOString(), level, msg });
   }
 
-  const apiKey = process.env.RESEND_API_KEY ?? process.env.SMTP_PASS;
+  const apiKey = process.env.RESEND_API_KEY || process.env.SMTP_PASS;
   const fromAddr = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@maligain.com";
   const from = `MALIGAIN <${fromAddr}>`;
 

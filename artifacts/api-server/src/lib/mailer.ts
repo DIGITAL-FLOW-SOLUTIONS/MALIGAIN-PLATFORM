@@ -5,7 +5,7 @@ const FROM_ADDR = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@mal
 const FROM = `MALIGAIN <${FROM_ADDR}>`;
 
 function getResendClient(): Resend {
-  const apiKey = process.env.RESEND_API_KEY ?? process.env.SMTP_PASS;
+  const apiKey = process.env.RESEND_API_KEY || process.env.SMTP_PASS;
   if (!apiKey) throw new Error("No Resend API key set (RESEND_API_KEY or SMTP_PASS)");
   return new Resend(apiKey);
 }
