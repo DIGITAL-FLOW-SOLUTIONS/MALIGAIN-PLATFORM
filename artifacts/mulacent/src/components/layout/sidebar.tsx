@@ -23,7 +23,6 @@ import {
   Clapperboard,
   Megaphone,
   UserCircle,
-  Phone,
   LogOut,
   ChevronDown,
   ChevronRight,
@@ -90,7 +89,6 @@ const EARN_ITEMS: NavItem[] = [
 
 const SETTINGS_ITEMS: NavItem[] = [
   { icon: UserCircle, label: "Profile",    href: "/profile", color: "bg-secondary"  },
-  { icon: Phone,      label: "Contact us", href: "/contact",  color: "bg-slate-500"  },
 ];
 
 /* ─── shared row ──────────────────────────────────────────────── */
