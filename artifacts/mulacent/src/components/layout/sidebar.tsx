@@ -63,6 +63,7 @@ const TEAM_LEVELS: TeamLevel[] = [
 ];
 
 const TEAM_BOTTOM: NavItem[] = [
+  { icon: Gift, label: "Welcome Bonus", href: "/welcome-bonus", color: "bg-orange-500" },
   { icon: Gift, label: "Bonuses", href: "/bonus", color: "bg-amber-500" },
 ];
 

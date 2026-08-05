@@ -29,6 +29,7 @@ import Withdraw from "@/pages/withdraw";
 import Recharge from "@/pages/recharge";
 import History from "@/pages/history";
 import Bonus from "@/pages/bonus";
+import WelcomeBonus from "@/pages/welcome-bonus";
 import Tasks from "@/pages/tasks";
 import EarnFun from "@/pages/earn-fun";
 import PayClient from "@/pages/pay-client";
@@ -281,6 +282,7 @@ function Router() {
       <Route path="/recharge" component={() => <ProtectedRoute component={Recharge} />} />
       <Route path="/history" component={() => <ProtectedRoute component={History} />} />
       <Route path="/bonus" component={() => <ProtectedRoute component={Bonus} />} />
+      <Route path="/welcome-bonus" component={() => <ProtectedRoute component={WelcomeBonus} />} />
       <Route path="/surveys" component={() => <ProtectedRoute component={Tasks} />} />
       <Route path="/blogging" component={() => <ProtectedRoute component={Tasks} />} />
       <Route path="/watch" component={() => <ProtectedRoute component={Tasks} />} />
