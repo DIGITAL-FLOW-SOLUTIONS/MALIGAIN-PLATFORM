@@ -286,19 +286,6 @@ export default function Dashboard() {
             "linear-gradient(135deg, #3b5bdb 0%, #5b8dee 50%, #8b6ff5 100%)",
         }}
       >
-        {/* Large faint background brand text */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-          <span
-            className="font-black uppercase tracking-widest text-white/[0.06] whitespace-nowrap"
-            style={{
-              fontSize: "clamp(3rem, 12vw, 7rem)",
-              letterSpacing: "0.2em",
-            }}
-          >
-            MALIGAIN
-          </span>
-        </div>
-
         {/* Dot-grid pattern overlay */}
         <div
           className="absolute inset-0 pointer-events-none opacity-20"
