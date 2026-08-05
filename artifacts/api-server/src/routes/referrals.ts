@@ -120,8 +120,8 @@ router.get("/stats", async (req: Request, res: Response) => {
   try {
     const userId = req.session.userId!;
 
-    const { rows: userRows } = await pool.query<{ referral_code: string }>(
-      `SELECT referral_code FROM users WHERE id = $1 LIMIT 1`,
+    const { rows: userRows } = await pool.query<{ username: string; referral_code: string }>(
+      `SELECT username, referral_code FROM users WHERE id = $1 LIMIT 1`,
       [userId],
     );
 
@@ -130,7 +130,7 @@ router.get("/stats", async (req: Request, res: Response) => {
       return;
     }
 
-    const referralCode = userRows[0]!.referral_code;
+    const { username, referral_code: referralCode } = userRows[0]!;
 
     // Count all direct referrals with no row limit
     const { rows: referrals } = await pool.query<{ status: string; created_at: string }>(
@@ -160,7 +160,9 @@ router.get("/stats", async (req: Request, res: Response) => {
     const host = "https://www.maligain.com";
 
     res.json({
-      inviteLink: `${host}/register?ref=${referralCode}`,
+      // New links identify the referrer by their unique username. Keep
+      // referralCode in the response for existing clients/admin tooling.
+      inviteLink: `${host}/register?ref=${encodeURIComponent(username)}`,
       referralCode,
       totalInvited: referrals.length,
       totalActivated: activated,

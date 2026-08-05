@@ -55,8 +55,8 @@ export default function DownlinesLevelPage({ level, status }: Props) {
 
   const inviteLink =
     stats?.inviteLink ||
-    (user?.referralCode
-      ? `https://www.maligain.com/register?ref=${user.referralCode}`
+    (user?.username
+      ? `https://www.maligain.com/register?ref=${encodeURIComponent(user.username)}`
       : null);
 
   const handleCopy = () => {

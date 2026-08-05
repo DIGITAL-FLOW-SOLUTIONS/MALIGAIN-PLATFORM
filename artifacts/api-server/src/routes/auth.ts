@@ -36,14 +36,18 @@ function formatUser(user: Record<string, unknown>) {
 
 router.get("/referrer", async (req: Request, res: Response) => {
   try {
-    const code = String(req.query["code"] ?? "").trim();
-    if (!code) {
+    const ref = String(req.query["code"] ?? "").trim();
+    if (!ref) {
       res.json({ username: null });
       return;
     }
     const { rows } = await pool.query<{ username: string }>(
-      `SELECT username FROM users WHERE referral_code = $1 LIMIT 1`,
-      [code],
+      `SELECT username
+         FROM users
+        WHERE username = $1 OR referral_code = $1
+        ORDER BY CASE WHEN username = $1 THEN 0 ELSE 1 END
+        LIMIT 1`,
+      [ref],
     );
     res.json({ username: rows[0]?.username ?? null });
   } catch {
@@ -101,7 +105,7 @@ router.post("/register", async (req: Request, res: Response) => {
       password,
       phone,
       country,
-      referralCode: refCode,
+      referralCode: ref,
     } = req.body;
 
     if (!username || !email || !password) {
@@ -138,10 +142,14 @@ router.post("/register", async (req: Request, res: Response) => {
     }
 
     let referredById: number | null = null;
-    if (refCode) {
+    if (ref) {
       const { rows: referrer } = await pool.query<{ id: number }>(
-        `SELECT id FROM users WHERE referral_code = $1 LIMIT 1`,
-        [refCode],
+        `SELECT id
+           FROM users
+          WHERE username = $1 OR referral_code = $1
+          ORDER BY CASE WHEN username = $1 THEN 0 ELSE 1 END
+          LIMIT 1`,
+        [String(ref).trim()],
       );
       if (referrer.length > 0) {
         referredById = referrer[0]!.id;
