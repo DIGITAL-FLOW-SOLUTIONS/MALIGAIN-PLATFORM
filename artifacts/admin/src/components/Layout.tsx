@@ -30,14 +30,11 @@ function NavItem({ href, label, icon: Icon, collapsed, onNavigate }: { href: str
   
   const content = (
     <Link href={href} onClick={onNavigate} className={`
-      relative flex items-center h-10 px-3 transition-colors group cursor-pointer
-      ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}
+      relative mx-2 flex items-center h-10 px-3 rounded-md transition-colors group cursor-pointer
+      ${active ? "bg-[#4f39f6] text-white shadow-sm" : "text-slate-300 hover:bg-[#1d2638] hover:text-white"}
       ${collapsed ? "justify-center" : "gap-3"}
     `}>
-      {active && (
-        <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary shadow-[0_0_8px_rgba(0,229,255,0.6)]" />
-      )}
-      <Icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`} />
+      <Icon className={`h-[18px] w-[18px] shrink-0 ${active ? "text-white" : "text-slate-400 group-hover:text-white"}`} />
       {!collapsed && <span className="text-xs font-mono tracking-wide uppercase truncate mt-0.5">{label}</span>}
     </Link>
   );
@@ -48,7 +45,7 @@ function NavItem({ href, label, icon: Icon, collapsed, onNavigate }: { href: str
         <TooltipTrigger asChild>
           {content}
         </TooltipTrigger>
-        <TooltipContent side="right" className="font-mono text-[10px] uppercase tracking-widest bg-card border-border text-foreground rounded-none px-2 py-1 ml-1">
+        <TooltipContent side="right" className="font-mono text-[10px] uppercase tracking-widest bg-[#111827] border-[#293449] text-slate-200 rounded-md px-2 py-1 ml-1">
           {label}
         </TooltipContent>
       </Tooltip>
@@ -86,20 +83,20 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 bg-card border-r border-border flex flex-col transition-all duration-200 ease-in-out
+        fixed inset-y-0 left-0 z-50 bg-[#111827] border-r border-[#1f2937] flex flex-col transition-all duration-200 ease-in-out
         lg:relative lg:translate-x-0
         ${mobileOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0"}
         ${collapsed && !mobileOpen ? "lg:w-[56px]" : "lg:w-[220px]"}
       `}>
         {/* Brand */}
-        <div className={`flex items-center h-12 border-b border-border shrink-0 ${collapsed && !mobileOpen ? "justify-center px-0" : "px-4 gap-3"}`}>
-          <div className="h-7 w-7 bg-primary/10 border border-primary/50 flex items-center justify-center shrink-0 overflow-hidden">
+        <div className={`flex items-center h-12 border-b border-[#1f2937] shrink-0 ${collapsed && !mobileOpen ? "justify-center px-0" : "px-4 gap-3"}`}>
+          <div className="h-7 w-7 bg-[#4f39f6]/20 border border-[#6d5dfc]/60 flex items-center justify-center shrink-0 overflow-hidden">
             <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="MALIGAIN" className="h-full w-full object-contain" />
           </div>
           {(!collapsed || mobileOpen) && (
-            <span className="text-foreground font-bold font-mono tracking-widest text-xs uppercase mt-0.5 shadow-primary drop-shadow-[0_0_8px_rgba(0,229,255,0.3)]">MALIGAIN</span>
+            <span className="text-white font-bold font-mono tracking-widest text-xs uppercase mt-0.5">MALIGAIN</span>
           )}
-          <button className="ml-auto lg:hidden text-muted-foreground hover:text-foreground" onClick={() => setMobileOpen(false)}>
+          <button className="ml-auto lg:hidden text-slate-400 hover:text-white" onClick={() => setMobileOpen(false)}>
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -110,11 +107,11 @@ export default function Layout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="border-t border-border p-2 shrink-0">
+        <div className="border-t border-[#1f2937] p-2 shrink-0">
           {!mobileOpen && (
             <button 
               onClick={toggleCollapse}
-              className="hidden lg:flex w-full items-center justify-center h-8 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+              className="hidden lg:flex w-full items-center justify-center h-8 text-slate-400 hover:bg-[#1d2638] hover:text-white transition-colors rounded-md"
             >
               {collapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" /> : <PanelLeftClose className="h-[18px] w-[18px]" />}
             </button>
