@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { formatDate, amountFontClass } from "@/lib/utils";
 import {
   Search, Copy, Phone, MapPin, Calendar, Users,
-  UserCheck, UserX, TrendingUp, Award, Share2,
+  UserCheck, UserX, Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -71,8 +71,6 @@ export default function DownlinesLevelPage({ level, status }: Props) {
   const totalActive   = data?.active   ?? 0;
   const totalInactive = data?.inactive ?? 0;
   const totalCount    = data?.total    ?? 0;
-  const activeRate    = totalCount > 0 ? Math.round((totalActive / totalCount) * 100) : 0;
-  const totalRefs     = members.reduce((acc, m) => acc + (m.referralCount ?? 0), 0);
 
   /* ── Sister page href ─────────────────────────────────── */
   const sisterHref = `/team/level-${level}/${isActive ? "inactive" : "active"}`;
@@ -129,7 +127,7 @@ export default function DownlinesLevelPage({ level, status }: Props) {
           <p className="text-white/70 text-sm mb-5">{LEVEL_DESCRIPTIONS[level]}</p>
 
           {/* Stats row */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <div className="bg-black/20 border border-white/20 rounded-xl px-3 py-3 text-center">
               <p className={cn("text-white font-black leading-none", amountFontClass(String(isLoading ? "—" : (isActive ? totalActive : totalInactive)), "md"))}>
                 {isLoading ? "—" : (isActive ? totalActive : totalInactive)}
@@ -144,18 +142,12 @@ export default function DownlinesLevelPage({ level, status }: Props) {
               </p>
               <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Total L{level}</p>
             </div>
-            <div className="bg-black/20 border border-white/20 rounded-xl px-3 py-3 text-center">
-              <p className={cn("text-white font-black leading-none", amountFontClass(isLoading ? "—" : `${activeRate}%`, "md"))}>
-                {isLoading ? "—" : `${activeRate}%`}
-              </p>
-              <p className="text-white/50 text-[10px] uppercase tracking-widest mt-1.5">Active Rate</p>
-            </div>
           </div>
         </div>
       </div>
 
       {/* ── ANALYTICS STRIP ─────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {/* Total shown */}
         <div className="bg-card border border-border rounded-2xl p-4 shadow-sm">
           <div className="flex items-center justify-between mb-2">
@@ -196,33 +188,6 @@ export default function DownlinesLevelPage({ level, status }: Props) {
           <p className="text-muted-foreground text-[10px] mt-1.5">in this level</p>
         </div>
 
-        {/* Active rate */}
-        <div className="bg-card border border-border rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-muted-foreground text-[11px] font-semibold uppercase tracking-wide leading-tight">Active Rate</p>
-            <div className="w-7 h-7 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-3.5 h-3.5 text-amber-600" />
-            </div>
-          </div>
-          <p className={cn("text-amber-600 font-black leading-none", amountFontClass(isLoading ? "—" : `${activeRate}%`, "md"))}>
-            {isLoading ? "—" : `${activeRate}%`}
-          </p>
-          <p className="text-muted-foreground text-[10px] mt-1.5">activation</p>
-        </div>
-
-        {/* Sub-referrals */}
-        <div className="bg-card border border-border rounded-2xl p-4 shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-muted-foreground text-[11px] font-semibold uppercase tracking-wide leading-tight">Sub-Refs</p>
-            <div className="w-7 h-7 rounded-lg bg-violet-50 border border-violet-200 flex items-center justify-center flex-shrink-0">
-              <Award className="w-3.5 h-3.5 text-violet-600" />
-            </div>
-          </div>
-          <p className={cn("text-violet-600 font-black leading-none", amountFontClass(String(isLoading ? "—" : totalRefs), "md"))}>
-            {isLoading ? "—" : totalRefs}
-          </p>
-          <p className="text-muted-foreground text-[10px] mt-1.5">by this group</p>
-        </div>
       </div>
 
       {/* ── SWITCH + INVITE ──────────────────────────────────────── */}
