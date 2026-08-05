@@ -172,6 +172,7 @@ export default function Dashboard() {
       badge: "+42%",
       icon: Wallet,
       href: "/recharge",
+      color: "bg-amber-400",
     },
     {
       label: "Withdrawn",
@@ -179,6 +180,7 @@ export default function Dashboard() {
       badge: "+10%",
       icon: ArrowDownCircle,
       href: "/withdraw",
+      color: "bg-indigo-600",
     },
     {
       label: "Affiliate Earnings",
@@ -186,6 +188,7 @@ export default function Dashboard() {
       badge: "+27%",
       icon: Users,
       href: "/downlines",
+      color: "bg-emerald-500",
     },
     {
       label: "My Investments",
@@ -193,6 +196,7 @@ export default function Dashboard() {
       badge: "daily",
       icon: TrendingUp,
       href: "/investments/current",
+      color: "bg-pink-500",
     },
   ];
 
@@ -374,25 +378,25 @@ export default function Dashboard() {
 
       {/* ── 2. FOUR STAT CARDS ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {STAT_CARDS.map(({ label, value, badge, icon: Icon, href }) => (
+        {STAT_CARDS.map(({ label, value, badge, icon: Icon, href, color }) => (
           <div
             key={label}
-            className="bg-card border border-border rounded-2xl p-3.5 shadow-sm flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow"
+            className={`${color} rounded-2xl p-3.5 text-white shadow-sm flex flex-col gap-3 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg transition-all`}
             onClick={() => navigate(href)}
           >
             {/* top row: label + badge */}
             <div className="flex items-start justify-between gap-1">
-              <p className="text-muted-foreground text-[11px] font-semibold leading-tight">
+              <p className="text-white/90 text-[11px] font-bold leading-tight">
                 {label}
               </p>
-              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+              <span className="text-[9px] font-bold text-white bg-white/20 border border-white/25 px-1.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
                 {badge}
               </span>
             </div>
 
             {/* value */}
             <p
-              className={`text-foreground font-black leading-none ${amountFontClass(value, "md")}`}
+              className={`text-white font-black leading-none ${amountFontClass(value, "md")}`}
             >
               {value}
             </p>
@@ -400,15 +404,15 @@ export default function Dashboard() {
             {/* bottom row: ALL TIME + icon */}
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                <p className="text-[9px] text-white/70 uppercase tracking-wider">
                   All Time
                 </p>
-                <button className="text-primary text-[10px] font-semibold mt-0.5 hover:underline">
+                <button className="text-white/90 text-[10px] font-semibold mt-0.5 hover:text-white hover:underline">
                   Show full stats &rsaquo;
                 </button>
               </div>
-              <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Icon className="w-4 h-4 text-primary" />
+              <div className="w-8 h-8 rounded-xl bg-white/20 border border-white/20 flex items-center justify-center flex-shrink-0">
+                <Icon className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
