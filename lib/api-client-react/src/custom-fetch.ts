@@ -357,7 +357,16 @@ export async function customFetch<T = unknown>(
 
   const requestInfo = { method, url: resolveUrl(input) };
 
-  const response = await fetch(input, { ...init, method, headers });
+  // The web frontends and API may be hosted on different origins in
+  // production. Include cookies by default so cookie-session authentication
+  // survives the cross-origin API calls. Callers can still explicitly opt out
+  // with credentials: "omit".
+  const response = await fetch(input, {
+    ...init,
+    method,
+    headers,
+    credentials: init.credentials ?? "include",
+  });
 
   if (!response.ok) {
     const errorData = await parseErrorBody(response, method);
