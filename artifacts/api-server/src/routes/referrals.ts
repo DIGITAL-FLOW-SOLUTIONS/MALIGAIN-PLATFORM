@@ -15,32 +15,38 @@ router.get("/downlines", async (req: Request, res: Response) => {
     const statusFilter = (req.query["status"] as string) ?? "all";
     const search = (req.query["search"] as string) ?? "";
 
-    // Fetch L1 — direct referrals, no row limit
-    const { rows: l1 } = await pool.query<Record<string, unknown>>(
-      `SELECT * FROM users WHERE referred_by = $1`,
-      [userId],
-    );
+    // Use the same authoritative users source as the admin referral tree.
+    // Referral registration still accepts both usernames and legacy codes;
+    // the tree itself is always resolved through the stored referred_by ID.
+    const { data: l1Data, error: l1Error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("referred_by", userId);
+    if (l1Error) throw l1Error;
+    const l1 = (l1Data ?? []) as Array<Record<string, unknown>>;
     const l1Ids = l1.map(u => u["id"] as number);
 
     // Fetch L2 — no row limit
     let l2: Array<Record<string, unknown>> = [];
     if (l1Ids.length > 0) {
-      const { rows } = await pool.query<Record<string, unknown>>(
-        `SELECT * FROM users WHERE referred_by = ANY($1::int[])`,
-        [l1Ids],
-      );
-      l2 = rows;
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .in("referred_by", l1Ids);
+      if (error) throw error;
+      l2 = (data ?? []) as Array<Record<string, unknown>>;
     }
     const l2Ids = l2.map(u => u["id"] as number);
 
     // Fetch L3 — no row limit
     let l3: Array<Record<string, unknown>> = [];
     if (l2Ids.length > 0) {
-      const { rows } = await pool.query<Record<string, unknown>>(
-        `SELECT * FROM users WHERE referred_by = ANY($1::int[])`,
-        [l2Ids],
-      );
-      l3 = rows;
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .in("referred_by", l2Ids);
+      if (error) throw error;
+      l3 = (data ?? []) as Array<Record<string, unknown>>;
     }
 
     // Compute referral counts from data we already have
@@ -120,23 +126,28 @@ router.get("/stats", async (req: Request, res: Response) => {
   try {
     const userId = req.session.userId!;
 
-    const { rows: userRows } = await pool.query<{ username: string; referral_code: string }>(
-      `SELECT username, referral_code FROM users WHERE id = $1 LIMIT 1`,
-      [userId],
-    );
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("username, referral_code")
+      .eq("id", userId)
+      .maybeSingle();
+    if (userError) throw userError;
 
-    if (userRows.length === 0) {
+    if (!user) {
       res.status(404).json({ error: "NotFound", message: "User not found" });
       return;
     }
 
-    const { username, referral_code: referralCode } = userRows[0]!;
+    const username = String(user["username"] ?? "");
+    const referralCode = user["referral_code"];
 
     // Count all direct referrals with no row limit
-    const { rows: referrals } = await pool.query<{ status: string; created_at: string }>(
-      `SELECT status, created_at FROM users WHERE referred_by = $1`,
-      [userId],
-    );
+    const { data: referralData, error: referralsError } = await supabase
+      .from("users")
+      .select("status, created_at")
+      .eq("referred_by", userId);
+    if (referralsError) throw referralsError;
+    const referrals = (referralData ?? []) as Array<{ status: string; created_at: string }>;
 
     const activated = referrals.filter(r => r.status === "active").length;
 
@@ -187,11 +198,13 @@ router.get("/lookup", async (req: Request, res: Response) => {
 
     const phoneClean = phone.replace(/\s+/g, "");
 
-    // No row limit — fetch all direct downlines
-    const { rows: downlines } = await pool.query<Record<string, unknown>>(
-      `SELECT id, username, phone, status, created_at FROM users WHERE referred_by = $1`,
-      [userId],
-    );
+    // No row limit — fetch all direct downlines from the same source as admin.
+    const { data: downlineData, error: downlinesError } = await supabase
+      .from("users")
+      .select("id, username, phone, status, created_at")
+      .eq("referred_by", userId);
+    if (downlinesError) throw downlinesError;
+    const downlines = (downlineData ?? []) as Array<Record<string, unknown>>;
 
     const found = downlines.find(u => {
       const p = String(u["phone"] ?? "");
@@ -233,10 +246,14 @@ router.post("/pay-client", async (req: Request, res: Response) => {
       return;
     }
 
-    const { rows: dl } = await pool.query<Record<string, unknown>>(
-      `SELECT id, username, phone, status FROM users WHERE id = $1 AND referred_by = $2 LIMIT 1`,
-      [downlineId, userId],
-    );
+    const { data: dlData, error: downlineError } = await supabase
+      .from("users")
+      .select("id, username, phone, status")
+      .eq("id", downlineId)
+      .eq("referred_by", userId)
+      .limit(1);
+    if (downlineError) throw downlineError;
+    const dl = (dlData ?? []) as Array<Record<string, unknown>>;
 
     if (!dl.length) {
       res.status(404).json({ error: "NotFound", message: "Downline not found or not your direct referral" });
