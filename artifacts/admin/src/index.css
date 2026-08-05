@@ -67,54 +67,55 @@
   --radius-xl: 0px;
 }
 
-/* Trading Floor Terminal Vibe */
+/* Light admin workspace */
 :root, .dark {
-  --background: 240 10% 3%;
-  --foreground: 210 40% 98%;
+  color-scheme: light;
 
-  --border: 240 10% 12%;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
 
-  --card: 240 10% 5%;
-  --card-foreground: 210 40% 98%;
-  --card-border: 240 10% 14%;
+  --border: 214 32% 88%;
 
-  --sidebar: 240 10% 4%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 240 10% 12%;
-  --sidebar-primary: 190 90% 50%;
-  --sidebar-primary-foreground: 0 0% 0%;
-  --sidebar-accent: 240 10% 10%;
-  --sidebar-accent-foreground: 190 90% 60%;
-  --sidebar-ring: 190 90% 50%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --card-border: 214 32% 88%;
 
-  --popover: 240 10% 6%;
-  --popover-foreground: 210 40% 98%;
-  --popover-border: 240 10% 16%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-border: 214 32% 88%;
+  --sidebar-primary: 199 89% 48%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 210 40% 96%;
+  --sidebar-accent-foreground: 199 89% 38%;
+  --sidebar-ring: 199 89% 48%;
 
-  /* Cyan accent for terminal feel */
-  --primary: 190 90% 50%;
-  --primary-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --popover-border: 214 32% 84%;
 
-  --secondary: 240 10% 16%;
-  --secondary-foreground: 210 40% 98%;
+  --primary: 199 89% 48%;
+  --primary-foreground: 0 0% 100%;
 
-  --muted: 240 10% 10%;
-  --muted-foreground: 240 5% 65%;
+  --secondary: 214 32% 92%;
+  --secondary-foreground: 222 47% 11%;
 
-  --accent: 240 10% 10%;
-  --accent-foreground: 210 40% 98%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --input: 240 10% 16%;
-  --ring: 190 90% 50%;
+  --input: 214 32% 84%;
+  --ring: 199 89% 48%;
 
-  --chart-1: 190 90% 50%;
-  --chart-2: 260 80% 65%;
-  --chart-3: 150 80% 50%;
-  --chart-4: 35 90% 55%;
-  --chart-5: 350 80% 60%;
+  --chart-1: 199 89% 48%;
+  --chart-2: 262 83% 58%;
+  --chart-3: 142 71% 45%;
+  --chart-4: 32 95% 44%;
+  --chart-5: 346 77% 50%;
 
   --radius: 0px;
 
