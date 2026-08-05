@@ -307,13 +307,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Medal badge — top right */}
-        <img
-          src={`${import.meta.env.BASE_URL}images/medal.png`}
-          alt="Medal"
-          className="absolute top-2 right-3 w-16 h-16 object-contain drop-shadow-lg pointer-events-none select-none"
-        />
-
         <div className="relative z-10 px-5 pt-4 pb-5">
           {/* Welcome pill */}
           <div className="inline-flex items-center gap-1.5 bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full mb-3 shadow-sm">
