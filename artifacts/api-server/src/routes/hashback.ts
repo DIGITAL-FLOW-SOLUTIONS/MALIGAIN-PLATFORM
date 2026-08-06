@@ -250,16 +250,37 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
     ? req.body
     : Buffer.from(JSON.stringify(req.body ?? {}));
   const signature = String(req.get("X-Hashpay-Signature") ?? "");
+  const callbackContext = {
+    requestId: req.id,
+    method: req.method,
+    path: req.originalUrl,
+    contentType: req.get("content-type") ?? "",
+    contentLength: req.get("content-length") ?? "",
+    userAgent: req.get("user-agent") ?? "",
+    forwardedFor: req.get("x-forwarded-for") ?? "",
+    signaturePresent: Boolean(signature),
+    signaturePrefix: signature.slice(0, 12),
+    signatureLength: signature.length,
+    rawBodyBytes: rawBody.length,
+  };
+
+  req.log.info(callbackContext, "HASHBACK_CALLBACK: Endpoint request received");
 
   try {
-    if (hasHashbackWebhookSecret() && !verifyHashbackSignature(rawBody, signature)) {
+    const webhookSecretConfigured = hasHashbackWebhookSecret();
+    if (webhookSecretConfigured && !verifyHashbackSignature(rawBody, signature)) {
+      req.log.warn(
+        callbackContext,
+        "HASHBACK_CALLBACK: Signature validation failed",
+      );
       res.status(401).send("Invalid Hashback webhook signature");
       return;
     }
 
-    if (!hasHashbackWebhookSecret()) {
+    if (!webhookSecretConfigured) {
       req.log.error(
-        "HASHBACK_WEBHOOK_SECRET is not configured; refusing to process callback",
+        callbackContext,
+        "HASHBACK_CALLBACK: Webhook secret is not configured; refusing callback",
       );
       res.status(503).json({
         error: "ConfigurationError",
@@ -268,7 +289,17 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
       return;
     }
 
-    const payload = JSON.parse(rawBody.toString("utf8")) as Record<string, unknown>;
+    let payload: Record<string, unknown>;
+    try {
+      payload = JSON.parse(rawBody.toString("utf8")) as Record<string, unknown>;
+    } catch (err) {
+      req.log.warn(
+        { ...callbackContext, err },
+        "HASHBACK_CALLBACK: Request body is not valid JSON",
+      );
+      res.status(400).json({ error: "InvalidCallback", message: "Hashback callback body is invalid JSON." });
+      return;
+    }
     const event = String(payload["event"] ?? "");
     const responseCode = payload["ResponseCode"];
     const reference = String(payload["TransactionReference"] ?? "").trim();
@@ -285,25 +316,42 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
         hashbackTransactionId,
         callbackAmount,
         callbackAccountId,
+        payloadKeys: Object.keys(payload).sort(),
       },
       "HASHBACK_CALLBACK: Received payment callback",
     );
 
     if (event !== "payment.success" || Number(responseCode) !== 0) {
+      req.log.info(
+        { event, responseCode, reference, hashbackTransactionId },
+        "HASHBACK_CALLBACK: Ignoring non-success callback",
+      );
       res.status(200).json({ received: true });
       return;
     }
 
     if (!reference || !hashbackTransactionId) {
+      req.log.warn(
+        { event, responseCode, referencePresent: Boolean(reference), transactionIdPresent: Boolean(hashbackTransactionId) },
+        "HASHBACK_CALLBACK: Required payment identifiers are missing",
+      );
       res.status(400).json({ error: "InvalidCallback", message: "Missing Hashback payment reference." });
       return;
     }
 
     if (callbackAccountId && configuredAccountId && callbackAccountId !== configuredAccountId) {
+      req.log.warn(
+        { reference, callbackAccountId, configuredAccountId },
+        "HASHBACK_CALLBACK: Account ID mismatch",
+      );
       res.status(401).json({ error: "InvalidCallback", message: "Hashback account mismatch." });
       return;
     }
 
+    req.log.info(
+      { reference, hashbackTransactionId, callbackAmount },
+      "HASHBACK_CALLBACK: Looking up stored transaction",
+    );
     const { data: pendingTransactions, error: lookupError } = await supabase
       .from("transactions")
       .select("id, user_id, amount, status, description")
@@ -318,20 +366,54 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
       return;
     }
 
+    req.log.info(
+      {
+        reference,
+        storedTransactionId: transaction["id"],
+        storedUserId: transaction["user_id"],
+        storedStatus: transaction["status"],
+        storedAmount: amount(transaction["amount"]),
+      },
+      "HASHBACK_CALLBACK: Stored transaction matched",
+    );
+
     if (String(transaction["status"]) === "completed") {
+      req.log.info(
+        { reference, storedTransactionId: transaction["id"] },
+        "HASHBACK_CALLBACK: Transaction was already completed",
+      );
       res.status(200).json({ received: true });
       return;
     }
 
     const expectedAmount = amount(transaction["amount"]);
     if (callbackAmount !== expectedAmount) {
-      req.log.error({ reference, callbackAmount, expectedAmount }, "HASHBACK_CALLBACK: Amount mismatch");
+      req.log.error(
+        { reference, storedTransactionId: transaction["id"], callbackAmount, expectedAmount },
+        "HASHBACK_CALLBACK: Amount mismatch",
+      );
       res.status(422).json({ error: "AmountMismatch", message: "Hashback payment amount mismatch." });
       return;
     }
 
+    req.log.info(
+      { reference, hashbackTransactionId, expectedAmount },
+      "HASHBACK_CALLBACK: Starting PULL API verification",
+    );
     const pullResult = await pullHashbackTransaction(hashbackTransactionId);
     const pulledAmount = amount(pullResult.data?.amount);
+    req.log.info(
+      {
+        reference,
+        hashbackTransactionId,
+        pullSuccess: pullResult.success,
+        pullMessage: pullResult.message,
+        pulledAmount,
+        expectedAmount,
+        pullDataKeys: pullResult.data ? Object.keys(pullResult.data).sort() : [],
+      },
+      "HASHBACK_CALLBACK: PULL API verification returned",
+    );
     if (!pullResult.success || !pullResult.data || pulledAmount !== expectedAmount) {
       req.log.error(
         { reference, hashbackTransactionId, pullResult, expectedAmount, pulledAmount },
@@ -345,7 +427,15 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
     const descriptionParts = String(transaction["description"] ?? "").split(":");
     const paymentType = descriptionParts[2];
     const extraId = Number(descriptionParts[3] ?? 0);
+    req.log.info(
+      { reference, storedTransactionId: transaction["id"], userId, paymentType, extraId },
+      "HASHBACK_CALLBACK: Payment details validated; starting settlement",
+    );
     if (paymentType !== "activate" && paymentType !== "investment" && paymentType !== "spin") {
+      req.log.warn(
+        { reference, storedTransactionId: transaction["id"], paymentType },
+        "HASHBACK_CALLBACK: Unknown payment type",
+      );
       res.status(422).json({ error: "InvalidCallback", message: "Unknown Hashback payment type." });
       return;
     }
@@ -376,11 +466,19 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
         return;
       }
       if (current.status === "completed") {
+        req.log.info(
+          { reference, storedTransactionId: current.id },
+          "HASHBACK_CALLBACK: Transaction completed while callback was in flight",
+        );
         await client.query("COMMIT");
         res.status(200).json({ received: true });
         return;
       }
       if (current.status === "failed") {
+        req.log.warn(
+          { reference, storedTransactionId: current.id },
+          "HASHBACK_CALLBACK: Stored transaction is already failed",
+        );
         await client.query("COMMIT");
         res.status(200).json({ received: true });
         return;
@@ -461,7 +559,7 @@ export async function handleHashbackCallback(req: Request, res: Response): Promi
 
     req.log.info(
       { reference, hashbackTransactionId, userId, amount: expectedAmount },
-      "HASHBACK_CALLBACK: Kenya account activated",
+      "HASHBACK_CALLBACK: Settlement committed successfully",
     );
     res.status(200).json({ received: true });
   } catch (err) {
