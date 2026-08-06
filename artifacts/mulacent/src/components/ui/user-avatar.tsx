@@ -13,8 +13,8 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-const AVATAR_SRC = `${import.meta.env.BASE_URL}images/default-avatar.png`;
-const CACHE_KEY  = "mg_avatar_loaded";
+const AVATAR_SRC = `${import.meta.env.BASE_URL}images/default-avatar.png?v=2`;
+const CACHE_KEY  = "mg_avatar_loaded_v2";
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
