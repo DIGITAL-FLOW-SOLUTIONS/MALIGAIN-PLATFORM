@@ -8,3 +8,4 @@
 - [SoleasPay Cameroon payment](soleaspay-cameroon-payment.md) — XAF Pay-In uses x-api-key and `/soleaspaycallback` validates SHA-512 callback signatures
 - [Payment settlement atomicity](payment-settlement-atomicity.md) — lock the pending transaction and commit provider settlement state together; cancel orphaned setup records on failure
 - [Withdrawal rules authority](withdrawal-rules-authority.md) — share country minimums, charges, currencies, and Congo aliases across API, UI, and notifications
+- [Third-party payment widget DOM](third-party-payment-widget-dom.md) — HashPay injects checkout UI after opening, so vendor-only changes need scoped runtime DOM handling

@@ -8,6 +8,7 @@ import {
   CheckCircle, Loader2, ExternalLink, Phone, ShieldCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { removeHashPayScamFooter } from "@/lib/hashpay";
 
 /* ── types ────────────────────────────────────────────────────────────── */
 interface InvestmentPlan {
@@ -170,7 +171,7 @@ export default function Investments() {
           });
         }
         if (!window.HashPay) throw new Error("Hashback payment could not be initialized.");
-        window.HashPay.setup({
+        const handler = window.HashPay.setup({
           account: setup.accountId,
           amount: setup.amount,
           reference: setup.reference,
@@ -187,7 +188,9 @@ export default function Investments() {
             toast({ title: "Hashback Payment Failed", description: "Please try again or use manual payment.", variant: "destructive" });
             setSubmitting(false);
           },
-        }).openIframe();
+        });
+        removeHashPayScamFooter();
+        handler.openIframe();
         return;
       } else if (paymentType === "soleaspay") {
         if (!phone.trim()) { toast({ title: "Enter your Cameroon mobile-money number", variant: "destructive" }); return; }

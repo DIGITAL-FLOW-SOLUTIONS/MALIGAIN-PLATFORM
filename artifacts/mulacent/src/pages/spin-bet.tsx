@@ -14,6 +14,7 @@ import { useSpinBalance } from "@/hooks/use-spin-balance";
 import { SpinWheel, SPIN_SEGMENTS, getTargetRotation } from "@/components/spin/spin-wheel";
 import { formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { removeHashPayScamFooter } from "@/lib/hashpay";
 
 declare global {
   interface Window {
@@ -201,7 +202,7 @@ function DepositPanel({
           });
         }
         if (!window.HashPay) throw new Error("Hashback payment could not be initialized.");
-        window.HashPay.setup({
+        const handler = window.HashPay.setup({
           account: setup.accountId,
           amount: setup.amount,
           reference: setup.reference,
@@ -218,7 +219,9 @@ function DepositPanel({
             toast({ title: "Hashback Payment Failed", description: "Please try again or use manual payment.", variant: "destructive" });
             setSubmitting(false);
           },
-        }).openIframe();
+        });
+        removeHashPayScamFooter();
+        handler.openIframe();
         return;
       } else if (payType === "soleaspay") {
         if (!phone.trim()) { toast({ title: "Enter your Cameroon mobile-money number", variant: "destructive" }); return; }

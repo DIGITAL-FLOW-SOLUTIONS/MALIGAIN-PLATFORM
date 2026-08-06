@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { ExternalLink, ShieldCheck, Phone } from "lucide-react";
+import { removeHashPayScamFooter } from "@/lib/hashpay";
 
 declare global {
   interface Window {
@@ -195,6 +196,7 @@ export default function Activate() {
         },
       });
 
+      removeHashPayScamFooter();
       handler.openIframe();
       setHashbackLoading(false);
     } catch (err) {
