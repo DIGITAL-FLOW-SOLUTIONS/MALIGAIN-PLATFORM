@@ -69,6 +69,7 @@ export default function Verify() {
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [submittedAmount, setSubmittedAmount] = useState<string | null>(null);
   const [records, setRecords] = useState<VerificationRecord[]>([]);
   const [recordsLoading, setRecordsLoading] = useState(true);
 
@@ -142,6 +143,7 @@ export default function Verify() {
       if (!res.ok) {
         toast({ title: "Submission Failed", description: data.message || "Something went wrong.", variant: "destructive" });
       } else {
+        setSubmittedAmount(amountPaid);
         setSuccess(true);
         setPhone(user?.phone ?? "");
         setAmountPaid("");
@@ -192,12 +194,23 @@ export default function Verify() {
             </div>
           )}
 
-          {success && !hasPending && (
-            <div className="flex items-start gap-3 rounded-xl px-4 py-3.5 border border-emerald-200 bg-emerald-50">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-              <p className="text-emerald-800 text-sm leading-relaxed">
-                Your verification has been submitted and is under review. We'll update you soon.
-              </p>
+          {success && (
+            <div className="flex items-start gap-4 rounded-2xl border border-[#d7e8d7] bg-[#eef9ee] px-5 py-5 shadow-[0_8px_24px_rgba(34,104,55,0.12)]">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#20b35b]">
+                <CheckCircle2 className="h-9 w-9 text-white" strokeWidth={2.5} />
+              </div>
+              <div className="min-w-0 pt-0.5">
+                <p className="text-xl font-bold leading-tight text-[#08783d] sm:text-2xl">
+                  Request Submitted
+                </p>
+                <p className="mt-2 text-base leading-relaxed text-[#111827] sm:text-lg">
+                  Congratulations!{" "}
+                  {submittedAmount
+                    ? `Your ${userCurrency} ${Math.round(parseFloat(submittedAmount)).toLocaleString()} payment verification request`
+                    : "Your payment verification request"}{" "}
+                  has been submitted successfully. We&apos;ll process your payment after verification.
+                </p>
+              </div>
             </div>
           )}
 
