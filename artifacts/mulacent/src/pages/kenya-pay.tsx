@@ -17,6 +17,7 @@ export default function KenyaPay() {
   const [tillNumber, setTillNumber] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [copied, setCopied] = useState(false);
+  const [manualPaymentEnabled, setManualPaymentEnabled] = useState<boolean | null>(null);
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, {
@@ -24,11 +25,24 @@ export default function KenyaPay() {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.manualPaymentEnabled === false) {
+          navigate("/activate");
+          return;
+        }
+        setManualPaymentEnabled(true);
         if (data.tillNumber) setTillNumber(data.tillNumber);
         if (data.businessName) setBusinessName(data.businessName);
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => setManualPaymentEnabled(true));
+  }, [navigate]);
+
+  if (manualPaymentEnabled === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(tillNumber).then(() => {

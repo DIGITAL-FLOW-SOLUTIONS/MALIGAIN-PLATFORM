@@ -7,7 +7,7 @@ const router: IRouter = Router();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const settingKeys = ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel", "kenya_payment_provider", "kenya_till_number", "kenya_till_business_name"];
+    const settingKeys = ["mtn_ug_id", "airtel_ug_id", "mtn_zm_id", "airtel_zm_id", "tz_phone_id", "cm_mtn_phone", "eversend_link", "launch_mode_enabled", "launch_date", "congo_agent_number", "congo_agent_name", "malawi_phone", "malawi_business_name", "botswana_phone", "botswana_business_name", "ss_phone", "ss_business_name", "rwanda_phone", "rwanda_business_name", "payhero_active_channel", "kenya_payment_provider", "kenya_till_number", "kenya_till_business_name", "kenya_manual_payment_enabled"];
     const welcomeKeys = COUNTRIES.flatMap(country => [`welcome_bonus_${country}_amount`, `welcome_bonus_${country}_referrals`]);
     const { data, error } = await supabase
       .from("app_settings")
@@ -61,6 +61,7 @@ router.put("/", async (req: Request, res: Response) => {
       kenya_payment_provider,
       kenya_till_number,
       kenya_till_business_name,
+      kenya_manual_payment_enabled,
     } = req.body as Record<string, string | undefined>;
 
     const upserts: Array<{ key: string; value: string; business_name?: string | null }> = [];
@@ -146,6 +147,14 @@ router.put("/", async (req: Request, res: Response) => {
       }
       upserts.push({ key: "kenya_till_business_name", value: kenya_till_business_name.trim() });
     }
+    if (kenya_manual_payment_enabled !== undefined) {
+      const enabled = kenya_manual_payment_enabled.trim().toLowerCase();
+      if (enabled !== "true" && enabled !== "false") {
+        res.status(400).json({ error: "ValidationError", message: "Invalid Kenya manual payment visibility setting" });
+        return;
+      }
+      upserts.push({ key: "kenya_manual_payment_enabled", value: enabled });
+    }
 
     for (const [key, rawValue] of Object.entries(req.body as Record<string, unknown>)) {
       if (!/^welcome_bonus_[A-Z]+_(amount|referrals)$/.test(key)) continue;
@@ -174,6 +183,7 @@ router.put("/", async (req: Request, res: Response) => {
       kenya_payment_provider,
       kenya_till_number,
       kenya_till_business_name,
+      kenya_manual_payment_enabled,
     });
 
     res.json({ message: "Settings updated successfully" });

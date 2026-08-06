@@ -54,6 +54,7 @@ export default function Activate() {
   const [hashbackLoading, setHashbackLoading] = useState(false);
   const [soleasPayLoading, setSoleasPayLoading] = useState(false);
   const [kenyaPaymentProvider, setKenyaPaymentProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
+  const [kenyaManualPaymentEnabled, setKenyaManualPaymentEnabled] = useState(true);
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
   const [dbFees, setDbFees] = useState<Record<string, number>>({});
   const ugxSetRef = useRef(false);
@@ -92,7 +93,10 @@ export default function Activate() {
     if (isKenya) {
       fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, { credentials: "include" })
         .then((r) => r.json())
-        .then((d) => setKenyaPaymentProvider(d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO"))
+        .then((d) => {
+          setKenyaPaymentProvider(d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO");
+          setKenyaManualPaymentEnabled(d.manualPaymentEnabled !== false);
+        })
         .catch(() => setKenyaPaymentProvider("PAYHERO"));
     }
     if (!hasOwnPage) {
@@ -282,12 +286,16 @@ export default function Activate() {
                   </p>
                   <p className="text-muted-foreground text-xs">
                     {kenyaPaymentProvider === "PAYHERO"
-                      ? "Pay automatically with PayHero or use manual M-Pesa Till payment"
-                      : "Pay automatically with Hashback or use manual M-Pesa Till payment"}
+                       ? kenyaManualPaymentEnabled
+                         ? "Pay automatically with PayHero, or use manual M-Pesa Till payment"
+                         : "Pay automatically with PayHero for instant activation"
+                       : kenyaManualPaymentEnabled
+                         ? "Pay automatically with Hashback, or use manual M-Pesa Till payment"
+                         : "Pay automatically with Hashback for instant activation"}
                   </p>
                 </div>
                 {kenyaPaymentProvider === "PAYHERO" && <form onSubmit={handleActivate} className="space-y-4">
-                <div>
+                 <div className="rounded-xl border border-primary/50 bg-primary/5 p-4">
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     M-PESA Phone Number
                   </label>
@@ -317,21 +325,21 @@ export default function Activate() {
                   {loading ? "Processing..." : "Pay & Activate Account"}
                 </button>
                 </form>}
-                <button
-                  type="button"
-                  onClick={() => navigate(`/kenya-pay?amount=${displayAmount}`)}
-                  className="w-full py-3.5 rounded-xl font-bold text-sm text-foreground border border-primary bg-primary/5 hover:bg-primary/10 flex items-center justify-center gap-2 transition-all"
-                >
-                  <ShieldCheck className="w-4 h-4 text-primary" /> Manual Payment (M-Pesa Till)
-                </button>
                 {kenyaPaymentProvider === "HASHBACK" && <button
                   type="button"
                   onClick={handleHashbackPayment}
                   disabled={hashbackLoading || loading}
-                  className="w-full py-3 rounded-xl font-bold text-xs text-foreground border border-border bg-muted/30 hover:bg-muted/50 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                   className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
                 >
                   {hashbackLoading ? "Opening Hashback..." : "Pay with Hashback M-Pesa"}
                 </button>}
+                 {kenyaManualPaymentEnabled && <button
+                   type="button"
+                   onClick={() => navigate(`/kenya-pay?amount=${displayAmount}`)}
+                   className="w-full py-3 rounded-xl font-semibold text-sm text-muted-foreground border border-border bg-muted/20 hover:bg-muted/40 flex items-center justify-center gap-2 transition-all"
+                 >
+                   <ShieldCheck className="w-4 h-4" /> Manual Payment (M-Pesa Till)
+                 </button>}
               </div>
 
             ) : isUganda ? (

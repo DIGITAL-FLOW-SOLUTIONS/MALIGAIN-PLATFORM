@@ -66,6 +66,7 @@ export default function Settings() {
   const [kenyaTillNumber, setKenyaTillNumber] = useState("5580730");
   const [kenyaTillBusinessName, setKenyaTillBusinessName] = useState("ZANY TECH EXPERTS");
   const [kenyaPaymentProvider, setKenyaPaymentProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
+  const [kenyaManualPaymentEnabled, setKenyaManualPaymentEnabled] = useState(true);
   const [activeChannel, setActiveChannel] = useState("8080");
   const [launchEnabled, setLaunchEnabled] = useState(false);
   const [launchDateLocal, setLaunchDateLocal] = useState("");
@@ -119,6 +120,7 @@ export default function Settings() {
       setKenyaTillNumber(s["kenya_till_number"] ?? "5580730");
       setKenyaTillBusinessName(s["kenya_till_business_name"] ?? "ZANY TECH EXPERTS");
       setKenyaPaymentProvider(s["kenya_payment_provider"] === "HASHBACK" ? "HASHBACK" : "PAYHERO");
+      setKenyaManualPaymentEnabled(s["kenya_manual_payment_enabled"] !== "false");
       if (s["payhero_active_channel"]) setActiveChannel(s["payhero_active_channel"]);
       setLaunchEnabled(s["launch_mode_enabled"] === "true");
       setLaunchDateLocal(toDatetimeLocal(s["launch_date"] ?? "2026-08-08T10:00:00.000Z"));
@@ -207,8 +209,9 @@ export default function Settings() {
       kenya_payment_provider: kenyaPaymentProvider,
       kenya_till_number: kenyaTillNumber.trim(),
       kenya_till_business_name: kenyaTillBusinessName.trim(),
+      kenya_manual_payment_enabled: String(kenyaManualPaymentEnabled),
     }),
-    onSuccess: () => { toast({ title: "Kenya settings saved", description: `${kenyaPaymentProvider === "PAYHERO" ? "PayHero" : "Hashback"} is now the active Kenya automatic payment method.` }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
+    onSuccess: () => { toast({ title: "Kenya settings saved", description: `${kenyaPaymentProvider === "PAYHERO" ? "PayHero" : "Hashback"} is active and manual payment is ${kenyaManualPaymentEnabled ? "visible" : "hidden"}.` }); qc.invalidateQueries({ queryKey: ["admin-settings"] }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
@@ -422,7 +425,7 @@ export default function Settings() {
                 Kenya Payment Settings
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Choose the automatic provider used by Kenyan users. The change takes effect immediately; manual Till instructions remain available.
+                Choose the automatic provider used by Kenyan users and whether manual Till payment is shown.
               </p>
             </div>
             <div className="p-6 space-y-4">
@@ -509,6 +512,20 @@ export default function Settings() {
 
               <div className="border-t border-border pt-5 space-y-3">
                 <h3 className={sectionSubhead}>Manual M-Pesa Till</h3>
+                <label className="flex items-center justify-between gap-4 rounded-xl border border-border bg-muted/20 px-4 py-3 cursor-pointer">
+                  <span>
+                    <span className="block text-sm font-semibold text-foreground">Show manual payment on activation</span>
+                    <span className="block text-xs text-muted-foreground mt-0.5">
+                      {kenyaManualPaymentEnabled ? "Kenyan users can choose the M-Pesa Till method." : "The manual Till method is hidden from the activation page."}
+                    </span>
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={kenyaManualPaymentEnabled}
+                    onChange={(e) => setKenyaManualPaymentEnabled(e.target.checked)}
+                    className="h-5 w-5 accent-primary"
+                  />
+                </label>
                 <div>
                   <label className={labelCls}>Till Number</label>
                   <input
