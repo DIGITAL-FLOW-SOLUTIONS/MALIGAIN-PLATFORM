@@ -1,5 +1,4 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import crypto from "crypto";
 import { requireAuth } from "../middlewares/auth";
 import { getActivationFee, getKenyaAutomaticPaymentProvider } from "../lib/appSettings";
 import {
@@ -73,7 +72,7 @@ router.post("/activate", requireAuth, async (req: Request, res: Response) => {
     }
 
     const activationAmount = await getActivationFee("KE");
-    const reference = `MUL-HB-activate-${userId}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
+    const reference = `MUL-${userId}-${Date.now()}`;
 
     const { data: transaction, error: transactionError } = await supabase
       .from("transactions")
@@ -172,7 +171,7 @@ async function createHashbackPayment(
       }
     }
 
-    const reference = `MUL-HB-${type}-${userId}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
+    const reference = `MUL-${userId}-${Date.now()}`;
     const { data: transaction, error: transactionError } = await supabase.from("transactions").insert({
       user_id: userId,
       type: type === "investment" ? "investment" : "recharge",
