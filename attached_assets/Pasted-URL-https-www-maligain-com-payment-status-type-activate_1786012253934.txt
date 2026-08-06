@@ -1,0 +1,244 @@
+URL: https://www.maligain.com/payment-status?type=activate&provider=hashback&reference=MUL-HB-activate-37-1786011331050-72d49ce3
+Provider: hashback
+Type: activate
+Reference: MUL-HB-activate-37-1786011331050-72d49ce3
+
+[2026-08-06T10:16:12.246Z] Hashback diagnostics started
+{
+  "href": "https://www.maligain.com/payment-status?type=activate&provider=hashback&reference=MUL-HB-activate-37-1786011331050-72d49ce3",
+  "pathname": "/payment-status",
+  "search": "?type=activate&provider=hashback&reference=MUL-HB-activate-37-1786011331050-72d49ce3",
+  "callbackParams": {
+    "type": "activate",
+    "provider": "hashback",
+    "reference": "MUL-HB-activate-37-1786011331050-72d49ce3"
+  },
+  "type": "activate",
+  "provider": "hashback",
+  "reference": "MUL-HB-activate-37-1786011331050-72d49ce3",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"
+}
+[2026-08-06T10:16:12.272Z] Payment reference accepted
+{
+  "reference": "MUL-HB-activate-37-1786011331050-72d49ce3",
+  "type": "activate",
+  "provider": "hashback"
+}
+[2026-08-06T10:16:12.272Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:12.730Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:12.730Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:16.261Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:16.644Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:16.644Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:20.249Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:20.654Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:20.654Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:24.249Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:24.634Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:24.634Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:28.250Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:28.595Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:28.595Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:32.253Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:32.623Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:32.623Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:36.252Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:36.614Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:36.614Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:40.261Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:40.602Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:40.602Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:44.254Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:44.595Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:44.595Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:48.256Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:48.622Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:48.622Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:52.252Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:52.597Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:52.597Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:16:56.262Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:16:56.595Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:16:56.595Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:00.257Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:00.602Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:00.602Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:04.262Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:04.593Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:04.593Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:08.259Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:08.609Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:08.609Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:12.256Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:12.643Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:12.643Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:16.253Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:16.595Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:16.595Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:20.250Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:20.595Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:20.595Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:24.257Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:24.741Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:24.741Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:28.248Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:28.634Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:28.634Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:32.249Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:32.645Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:32.645Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:36.259Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:36.590Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:36.590Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:40.251Z] Polling status endpoint
+/api/hashback/status?reference=MUL-HB-activate-37-1786011331050-72d49ce3
+[2026-08-06T10:17:40.616Z] Status response HTTP 200
+{"status":"pending","amount":5}
+[2026-08-06T10:17:40.616Z] Payment is still pending
+{
+  "status": "pending",
+  "amount": 5
+}
+[2026-08-06T10:17:42.259Z] Polling timed out
+{
+  "maxWaitSeconds": 90,
+  "reference": "MUL-HB-activate-37-1786011331050-72d49ce3"
+}
+[2026-08-06T10:18:02.593Z] Browser window blurred
+[2026-08-06T10:18:02.653Z] Browser visibility changed
+hidden
+[2026-08-06T10:29:37.765Z] Browser visibility changed
+visible
+[2026-08-06T10:29:37.793Z] Browser window focused
