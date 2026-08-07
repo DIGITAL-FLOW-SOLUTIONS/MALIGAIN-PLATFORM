@@ -111,12 +111,11 @@ router.post("/:txnId/approve", async (req: Request, res: Response) => {
     // Re-deduct it now so they aren't double-paid (refund reversed + admin payout).
     if (prevStatus === "failed") {
       const grossAmount = parseGrossAmount(txn);
-      const { data: wallets } = await supabase.from("wallet").select("team_earnings, main_wallet").eq("user_id", userId).limit(1);
+      const { data: wallets } = await supabase.from("wallet").select("main_wallet").eq("user_id", userId).limit(1);
       const wallet = (wallets ?? [])[0] as Record<string, unknown> | undefined;
       if (wallet) {
         await supabase.from("wallet").update({
-          team_earnings: Math.max(0, num(wallet["team_earnings"]) - grossAmount),
-          main_wallet:   Math.max(0, num(wallet["main_wallet"])   - grossAmount),
+          main_wallet: Math.max(0, num(wallet["main_wallet"]) - grossAmount),
         }).eq("user_id", userId);
       }
     }
@@ -181,12 +180,11 @@ router.post("/:txnId/decline", async (req: Request, res: Response) => {
     // Refund the gross amount — what was originally deducted from the user's wallet.
     const grossAmount = parseGrossAmount(txn);
 
-    const { data: wallets } = await supabase.from("wallet").select("team_earnings, main_wallet").eq("user_id", userId).limit(1);
+    const { data: wallets } = await supabase.from("wallet").select("main_wallet").eq("user_id", userId).limit(1);
     const wallet = (wallets ?? [])[0] as Record<string, unknown> | undefined;
     if (wallet) {
       await supabase.from("wallet").update({
-        team_earnings: num(wallet["team_earnings"]) + grossAmount,
-        main_wallet:   num(wallet["main_wallet"])   + grossAmount,
+        main_wallet: num(wallet["main_wallet"]) + grossAmount,
       }).eq("user_id", userId);
     }
 

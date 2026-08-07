@@ -109,7 +109,7 @@ router.post("/withdraw", async (req: Request, res: Response) => {
 
     const { data: wallets } = await supabase
       .from("wallet")
-      .select("team_earnings, main_wallet, total_withdrawn")
+      .select("main_wallet, total_withdrawn")
       .eq("user_id", userId)
       .limit(1);
 
@@ -119,15 +119,14 @@ router.post("/withdraw", async (req: Request, res: Response) => {
     }
 
     const wallet = wallets[0] as Record<string, unknown>;
-    const teamEarnings = num(wallet["team_earnings"]);
     const mainWallet = num(wallet["main_wallet"]);
     const totalWithdrawn = num(wallet["total_withdrawn"]);
 
-    // Balance check is against team_earnings only
-    if (teamEarnings < requestedAmount) {
+    // Withdrawals are funded from main_wallet only.
+    if (mainWallet < requestedAmount) {
       res.status(400).json({
         error: "InsufficientFunds",
-        message: "You have insufficient Affiliate balance, refer more to earn more",
+        message: "You have insufficient main wallet balance",
       });
       return;
     }
@@ -137,8 +136,7 @@ router.post("/withdraw", async (req: Request, res: Response) => {
     await supabase
       .from("wallet")
       .update({
-        team_earnings:   teamEarnings - requestedAmount,
-        main_wallet:     Math.max(0, mainWallet - requestedAmount),
+        main_wallet:     mainWallet - requestedAmount,
         total_withdrawn: totalWithdrawn + requestedAmount,
       })
       .eq("user_id", userId);

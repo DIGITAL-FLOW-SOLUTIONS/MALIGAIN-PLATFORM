@@ -62,13 +62,13 @@ export default function Withdraw() {
   const currencyCode = rules.currency;
   const formatAmount = (value: number) => `${currencyCode} ${Math.round(value).toLocaleString("en-US")}`;
 
-  const affiliateBal = balances?.teamEarnings ?? 0;
+  const mainWallet = balances?.mainWallet ?? 0;
   const minRequired = rules.min;
   const charge = rules.charge;
   const amountNum = parseFloat(amount) || 0;
   const netAmount = Math.max(0, amountNum - charge);
   const canWithdraw =
-    amountNum >= minRequired && amountNum <= affiliateBal && !!user?.phone;
+    amountNum >= minRequired && amountNum <= mainWallet && !!user?.phone;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
