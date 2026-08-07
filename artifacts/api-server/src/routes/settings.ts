@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { supabase } from "../lib/supabase";
 import { getActivationFees, WITHDRAWAL_RULES } from "../lib/appSettings";
+import { hasHashbackCredentials } from "../lib/hashback";
 
 const router = Router();
 
@@ -86,6 +87,7 @@ router.get("/kenya", async (req, res) => {
         ? "HASHBACK"
         : "PAYHERO",
       manualPaymentEnabled: settings["kenya_manual_payment_enabled"] !== "false",
+      hashbackConfigured: hasHashbackCredentials(),
     });
   } catch {
     res.status(500).json({ message: "Failed to fetch Kenya payment settings" });

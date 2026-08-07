@@ -24,6 +24,10 @@ function getHashbackApiKey(): string {
   return String(process.env["hashback_api_key"] ?? "").trim();
 }
 
+export function hasHashbackCredentials(): boolean {
+  return Boolean(getHashbackAccountId() && getHashbackApiKey());
+}
+
 export function hasHashbackWebhookSecret(): boolean {
   return Boolean(String(process.env["HASHBACK_WEBHOOK_SECRET"] ?? "").trim());
 }

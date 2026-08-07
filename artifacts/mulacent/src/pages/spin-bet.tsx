@@ -134,7 +134,11 @@ function DepositPanel({
       fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, { credentials: "include" })
         .then(r => r.json())
         .then((d: Record<string, unknown>) => {
-          setKenyaProvider(d["automaticProvider"] === "HASHBACK" ? "HASHBACK" : "PAYHERO");
+          const provider = d["automaticProvider"] === "HASHBACK" ? "HASHBACK" : "PAYHERO";
+          setKenyaProvider(provider);
+          if (provider === "HASHBACK" && d["hashbackConfigured"] === false) {
+            setManualFallback(true);
+          }
           setKenyaTill(String(d["tillNumber"] ?? ""));
           setKenyaBusiness(String(d["businessName"] ?? ""));
         })
@@ -180,7 +184,12 @@ function DepositPanel({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount: Number(amount) }),
         });
-        const setup = await setupResponse.json() as { accountId?: string; amount?: number; reference?: string; message?: string };
+        const setup = await setupResponse.json() as { accountId?: string; amount?: number; reference?: string; error?: string; message?: string };
+        if (setupResponse.status === 503 && setup.error === "ConfigurationError") {
+          setManualFallback(true);
+          toast({ title: "Hashback unavailable", description: "Switched to manual payment." });
+          return;
+        }
         if (!setupResponse.ok || !setup.accountId || !setup.amount || !setup.reference) {
           throw new Error(setup.message ?? "Hashback payment is unavailable.");
         }

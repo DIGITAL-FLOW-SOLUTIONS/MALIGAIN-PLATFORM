@@ -116,8 +116,13 @@ export default function Investments() {
       fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, { credentials: "include" })
         .then(r => r.json())
         .then(d => {
-          setKenyaProvider(d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO");
-           setKenyaManualPaymentEnabled(d.manualPaymentEnabled !== false);
+          const provider = d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO";
+          const manualEnabled = d.manualPaymentEnabled !== false;
+          setKenyaProvider(provider);
+          setKenyaManualPaymentEnabled(manualEnabled);
+          if (provider === "HASHBACK" && d.hashbackConfigured === false && manualEnabled) {
+            setManualFallback(true);
+          }
           setKenyaTill(d.tillNumber ?? "");
           setKenyaBusiness(d.businessName ?? "");
         })
@@ -162,7 +167,12 @@ export default function Investments() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ planId: selected.id }),
         });
-        const setup = await setupResponse.json() as { accountId?: string; amount?: number; reference?: string; message?: string };
+        const setup = await setupResponse.json() as { accountId?: string; amount?: number; reference?: string; error?: string; message?: string };
+        if (setupResponse.status === 503 && setup.error === "ConfigurationError" && kenyaManualPaymentEnabled) {
+          setManualFallback(true);
+          toast({ title: "Hashback unavailable", description: "Switched to manual M-Pesa Till payment." });
+          return;
+        }
         if (!setupResponse.ok || !setup.accountId || !setup.amount || !setup.reference) {
           throw new Error(setup.message ?? "Hashback payment is unavailable.");
         }
