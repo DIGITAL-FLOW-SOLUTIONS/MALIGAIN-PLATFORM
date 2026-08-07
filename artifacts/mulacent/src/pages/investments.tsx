@@ -8,7 +8,6 @@ import {
   CheckCircle, Loader2, ExternalLink, Phone, ShieldCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { removeHashPayScamFooter } from "@/lib/hashpay";
 
 /* ── types ────────────────────────────────────────────────────────────── */
 interface InvestmentPlan {
@@ -24,28 +23,13 @@ interface InvestmentPlan {
   country: string;
 }
 
-declare global {
-  interface Window {
-    HashPay?: {
-      setup: (options: {
-        account: string;
-        amount: number;
-        reference: string;
-        onSuccess: (transaction: { amount?: number; receipt?: string; status?: string }) => void;
-        onCancel: () => void;
-        onError: (error: unknown) => void;
-      }) => { openIframe: () => void };
-    };
-  }
-}
-
 /* ── country helpers (mirrors activate.tsx) ───────────────────────────── */
 const MOBILE_COUNTRIES   = new Set(["UG", "ZM", "TZ", "CG", "MW", "BW", "SS", "RW"]);
 
-type PaymentType = "payhero" | "hashback" | "soleaspay" | "mobile" | "manual";
+type PaymentType = "payhero" | "soleaspay" | "mobile" | "manual";
 
-function getPaymentType(country: string, kenyaProvider: "PAYHERO" | "HASHBACK"): PaymentType {
-  if (country === "KE") return kenyaProvider === "HASHBACK" ? "hashback" : "payhero";
+function getPaymentType(country: string): PaymentType {
+  if (country === "KE") return "payhero";
   if (country === "CM") return "soleaspay";
   if (MOBILE_COUNTRIES.has(country)) return "mobile";
   return "manual";
@@ -82,9 +66,8 @@ export default function Investments() {
   const [, navigate] = useLocation();
 
   const country     = user?.country ?? "KE";
-  const [kenyaProvider, setKenyaProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
   const [kenyaManualPaymentEnabled, setKenyaManualPaymentEnabled] = useState(true);
-  const configuredPaymentType = getPaymentType(country, kenyaProvider);
+  const configuredPaymentType = getPaymentType(country);
   const [manualFallback, setManualFallback] = useState(false);
   const paymentType: PaymentType = manualFallback ? "manual" : configuredPaymentType;
   const fmt         = (n: number) => formatCurrency(n, country);
@@ -116,17 +99,12 @@ export default function Investments() {
       fetch(`${import.meta.env.BASE_URL}api/settings/kenya`, { credentials: "include" })
         .then(r => r.json())
         .then(d => {
-          const provider = d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO";
           const manualEnabled = d.manualPaymentEnabled !== false;
-          setKenyaProvider(provider);
           setKenyaManualPaymentEnabled(manualEnabled);
-          if (provider === "HASHBACK" && d.hashbackConfigured === false && manualEnabled) {
-            setManualFallback(true);
-          }
           setKenyaTill(d.tillNumber ?? "");
           setKenyaBusiness(d.businessName ?? "");
         })
-        .catch(() => setKenyaProvider("PAYHERO"));
+        .catch(() => {});
     }
     if (country === "CM" || paymentType === "manual") {
       fetch(`${import.meta.env.BASE_URL}api/settings/eversend-link`, { credentials: "include" })
@@ -134,7 +112,7 @@ export default function Investments() {
         .then(d => { if (d.eversendLink) setEversendLink(d.eversendLink); })
         .catch(() => {});
     }
-  }, [configuredPaymentType, country]);
+  }, [country]);
 
   const filtered = plans.filter(p => p.category === tab);
 
@@ -161,60 +139,6 @@ export default function Investments() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
         navigate(`/payment-status?type=investment&txn_id=${data.transactionId ?? ""}&checkout_id=${encodeURIComponent(data.checkoutRequestId ?? "")}`);
-      } else if (paymentType === "hashback") {
-        const setupResponse = await fetch(`${import.meta.env.BASE_URL}api/hashback/investment`, {
-          method: "POST", credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ planId: selected.id }),
-        });
-        const setup = await setupResponse.json() as { accountId?: string; amount?: number; reference?: string; error?: string; message?: string };
-        if (setupResponse.status === 503 && setup.error === "ConfigurationError" && kenyaManualPaymentEnabled) {
-          setManualFallback(true);
-          toast({ title: "Hashback unavailable", description: "Switched to manual M-Pesa Till payment." });
-          return;
-        }
-        if (!setupResponse.ok || !setup.accountId || !setup.amount || !setup.reference) {
-          throw new Error(setup.message ?? "Hashback payment is unavailable.");
-        }
-        if (!window.HashPay) {
-          await new Promise<void>((resolve, reject) => {
-            const existing = document.querySelector<HTMLScriptElement>('script[data-hashpay="true"]');
-            if (existing) {
-              existing.addEventListener("load", () => resolve(), { once: true });
-              existing.addEventListener("error", () => reject(new Error("Unable to load Hashback payment.")), { once: true });
-              return;
-            }
-            const script = document.createElement("script");
-            script.src = "https://pay.hashback.co.ke/hashpay.js";
-            script.async = true;
-            script.dataset.hashpay = "true";
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error("Unable to load Hashback payment."));
-            document.head.appendChild(script);
-          });
-        }
-        if (!window.HashPay) throw new Error("Hashback payment could not be initialized.");
-        const handler = window.HashPay.setup({
-          account: setup.accountId,
-          amount: setup.amount,
-          reference: setup.reference,
-          onSuccess: transaction => {
-            if (Number(transaction.amount) !== Number(setup.amount)) {
-              toast({ title: "Payment Amount Mismatch", description: "The payment amount could not be verified.", variant: "destructive" });
-              setSubmitting(false);
-              return;
-            }
-            navigate(`/payment-status?type=investment&provider=hashback&reference=${encodeURIComponent(setup.reference!)}`);
-          },
-          onCancel: () => setSubmitting(false),
-          onError: () => {
-            toast({ title: "Hashback Payment Failed", description: "Please try again or use manual payment.", variant: "destructive" });
-            setSubmitting(false);
-          },
-        });
-        removeHashPayScamFooter();
-        handler.openIframe();
-        return;
       } else if (paymentType === "soleaspay") {
         if (!phone.trim()) { toast({ title: "Enter your Cameroon mobile-money number", variant: "destructive" }); return; }
         const res = await fetch(`${import.meta.env.BASE_URL}api/soleaspay/investment`, {
@@ -471,13 +395,6 @@ function PaymentModal({
                   className="w-full text-center text-foreground text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
-            </>
-          )}
-
-          {paymentType === "hashback" && (
-            <>
-              <p className="text-sm font-semibold text-foreground">Pay via Hashback M-Pesa</p>
-              <p className="text-xs text-muted-foreground -mt-2">A secure Hashback payment window will open</p>
             </>
           )}
 

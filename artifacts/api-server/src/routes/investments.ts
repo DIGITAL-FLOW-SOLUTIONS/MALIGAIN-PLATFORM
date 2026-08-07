@@ -3,7 +3,6 @@ import { supabase } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { initiateSTKPush } from "../lib/payhero";
 import { logger } from "../lib/logger";
-import { getKenyaAutomaticPaymentProvider } from "../lib/appSettings";
 
 const router = Router();
 router.use(requireAuth);
@@ -113,10 +112,6 @@ router.get("/my", async (req: Request, res: Response) => {
 router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
   let investmentId: number | null = null;
   try {
-    if (await getKenyaAutomaticPaymentProvider() !== "PAYHERO") {
-      res.status(409).json({ error: "PaymentProviderChanged", message: "PayHero is currently disabled for Kenya. Please use Hashback or manual M-Pesa payment.", provider: "HASHBACK" });
-      return;
-    }
     const userId   = req.session.userId!;
     const planId   = parseInt(String(req.params["planId"]));
     const { phoneNumber } = req.body;
