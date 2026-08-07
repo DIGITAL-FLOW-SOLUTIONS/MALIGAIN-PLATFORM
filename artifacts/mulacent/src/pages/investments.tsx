@@ -83,6 +83,7 @@ export default function Investments() {
 
   const country     = user?.country ?? "KE";
   const [kenyaProvider, setKenyaProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
+  const [kenyaManualPaymentEnabled, setKenyaManualPaymentEnabled] = useState(true);
   const configuredPaymentType = getPaymentType(country, kenyaProvider);
   const [manualFallback, setManualFallback] = useState(false);
   const paymentType: PaymentType = manualFallback ? "manual" : configuredPaymentType;
@@ -116,6 +117,7 @@ export default function Investments() {
         .then(r => r.json())
         .then(d => {
           setKenyaProvider(d.automaticProvider === "HASHBACK" ? "HASHBACK" : "PAYHERO");
+           setKenyaManualPaymentEnabled(d.manualPaymentEnabled !== false);
           setKenyaTill(d.tillNumber ?? "");
           setKenyaBusiness(d.businessName ?? "");
         })
