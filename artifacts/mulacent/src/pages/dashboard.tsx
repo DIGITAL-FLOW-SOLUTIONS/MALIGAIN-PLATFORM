@@ -187,7 +187,7 @@ export default function Dashboard() {
       value: fmt(affiliate),
       badge: "+27%",
       icon: Users,
-      href: "/downlines",
+      href: "/team/level-1/active",
       color: "bg-emerald-500",
     },
     {
@@ -432,37 +432,37 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-              {welcomeBonus && !welcomeBonus.claimed && (
-                <div className="flex flex-wrap items-center justify-end gap-2">
-                  <Link
-                    href="/welcome-bonus"
-                    className="rounded-xl px-3 py-2 text-xs font-bold text-amber-700 transition hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-950/40"
-                  >
-                    View details
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={claimWelcomeBonus}
-                    disabled={!welcomeBonus.canClaim || claimingWelcomeBonus}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <Gift className="h-4 w-4" />
-                    {claimingWelcomeBonus
-                      ? "Claiming..."
-                      : welcomeBonus.canClaim
-                        ? "Claim bonus"
-                        : "Keep referring"}
-                  </button>
-                </div>
-              )}
-              {welcomeBonus && welcomeBonus.claimed && (
-                <Link
-                  href="/welcome-bonus"
-                  className="rounded-xl px-3 py-2 text-xs font-bold text-amber-700 transition hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-950/40"
-                >
-                  View details
-                </Link>
-              )}
+          {welcomeBonus && !welcomeBonus.claimed && (
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <Link
+                href="/welcome-bonus"
+                className="rounded-xl px-3 py-2 text-xs font-bold text-amber-700 transition hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-950/40"
+              >
+                View details
+              </Link>
+              <button
+                type="button"
+                onClick={claimWelcomeBonus}
+                disabled={!welcomeBonus.canClaim || claimingWelcomeBonus}
+                className="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Gift className="h-4 w-4" />
+                {claimingWelcomeBonus
+                  ? "Claiming..."
+                  : welcomeBonus.canClaim
+                    ? "Claim bonus"
+                    : "Keep referring"}
+              </button>
+            </div>
+          )}
+          {welcomeBonus && welcomeBonus.claimed && (
+            <Link
+              href="/welcome-bonus"
+              className="rounded-xl px-3 py-2 text-xs font-bold text-amber-700 transition hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-950/40"
+            >
+              View details
+            </Link>
+          )}
         </div>
         {welcomeBonus && !welcomeBonus.claimed && !welcomeBonusLoading && (
           <div className="h-1.5 bg-amber-100 dark:bg-amber-950/50">
