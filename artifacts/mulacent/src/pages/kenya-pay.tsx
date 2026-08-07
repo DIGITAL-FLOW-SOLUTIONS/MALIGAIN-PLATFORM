@@ -13,6 +13,7 @@ export default function KenyaPay() {
   const search = useSearch();
   const params = new URLSearchParams(search);
   const kesAmount = params.get("amount") ?? FALLBACK_KES_AMOUNT;
+  const planId = params.get("planId");
 
   const [tillNumber, setTillNumber] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -108,7 +109,7 @@ export default function KenyaPay() {
 
           <button
             type="button"
-            onClick={() => navigate(`/verify?amount=${encodeURIComponent(kesAmount)}`)}
+            onClick={() => navigate(`/verify?amount=${encodeURIComponent(kesAmount)}${planId ? `&planId=${encodeURIComponent(planId)}` : ""}`)}
             className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all mb-3 shadow-sm"
           >
             <ShieldCheck className="w-4 h-4" />

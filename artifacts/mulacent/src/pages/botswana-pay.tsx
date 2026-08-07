@@ -13,6 +13,7 @@ export default function BotswanaPay() {
   const search = useSearch();
   const params = new URLSearchParams(search);
   const bwpAmount = params.get("amount") ?? FALLBACK_AMOUNT;
+  const planId = params.get("planId");
 
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,16 +45,21 @@ export default function BotswanaPay() {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}api/verify/botswana`, {
+      const res = await fetch(
+        planId
+          ? `${import.meta.env.BASE_URL}api/investments/${encodeURIComponent(planId)}/pay/mobile`
+          : `${import.meta.env.BASE_URL}api/verify/botswana`,
+        {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ phone: phone.trim(), paymentMethod: "Orange Money Botswana" }),
-      });
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Submission failed");
       toast({ title: "Submitted!", description: "Your payment has been submitted for verification." });
-      navigate("/dashboard");
+      navigate(planId ? "/investments/current" : "/dashboard");
     } catch (err: any) {
       toast({ title: "Failed", description: err.message || "Something went wrong. Try again.", variant: "destructive" });
     } finally {

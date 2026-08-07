@@ -148,6 +148,11 @@ async function createHashbackPayment(
         return;
       }
       const p = plan as Record<string, unknown>;
+      const planCountry = String(p["country"] ?? "ALL").trim().toUpperCase();
+      if (planCountry !== "ALL" && planCountry !== "KE") {
+        res.status(400).json({ error: "ValidationError", message: "This investment plan is not available for Kenya users." });
+        return;
+      }
       const { data: pending } = await supabase.from("user_investments").select("id").eq("user_id", userId).eq("plan_id", planId).eq("status", "pending").limit(1);
       if (pending?.length) {
         res.status(409).json({ error: "Conflict", message: "You already have a pending payment for this plan." });

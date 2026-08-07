@@ -12,8 +12,15 @@ const COUNTRY_CURRENCY: Record<string, string> = {
   KE: "KES", UG: "UGX", TZ: "TZS", GH: "GHS", ZM: "ZMW", CM: "XAF",
   NG: "NGN", RW: "RWF", BI: "BIF", MW: "MWK", BW: "BWP", SS: "SSP", CG: "XAF",
 };
+const MANUAL_PAYMENT_COUNTRIES = new Set(["KE", "CM", "GH", "NG", "BI"]);
+const MOBILE_PAYMENT_COUNTRIES = new Set(["UG", "TZ", "ZM", "CG", "MW", "BW", "SS", "RW"]);
 
 function num(v: unknown): number { return parseFloat(String(v ?? "0")) || 0; }
+
+function planMatchesCountry(plan: Record<string, unknown>, country: string): boolean {
+  const planCountry = String(plan["country"] ?? "ALL").trim().toUpperCase();
+  return planCountry === "ALL" || planCountry === country.trim().toUpperCase();
+}
 
 // ── GET /api/investments/plans ────────────────────────────────────────────────
 // Returns plans for user's country (country-specific first, then ALL as fallback)
@@ -128,7 +135,8 @@ router.post("/:planId/pay/kenya", async (req: Request, res: Response) => {
     }
     const plan = planData as Record<string, unknown>;
     const { data: userData } = await supabase.from("users").select("country").eq("id", userId).single();
-    if (String((userData as Record<string, unknown> | null)?.["country"] ?? "").toUpperCase() !== "KE") {
+    const userCountry = String((userData as Record<string, unknown> | null)?.["country"] ?? "").toUpperCase();
+    if (userCountry !== "KE" || !planMatchesCountry(plan, userCountry)) {
       res.status(400).json({ message: "PayHero Kenya payments are available for Kenya users only." });
       return;
     }
@@ -208,10 +216,10 @@ router.post("/:planId/pay/manual", async (req: Request, res: Response) => {
   try {
     const userId = req.session.userId!;
     const planId = parseInt(String(req.params["planId"]));
-    const { phone, screenshotBase64, screenshotMime, amountPaid } = req.body;
+    const { phone, screenshotBase64, screenshotMime } = req.body;
 
-    if (!phone || !screenshotBase64 || !amountPaid) {
-      res.status(400).json({ message: "Phone, screenshot, and amount are required" });
+    if (!phone) {
+      res.status(400).json({ message: "Phone is required" });
       return;
     }
 
@@ -236,24 +244,36 @@ router.post("/:planId/pay/manual", async (req: Request, res: Response) => {
     const { data: userData } = await supabase.from("users").select("email, country").eq("id", userId).single();
     const email    = (userData as Record<string, unknown>)?.["email"] as string;
     const country  = (userData as Record<string, unknown>)?.["country"] as string ?? "KE";
+    if (!MANUAL_PAYMENT_COUNTRIES.has(country.toUpperCase())) {
+      res.status(400).json({ message: "Manual Eversend payments are not available for this country." });
+      return;
+    }
+    if (!planMatchesCountry(plan, country)) {
+      res.status(400).json({ message: "This investment plan is not available in your country." });
+      return;
+    }
     const currency = COUNTRY_CURRENCY[country] ?? "USD";
 
     // Upload screenshot
-    const base64Data = screenshotBase64.replace(/^data:image\/\w+;base64,/, "");
-    const buffer     = Buffer.from(base64Data, "base64");
-    const mime       = screenshotMime || "image/png";
-    const ext        = mime.split("/")[1] || "png";
-    const fileName   = `verifications/${userId}_invest_${Date.now()}.${ext}`;
+    let screenshotUrl = "";
+    if (screenshotBase64) {
+      const base64Data = screenshotBase64.replace(/^data:image\/\w+;base64,/, "");
+      const buffer     = Buffer.from(base64Data, "base64");
+      const mime       = screenshotMime || "image/png";
+      const ext        = mime.split("/")[1] || "png";
+      const fileName   = `verifications/${userId}_invest_${Date.now()}.${ext}`;
 
-    const { error: uploadErr } = await supabase.storage
-      .from("verifications")
-      .upload(fileName, buffer, { contentType: mime, upsert: false });
-    if (uploadErr) { res.status(500).json({ message: "Failed to upload screenshot" }); return; }
+      const { error: uploadErr } = await supabase.storage
+        .from("verifications")
+        .upload(fileName, buffer, { contentType: mime, upsert: false });
+      if (uploadErr) { res.status(500).json({ message: "Failed to upload screenshot" }); return; }
 
-    const { data: urlData } = supabase.storage.from("verifications").getPublicUrl(fileName);
+      const { data: urlData } = supabase.storage.from("verifications").getPublicUrl(fileName);
+      screenshotUrl = urlData.publicUrl;
+    }
 
     // Create pending investment
-    const { data: inv } = await supabase.from("user_investments").insert({
+    const { data: inv, error: investmentError } = await supabase.from("user_investments").insert({
       user_id: userId, plan_id: planId,
       plan_name: plan["name"], brand_name: plan["brand_name"],
       category: plan["category"], deposit_amount: num(plan["deposit_amount"]),
@@ -262,13 +282,14 @@ router.post("/:planId/pay/manual", async (req: Request, res: Response) => {
       status: "pending",
     }).select("id").single();
 
-    investmentId = Number((inv as Record<string, unknown>)?.["id"]);
+    if (investmentError || !inv) throw investmentError ?? new Error("Failed to create investment");
+    investmentId = Number((inv as Record<string, unknown>)["id"]);
 
     // Create eversend_verifications record with purpose tag
     const { error: verificationError } = await supabase.from("eversend_verifications").insert({
       user_id: userId, email, phone: phone.trim(),
-      screenshot_url: urlData.publicUrl,
-      amount_paid: parseFloat(amountPaid),
+      screenshot_url: screenshotUrl,
+      amount_paid: num(plan["deposit_amount"]),
       currency, status: "pending",
       admin_note: `INVESTMENT | plan_id=${planId} | investment_id=${investmentId} | plan=${String(plan["name"])}`,
     });
@@ -318,10 +339,18 @@ router.post("/:planId/pay/mobile", async (req: Request, res: Response) => {
     const { data: userData } = await supabase.from("users").select("email, country").eq("id", userId).single();
     const email   = (userData as Record<string, unknown>)?.["email"] as string;
     const country = (userData as Record<string, unknown>)?.["country"] as string ?? "UG";
+    if (!MOBILE_PAYMENT_COUNTRIES.has(country.toUpperCase())) {
+      res.status(400).json({ message: "Manual mobile-money payments are not available for this country." });
+      return;
+    }
+    if (!planMatchesCountry(plan, country)) {
+      res.status(400).json({ message: "This investment plan is not available in your country." });
+      return;
+    }
     const currency = COUNTRY_CURRENCY[country] ?? "UGX";
 
     // Create pending investment
-    const { data: inv } = await supabase.from("user_investments").insert({
+    const { data: inv, error: investmentError } = await supabase.from("user_investments").insert({
       user_id: userId, plan_id: planId,
       plan_name: plan["name"], brand_name: plan["brand_name"],
       category: plan["category"], deposit_amount: num(plan["deposit_amount"]),
@@ -330,7 +359,8 @@ router.post("/:planId/pay/mobile", async (req: Request, res: Response) => {
       status: "pending",
     }).select("id").single();
 
-    investmentId = Number((inv as Record<string, unknown>)?.["id"]);
+    if (investmentError || !inv) throw investmentError ?? new Error("Failed to create investment");
+    investmentId = Number((inv as Record<string, unknown>)["id"]);
 
     const { error: verificationError } = await supabase.from("eversend_verifications").insert({
       user_id: userId, email, phone: phone.trim(),

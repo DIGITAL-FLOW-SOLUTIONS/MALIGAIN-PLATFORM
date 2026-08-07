@@ -62,6 +62,17 @@ const MOBILE_HINTS: Record<string, { methods: string[]; hint: string }> = {
   RW: { methods: ["MTN MoMo (*182*1*3#)"],               hint: "Dial *182*1*3# to send" },
 };
 
+const COUNTRY_PAYMENT_ROUTES: Record<string, string> = {
+  UG: "/uganda-pay",
+  ZM: "/zambia-pay",
+  TZ: "/tanzania-pay",
+  CG: "/congo-pay",
+  MW: "/malawi-pay",
+  BW: "/botswana-pay",
+  SS: "/south-sudan-pay",
+  RW: "/rwanda-pay",
+};
+
 const FALLBACK_EVERSEND = "https://eversend.me/kantolah";
 
 /* ── main component ───────────────────────────────────────────────────── */
@@ -203,34 +214,30 @@ export default function Investments() {
         if (!res.ok) throw new Error(data.message);
         navigate(`/payment-status?type=investment&provider=soleaspay&order_id=${encodeURIComponent(data.orderId ?? "")}&service=${soleasService}`);
       } else if (paymentType === "mobile") {
-        if (!phone.trim() || !payMethod) { toast({ title: "Enter phone and select payment method", variant: "destructive" }); return; }
-        const res = await fetch(`${import.meta.env.BASE_URL}api/investments/${selected.id}/pay/mobile`, {
-          method: "POST", credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: phone.trim(), paymentMethod: payMethod }),
+        if (!payMethod) { toast({ title: "Select a payment method", variant: "destructive" }); return; }
+        const route = COUNTRY_PAYMENT_ROUTES[country];
+        if (!route) throw new Error("Payment instructions are unavailable for this country.");
+        const methodParam = country === "UG"
+          ? payMethod.toLowerCase().includes("airtel") ? "airtel" : "mtn"
+          : country === "ZM"
+          ? payMethod.toLowerCase().includes("airtel") ? "airtel" : "mtn"
+          : "";
+        const query = new URLSearchParams({
+          amount: String(Math.round(selected.depositAmount)),
+          planId: String(selected.id),
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
-        toast({ title: "Payment submitted!", description: data.message });
-        setSelected(null);
-        navigate("/investments/current");
+        if (methodParam) query.set("method", methodParam);
+        navigate(`${route}?${query.toString()}`);
+        return;
       } else {
-        // Manual payment (Eversend or Kenya M-Pesa Till) — needs proof.
-        if (!screenshot) { toast({ title: "Upload payment screenshot", variant: "destructive" }); return; }
-        if (!phone.trim()) { toast({ title: "Enter your phone number", variant: "destructive" }); return; }
-        const res = await fetch(`${import.meta.env.BASE_URL}api/investments/${selected.id}/pay/manual`, {
-          method: "POST", credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone: phone.trim(), screenshotBase64: screenshot,
-            screenshotMime, amountPaid: String(selected.depositAmount),
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
-        toast({ title: "Payment submitted!", description: data.message });
-        setSelected(null);
-        navigate("/investments/current");
+        // Reuse the exact country payment instructions and verification page.
+         // Reuse the same manual payment verification flow as activation.
+        if (country === "KE") {
+          navigate(`/kenya-pay?amount=${encodeURIComponent(String(Math.round(selected.depositAmount)))}&planId=${selected.id}`);
+        } else {
+          navigate(`/verify?amount=${encodeURIComponent(String(Math.round(selected.depositAmount)))}&planId=${selected.id}`);
+        }
+        return;
       }
     } catch (err: any) {
       toast({ title: "Payment failed", description: err.message, variant: "destructive" });
@@ -310,7 +317,7 @@ export default function Investments() {
            kenyaBusiness={kenyaBusiness}
            soleasService={soleasService}
            setSoleasService={setSoleasService}
-           canUseManualFallback={country === "KE" || country === "CM"}
+           canUseManualFallback={country === "KE" ? kenyaManualPaymentEnabled : country === "CM"}
            onUseManual={() => setManualFallback(true)}
            onUseAutomatic={() => setManualFallback(false)}
           mobileHints={MOBILE_HINTS[country]}
@@ -489,10 +496,6 @@ function PaymentModal({
                 <p className="mt-1 text-amber-600 dark:text-amber-400">{mobileHints.hint}</p>
               </div>
               <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-1.5">Your Phone Number</label>
-                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Your phone" className="w-full text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary" />
-              </div>
-              <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-1.5">Payment Method</label>
                 <select value={payMethod} onChange={e => setPayMethod(e.target.value)} className="w-full text-sm py-3 px-4 rounded-xl outline-none bg-muted/40 border border-input focus:border-primary">
                   <option value="">Select method</option>
@@ -504,7 +507,7 @@ function PaymentModal({
 
           {paymentType === "manual" && (
             <>
-              <p className="text-sm font-semibold text-foreground">{country === "KE" ? "Manual M-Pesa Till Payment" : "Pay via Eversend"}</p>
+               <p className="text-sm font-semibold text-foreground">{country === "KE" ? "Manual M-Pesa Till Payment" : "Pay via Eversend"}</p>
               <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-3 text-xs text-blue-800 dark:text-blue-300">
                 {country === "KE" ? (
                   <p>Send <strong>{fmt(plan.depositAmount)}</strong> to Till <strong>{kenyaTill || "the configured M-Pesa Till"}</strong>{kenyaBusiness ? ` (${kenyaBusiness})` : ""}, then upload your payment proof.</p>
@@ -549,7 +552,7 @@ function PaymentModal({
             disabled={submitting}
             className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2 transition-all shadow-sm mt-2"
           >
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Processing…</> : <><CheckCircle className="w-4 h-4" />Confirm Investment</>}
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" />Processing…</> : <><CheckCircle className="w-4 h-4" />{paymentType === "mobile" || paymentType === "manual" ? "Continue to Payment Instructions" : "Confirm Investment"}</>}
           </button>
         </div>
       </div>

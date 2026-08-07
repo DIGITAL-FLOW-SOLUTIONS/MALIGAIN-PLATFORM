@@ -55,13 +55,19 @@ const COUNTRY_CURRENCY: Record<string, string> = {
   CM: "XAF",
 };
 
+const FALLBACK_EVERSEND_LINK = "https://eversend.me/kantolah";
+
 export default function Verify() {
   const { user } = useAuth();
   const userCurrency = COUNTRY_CURRENCY[user?.country ?? "KE"] ?? "KES";
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const search = useSearch();
-  const verificationAmount = new URLSearchParams(search).get("amount") ?? "";
+  const searchParams = new URLSearchParams(search);
+  const verificationAmount = searchParams.get("amount") ?? "";
+  const investmentPlanId = searchParams.get("planId");
+  const isInvestment = Boolean(investmentPlanId);
+  const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
 
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [amountPaid, setAmountPaid] = useState(verificationAmount);
@@ -96,6 +102,18 @@ export default function Verify() {
     fetchRecords();
   }, []);
 
+  useEffect(() => {
+    if (!isInvestment) return;
+    fetch(`${import.meta.env.BASE_URL}api/settings/eversend-link`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.eversendLink) setEversendLink(data.eversendLink);
+      })
+      .catch(() => {});
+  }, [isInvestment]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -128,17 +146,28 @@ export default function Verify() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}api/verify`, {
+      const res = await fetch(
+        isInvestment
+          ? `${import.meta.env.BASE_URL}api/investments/${encodeURIComponent(investmentPlanId!)}/pay/manual`
+          : `${import.meta.env.BASE_URL}api/verify`,
+        {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: phone.trim(),
-          screenshotBase64: screenshotPreview,
-          screenshotMime: screenshotFile?.type ?? null,
-          amountPaid,
-        }),
-      });
+          body: isInvestment
+            ? JSON.stringify({
+                phone: phone.trim(),
+                screenshotBase64: screenshotPreview,
+                screenshotMime: screenshotFile?.type ?? null,
+              })
+            : JSON.stringify({
+                phone: phone.trim(),
+                screenshotBase64: screenshotPreview,
+                screenshotMime: screenshotFile?.type ?? null,
+                amountPaid,
+              }),
+        },
+      );
       const data = await res.json();
       if (!res.ok) {
         toast({ title: "Submission Failed", description: data.message || "Something went wrong.", variant: "destructive" });
@@ -176,9 +205,9 @@ export default function Verify() {
           <h1 className="relative z-10 text-xl font-black text-white tracking-wider uppercase">
              {user?.country === "KE" ? "M-Pesa Payment Verification" : "Payment Verification"}
           </h1>
-          <p className="relative z-10 text-white/70 text-sm mt-1.5">
-            Submit your payment details for verification
-          </p>
+           <p className="relative z-10 text-white/70 text-sm mt-1.5">
+             {isInvestment ? "Submit your investment payment details for verification" : "Submit your payment details for verification"}
+           </p>
         </div>
 
         <div className="px-6 py-6 space-y-5">
@@ -214,6 +243,22 @@ export default function Verify() {
             </div>
           )}
 
+          {isInvestment && (
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
+              <p className="text-sm text-foreground">
+                Send <strong>{userCurrency} {Math.round(Number(verificationAmount || 0)).toLocaleString()}</strong> via Eversend, then submit your payment details below.
+              </p>
+              <a
+                href={eversendLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-full py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-colors"
+              >
+                Open Eversend
+              </a>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-primary mb-1.5">
@@ -244,7 +289,7 @@ export default function Verify() {
               />
             </div>
 
-            <div>
+             {!isInvestment && <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-primary mb-1.5">
                 Amount Paid ({userCurrency})
               </label>
@@ -260,7 +305,7 @@ export default function Verify() {
                   hasPending && "opacity-50 cursor-not-allowed"
                 )}
               />
-            </div>
+             </div>}
 
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-primary mb-1.5">

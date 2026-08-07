@@ -14,6 +14,7 @@ export default function UgandaPay() {
   const params = new URLSearchParams(search);
   const method = params.get("method") === "airtel" ? "airtel" : "mtn";
   const ugxAmount = params.get("amount") ?? FALLBACK_UGX_AMOUNT;
+  const planId = params.get("planId");
 
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,7 +54,11 @@ export default function UgandaPay() {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.BASE_URL}api/verify/uganda`, {
+      const res = await fetch(
+        planId
+          ? `${import.meta.env.BASE_URL}api/investments/${encodeURIComponent(planId)}/pay/mobile`
+          : `${import.meta.env.BASE_URL}api/verify/uganda`,
+        {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -61,14 +66,15 @@ export default function UgandaPay() {
           phone: phone.trim(),
           paymentMethod: method === "mtn" ? "MTN Uganda" : "Airtel Uganda",
         }),
-      });
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Submission failed");
       toast({
         title: "Submitted!",
         description: "Your payment has been submitted for verification.",
       });
-      navigate("/dashboard");
+      navigate(planId ? "/investments/current" : "/dashboard");
     } catch (err: any) {
       toast({
         title: "Failed",
