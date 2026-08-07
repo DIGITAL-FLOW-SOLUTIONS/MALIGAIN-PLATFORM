@@ -1,12 +1,14 @@
 import { Resend } from "resend";
 
 const APP_URL = process.env.APP_URL ?? "https://www.maligain.com";
-const FROM_ADDR = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@maligain.com";
+const FROM_ADDR =
+  process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@maligain.com";
 const FROM = `MALIGAIN <${FROM_ADDR}>`;
 
 function getResendClient(): Resend {
   const apiKey = process.env.RESEND_API_KEY || process.env.SMTP_PASS;
-  if (!apiKey) throw new Error("No Resend API key set (RESEND_API_KEY or SMTP_PASS)");
+  if (!apiKey)
+    throw new Error("No Resend API key set (RESEND_API_KEY or SMTP_PASS)");
   return new Resend(apiKey);
 }
 
@@ -75,7 +77,7 @@ function buildBonusEmail(opts: {
           <!-- CTA -->
           <tr>
             <td style="padding:0 32px 28px;text-align:center;">
-              <a href="${APP_URL}"
+              <a href="https://www.maligain.com/"
                  style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%);color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;border-radius:10px;letter-spacing:0.5px;">
                 Login &amp; See Dashboard
               </a>
@@ -100,7 +102,8 @@ function buildWithdrawalEmail(opts: {
   currency: string;
 }): string {
   const { username, grossAmount, serviceFee, netAmount, currency } = opts;
-  const fmt = (n: number) => `${currency} ${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const fmt = (n: number) =>
+    `${currency} ${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
   return `<!DOCTYPE html>
 <html>
@@ -180,7 +183,9 @@ export async function sendWithdrawalConfirmationEmail(opts: {
   currency: string;
 }): Promise<void> {
   const { toEmail, username, grossAmount, netAmount, currency } = opts;
-  console.log(`[mailer] Sending withdrawal confirmation to ${toEmail} (${username}) — net ${currency} ${netAmount}`);
+  console.log(
+    `[mailer] Sending withdrawal confirmation to ${toEmail} (${username}) — net ${currency} ${netAmount}`,
+  );
 
   const resend = getResendClient();
   const { data, error } = await resend.emails.send({
@@ -191,10 +196,14 @@ export async function sendWithdrawalConfirmationEmail(opts: {
   });
 
   if (error) {
-    console.error(`[mailer] ❌ Withdrawal email failed for ${toEmail}: ${error.message}`);
+    console.error(
+      `[mailer] ❌ Withdrawal email failed for ${toEmail}: ${error.message}`,
+    );
     throw new Error(error.message);
   }
-  console.log(`[mailer] ✅ Withdrawal email sent to ${toEmail} | id: ${data?.id}`);
+  console.log(
+    `[mailer] ✅ Withdrawal email sent to ${toEmail} | id: ${data?.id}`,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -210,8 +219,12 @@ function buildAdminWithdrawalNotificationEmail(opts: {
   requestedAt: string;
 }): string {
   const { username, phone, amount, currency, country, requestedAt } = opts;
-  const fmt = (n: number) => `${currency} ${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const formattedDate = new Date(requestedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+  const fmt = (n: number) =>
+    `${currency} ${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formattedDate = new Date(requestedAt).toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 
   return `<!DOCTYPE html>
 <html>
@@ -310,7 +323,9 @@ export async function sendWithdrawalRequestNotificationEmail(opts: {
   requestedAt: string;
 }): Promise<void> {
   const { toEmail, username, amount, currency } = opts;
-  console.log(`[mailer] Sending withdrawal request notification to admin ${toEmail} — ${currency} ${amount} from ${username}`);
+  console.log(
+    `[mailer] Sending withdrawal request notification to admin ${toEmail} — ${currency} ${amount} from ${username}`,
+  );
 
   const resend = getResendClient();
   const { data, error } = await resend.emails.send({
@@ -321,10 +336,14 @@ export async function sendWithdrawalRequestNotificationEmail(opts: {
   });
 
   if (error) {
-    console.error(`[mailer] ❌ Admin withdrawal notification failed for ${toEmail}: ${error.message}`);
+    console.error(
+      `[mailer] ❌ Admin withdrawal notification failed for ${toEmail}: ${error.message}`,
+    );
     throw new Error(error.message);
   }
-  console.log(`[mailer] ✅ Admin withdrawal notification sent to ${toEmail} | id: ${data?.id}`);
+  console.log(
+    `[mailer] ✅ Admin withdrawal notification sent to ${toEmail} | id: ${data?.id}`,
+  );
 }
 
 export async function sendReferralBonusEmail(opts: {
@@ -352,7 +371,9 @@ export async function sendReferralBonusEmail(opts: {
   });
 
   if (error) {
-    console.error(`[mailer] ❌ Failed to send email to ${toEmail} | error: ${error.message}`);
+    console.error(
+      `[mailer] ❌ Failed to send email to ${toEmail} | error: ${error.message}`,
+    );
     throw new Error(error.message);
   }
 
