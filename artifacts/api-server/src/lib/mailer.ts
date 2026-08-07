@@ -291,7 +291,7 @@ function buildAdminWithdrawalNotificationEmail(opts: {
           <!-- CTA -->
           <tr>
             <td style="padding:0 36px 28px;">
-              <a href="${APP_URL}/admin/withdrawals"
+              <a href="https://admin.maligain.com/admin/withdrawals"
                  style="display:inline-block;padding:12px 28px;background:#111111;color:#ffffff;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;letter-spacing:0.5px;">
                 Go to Admin Panel →
               </a>
