@@ -31,25 +31,26 @@ router.get("/upline", async (req: Request, res: Response) => {
       .eq("id", userId)
       .single();
     if (meErr || !me || !me["referred_by"]) {
-      res.json({ phone: null, username: null });
+      res.json({ phone: null, username: null, country: null });
       return;
     }
-    // Get upline's phone and username
+    // Get the upline's profile details using the stored referred_by user ID.
     const { data: upline, error: upErr } = await supabase
       .from("users")
-      .select("username, phone")
+      .select("username, phone, country")
       .eq("id", me["referred_by"])
       .single();
     if (upErr || !upline) {
-      res.json({ phone: null, username: null });
+      res.json({ phone: null, username: null, country: null });
       return;
     }
     res.json({
       phone: (upline["phone"] as string | null) ?? null,
       username: (upline["username"] as string | null) ?? null,
+      country: (upline["country"] as string | null) ?? null,
     });
   } catch {
-    res.json({ phone: null, username: null });
+    res.json({ phone: null, username: null, country: null });
   }
 });
 

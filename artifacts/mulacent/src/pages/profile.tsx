@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useCurrency } from "@/hooks/use-currency";
 import {
@@ -55,6 +55,11 @@ const passwordSchema = z
 
 type ProfileForm = z.infer<typeof profileSchema>;
 type PasswordForm = z.infer<typeof passwordSchema>;
+type Upline = {
+  username: string | null;
+  phone: string | null;
+  country: string | null;
+};
 
 function inputCls() {
   return "w-full bg-background border border-input rounded-xl py-3 px-4 text-foreground text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-muted-foreground";
@@ -72,6 +77,7 @@ export default function Profile() {
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [upline, setUpline] = useState<Upline | null>(null);
 
   const { data: balances } = useGetWalletBalances();
   const { data: stats } = useGetReferralStats();
@@ -79,6 +85,23 @@ export default function Profile() {
 
   const updateMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(`${import.meta.env.BASE_URL}api/users/upline`, {
+      credentials: "include",
+      signal: controller.signal,
+    })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("Failed to load upline")))
+      .then((data: Upline) => setUpline(data))
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setUpline(null);
+      });
+
+    return () => controller.abort();
+  }, []);
 
   const { register: regProfile, handleSubmit: handleProfileSubmit } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -280,12 +303,16 @@ export default function Profile() {
             </div>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-primary flex items-center justify-center text-white font-bold text-sm">
-                ML
+                {upline?.username
+                  ? upline.username.substring(0, 2).toUpperCase()
+                  : "—"}
               </div>
               <div>
-                <p className="text-foreground font-semibold">MALIGAIN</p>
+                <p className="text-foreground font-semibold">
+                  {upline?.username || "NONE"}
+                </p>
                 <p className="flex items-center gap-1 text-muted-foreground text-xs mt-0.5">
-                  <Globe className="w-3 h-3" /> {countryLabel(user?.country)}
+                  <Globe className="w-3 h-3" /> {countryLabel(upline?.country)}
                 </p>
               </div>
             </div>
