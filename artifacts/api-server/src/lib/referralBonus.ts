@@ -15,7 +15,8 @@ export interface ReferralBonusResult {
 /**
  * Triggered on every user activation (M-Pesa or Eversend admin approval).
  * Walks up to 3 levels of uplines and credits each with their referral bonus
- * in their own local currency into main_wallet, team_earnings, and total_earned.
+ * in their own local currency into main_wallet and total_earned. Only Level 1
+ * bonuses also contribute to team_earnings.
  * Bonus amounts are loaded from the database (app_settings) at runtime.
  */
 export async function triggerReferralBonus(activatedUserId: number, log?: { error: (...args: unknown[]) => void }): Promise<ReferralBonusResult> {
@@ -99,7 +100,7 @@ export async function triggerReferralBonus(activatedUserId: number, log?: { erro
 
       await supabase.from("wallet").update({
         main_wallet:    num(wallet["main_wallet"])    + bonusAmount,
-        team_earnings:  num(wallet["team_earnings"])  + bonusAmount,
+        team_earnings:  num(wallet["team_earnings"])  + (level === 1 ? bonusAmount : 0),
         total_earned:   num(wallet["total_earned"])   + bonusAmount,
         today_earnings: num(wallet["today_earnings"]) + bonusAmount,
       }).eq("user_id", uplineId);
