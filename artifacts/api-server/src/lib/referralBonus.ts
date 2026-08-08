@@ -96,7 +96,7 @@ export async function triggerReferralBonus(activatedUserId: number, log?: { erro
         .limit(1);
 
       const wallet = (wallets ?? [])[0] as Record<string, unknown> | undefined;
-      if (!wallet) continue;
+      if (!wallet) continue; // Should never happen
 
       await supabase.from("wallet").update({
         main_wallet:    num(wallet["main_wallet"])    + bonusAmount,

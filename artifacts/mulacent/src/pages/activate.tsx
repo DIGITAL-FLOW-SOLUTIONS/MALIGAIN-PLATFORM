@@ -53,6 +53,7 @@ export default function Activate() {
   const [loading, setLoading] = useState(false);
   const [hashbackLoading, setHashbackLoading] = useState(false);
   const [soleasPayLoading, setSoleasPayLoading] = useState(false);
+  const [soleasPayConfigured, setSoleasPayConfigured] = useState(false);
   const [kenyaPaymentProvider, setKenyaPaymentProvider] = useState<"PAYHERO" | "HASHBACK">("PAYHERO");
   const [kenyaManualPaymentEnabled, setKenyaManualPaymentEnabled] = useState(true);
   const [eversendLink, setEversendLink] = useState(FALLBACK_EVERSEND_LINK);
@@ -105,7 +106,13 @@ export default function Activate() {
         .then((d) => { if (d.eversendLink) setEversendLink(d.eversendLink); })
         .catch(() => {});
     }
-  }, [hasOwnPage, isKenya]);
+    if (isCameroon) {
+      fetch(`${import.meta.env.BASE_URL}api/settings/cameroon`, { credentials: "include" })
+        .then((r) => r.json())
+        .then((d) => setSoleasPayConfigured(d.soleasPayConfigured === true))
+        .catch(() => setSoleasPayConfigured(false));
+    }
+  }, [hasOwnPage, isCameroon, isKenya]);
 
   const handleActivate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,7 +238,16 @@ export default function Activate() {
         credentials: "include",
         body: JSON.stringify({ phoneNumber: phone.trim(), service: paymentService }),
       });
-      const data = await response.json() as { orderId?: string; message?: string };
+      const data = await response.json() as { orderId?: string; error?: string; message?: string };
+      if (response.status === 503 && data.error === "ConfigurationError") {
+        setSoleasPayConfigured(false);
+        toast({
+          title: "SoleasPay unavailable",
+          description: "Use manual Eversend payment instead.",
+          variant: "destructive",
+        });
+        return;
+      }
       if (!response.ok || !data.orderId) {
         throw new Error(data.message || "SoleasPay payment could not be started.");
       }
@@ -567,7 +583,9 @@ export default function Activate() {
                     <span className="text-foreground font-bold">{fee.currency} {displayAmount}</span>
                   </p>
                   <p className="text-muted-foreground text-xs">
-                    Pay automatically with SoleasPay or use manual Eversend payment
+                     {soleasPayConfigured
+                       ? "Pay automatically with SoleasPay or use manual Eversend payment"
+                       : "SoleasPay is unavailable — use manual Eversend payment"}
                   </p>
                 </div>
                 <div>
@@ -583,22 +601,26 @@ export default function Activate() {
                   />
                   <p className="text-xs mt-1.5 text-center text-muted-foreground">{fee.hint}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleSoleasPayActivation(1)}
-                  disabled={soleasPayLoading}
-                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
-                >
-                  {soleasPayLoading ? "Starting payment..." : "Pay with MTN Cameroon"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSoleasPayActivation(2)}
-                  disabled={soleasPayLoading}
-                  className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-secondary hover:bg-secondary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
-                >
-                  {soleasPayLoading ? "Starting payment..." : "Pay with Orange Money"}
-                </button>
+                {soleasPayConfigured && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleSoleasPayActivation(1)}
+                      disabled={soleasPayLoading}
+                      className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
+                    >
+                      {soleasPayLoading ? "Starting payment..." : "Pay with MTN Cameroon"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSoleasPayActivation(2)}
+                      disabled={soleasPayLoading}
+                      className="w-full py-3.5 rounded-xl font-bold text-sm text-primary-foreground bg-secondary hover:bg-secondary/90 flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
+                    >
+                      {soleasPayLoading ? "Starting payment..." : "Pay with Orange Money"}
+                    </button>
+                  </>
+                )}
                 <a
                   href={eversendLink}
                   target="_blank"

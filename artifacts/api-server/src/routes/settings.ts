@@ -2,6 +2,7 @@ import { Router } from "express";
 import { supabase } from "../lib/supabase";
 import { getActivationFees, WITHDRAWAL_RULES } from "../lib/appSettings";
 import { hasHashbackCredentials } from "../lib/hashback";
+import { hasSoleasPayApiKey } from "../lib/soleaspay";
 
 const router = Router();
 
@@ -268,6 +269,7 @@ router.get("/cameroon", async (req, res) => {
     res.json({
       cmMtnPhone: row?.value ?? "+254757574729",
       cmMtnBusinessName: row?.business_name ?? "Charles Nzive",
+      soleasPayConfigured: hasSoleasPayApiKey(),
     });
   } catch {
     res.status(500).json({ message: "Failed to fetch settings" });
